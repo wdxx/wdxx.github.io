@@ -4,6 +4,8 @@
     <title>Hexo+github博客搭建</title>
     <url>/2020/05/08/hello-world/</url>
     <content><![CDATA[<p>&emsp;&emsp;hexo是一个博客框架，可以将markdown文本编译成静态网页。github提供了github pages,这是一个静态网站托管服务。所以前者生成的静态网页可以托管在github pages上。通过在网上搜索，发现<a href="https://cuiqingcai.com/7625.html" target="_blank" rel="noopener">这篇文章</a>写的很详细，根据这篇文章部署了该<a href="https://wdxx.github.io/" target="_blank" rel="noopener">博客网站</a>。</p>
+<a id="more"></a>
+
 <h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p>&emsp;&emsp;搭建前需要先安装好Node.js，可以通过<a href="https://nodejs.org/zh-cn/download/" target="_blank" rel="noopener">这里</a>下载安装。然后就是安装hexo与github pages创建。需要注意的是在申请github作为github pages的仓库时，仓库名需要是{name}.github.io的命名方式。如果你还没有github账户的话赶紧去<a href="https://github.com/" target="_blank" rel="noopener">官网</a>申请一个吧。</p>
 <h3 id="安装hexo"><a href="#安装hexo" class="headerlink" title="安装hexo"></a>安装hexo</h3><p>安装命令如下：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br></pre></td></tr></table></figure>
