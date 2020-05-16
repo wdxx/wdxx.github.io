@@ -80,4 +80,39 @@
 
 ]]></content>
   </entry>
+  <entry>
+    <title>android simpleperf工具使用入门</title>
+    <url>/2020/05/15/android-simpleperf/</url>
+    <content><![CDATA[<p>&emsp;&emsp;Simpleperf 是一个通用的命令行 CPU 性能剖析工具，在Android NDK中已经自带了。需要注意的是，如果自带的simpleperf不能使用，就需要在适配当前Android设备的源码中编译了。simpleperf的源码在AOSP的system/extras/simpleperf下，其中doc目录详细介绍了如何使用该工具。</p>
+<a id="more"></a>
+
+<h2 id="在源码中编译simpleperf"><a href="#在源码中编译simpleperf" class="headerlink" title="在源码中编译simpleperf"></a>在源码中编译simpleperf</h2><p>&emsp;&emsp;可以通过如下命令在Andorid设备的源码中编译simpleperf:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> build/envsetup.sh</span><br><span class="line">lunch aosp_arm64-eng</span><br><span class="line">make simpleperf -j32</span><br></pre></td></tr></table></figure>
+<p>最后将会生成out/target/product/xxx/system/xbin/simpleperf，这就是需要push到Android设备的simpleperf。</p>
+<h3 id="push-simpleperf"><a href="#push-simpleperf" class="headerlink" title="push simpleperf"></a>push simpleperf</h3><p>&emsp;&emsp;在push之前需要需要保证Android设备具有root权限，一般通过adb root选项进行提权。然后通过如下命令将simpleperf push到设备。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">adb root</span><br><span class="line">adb shell mkdir /data/bin</span><br><span class="line">adb push &lt;编译出来的simpleperf&gt; /data/bin/simpleperf</span><br><span class="line">adb shell setenforce 0</span><br></pre></td></tr></table></figure>
+<p>进行了上述步骤后，就可以在设备中使用simpleperf了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">adb shell /data/bin/simpleperf --version</span><br><span class="line"><span class="comment"># simpleperf I command.cpp:131] Simpleperf version 1.c65e6065befd</span></span><br><span class="line"><span class="comment">#</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="simpleperf使用介绍"><a href="#simpleperf使用介绍" class="headerlink" title="simpleperf使用介绍"></a>simpleperf使用介绍</h2><p>&emsp;&emsp;simpleperf的record命令用于转储已需要分析的进程的样本。 每个样本可以包含诸如样本生成时间，自上一个样本以来的事件数，线程的程序计数器，线程的调用链之类的信息。后续的分析步骤都是基于这个样本信息来分析的。</p>
+<h3 id="采集样本数据"><a href="#采集样本数据" class="headerlink" title="采集样本数据"></a>采集样本数据</h3><p>首先确认需要分析的进程。比如分析当前cpu占用最高的进程。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top -m 5 <span class="comment"># 得到执行的进程名字</span></span><br><span class="line"><span class="comment">## 根据pidof得到需要分析的进程id号</span></span><br><span class="line">pidof &lt;进程名&gt;</span><br></pre></td></tr></table></figure>
+<p>得到进程id后就可以进行数据采集了。如果使用simpleperf的recod命令请参<a href="https://android.googlesource.com/platform/system/extras/+/refs/heads/master/simpleperf/doc/executable_commands_reference.md" target="_blank" rel="noopener">考官方文档</a>中的<code>The record command</code>小节。<br>如下的命令记录进行号为11961的record：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/data/bin/simpleperf record -p 11961 -o /sdcard/perf_11961.data --duration 360</span><br></pre></td></tr></table></figure>
+<p>结果保存在/sdcard/perf_11961.data,记录持续时间为360秒。这里只记录了默认的<code>cpu-cycles</code>event，如果需要记录更加多的event需要指定-e参数。通过<code>simpleperf list</code>命令查看支持哪些events。</p>
+<h3 id="查看特定进程调用的动态库"><a href="#查看特定进程调用的动态库" class="headerlink" title="查看特定进程调用的动态库"></a>查看特定进程调用的动态库</h3><p>通过report命令可以查看这种report数据：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./simpleperf report --sort dso -i /sdcard/perf_11961.data</span><br><span class="line">simpleperf W dso.cpp:361] failed to <span class="built_in">read</span> symbols from [vdso]: File not found</span><br><span class="line">Cmdline: /data/bin/simpleperf record -p 11961 -o /sdcard/perf_11961.data --duration 360</span><br><span class="line">Arch: arm64</span><br><span class="line">Event: cpu-cycles (<span class="built_in">type</span> 0, config 0)</span><br><span class="line">Samples: 649</span><br><span class="line">Event count: 136430910</span><br><span class="line"></span><br><span class="line">Overhead  Shared Object</span><br><span class="line">57.91%    [kernel.kallsyms]</span><br><span class="line">20.03%    /system/lib64/libart.so</span><br><span class="line">9.43%     /system/lib64/libandroidfw.so</span><br><span class="line">5.05%     /system/framework/arm64/boot-framework.oat</span><br><span class="line">3.58%     /system/lib64/libc.so</span><br><span class="line">1.67%     /system/framework/arm64/boot-core-oj.oat</span><br><span class="line">0.89%     /system/lib64/libbinder.so</span><br><span class="line">0.39%     /system/lib64/libc++.so</span><br><span class="line">0.38%     /system/lib64/libopenjdk.so</span><br><span class="line">0.27%     /system/lib64/libz.so</span><br><span class="line">0.15%     /system/lib64/libandroid_runtime.so</span><br><span class="line">0.13%     [vdso]</span><br><span class="line">0.07%     /system/framework/arm64/boot-core-libart.oat</span><br><span class="line">0.05%     /system/lib64/libutils.so</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看函数调用关系"><a href="#查看函数调用关系" class="headerlink" title="查看函数调用关系"></a>查看函数调用关系</h3><p>simpleperf report还可以导出函数调用关系,–symfs可以指定符号表的目录。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/data/bin/simpleperf report -g  -i /sdcard/perf_19357.data --symfs . &gt; /sdcard/g_19357.dat</span><br></pre></td></tr></table></figure>
+
+<h4 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h4><ol>
+<li><a href="https://blog.csdn.net/zhuyong006/article/details/103112571" target="_blank" rel="noopener">https://blog.csdn.net/zhuyong006/article/details/103112571</a></li>
+<li><a href="https://developer.android.com/ndk/guides/simpleperf" target="_blank" rel="noopener">https://developer.android.com/ndk/guides/simpleperf</a></li>
+</ol>
+]]></content>
+      <tags>
+        <tag>android</tag>
+      </tags>
+  </entry>
 </search>
