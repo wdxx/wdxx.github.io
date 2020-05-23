@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Hexo+github博客搭建</title>
+    <url>/2020/05/08/hello-world/</url>
+    <content><![CDATA[<p>&emsp;&emsp;hexo是一个博客框架，可以将markdown文本编译成静态网页。github提供了github pages,这是一个静态网站托管服务。所以前者生成的静态网页可以托管在github pages上。通过在网上搜索，发现<a href="https://cuiqingcai.com/7625.html" target="_blank" rel="noopener">这篇文章</a>写的很详细，根据这篇文章部署了该<a href="https://wdxx.github.io/" target="_blank" rel="noopener">博客网站</a>。</p>
+<a id="more"></a>
+
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p>&emsp;&emsp;搭建前需要先安装好Node.js，可以通过<a href="https://nodejs.org/zh-cn/download/" target="_blank" rel="noopener">这里</a>下载安装。然后就是安装hexo与github pages创建。需要注意的是在申请github作为github pages的仓库时，仓库名需要是{name}.github.io的命名方式。如果你还没有github账户的话赶紧去<a href="https://github.com/" target="_blank" rel="noopener">官网</a>申请一个吧。</p>
+<h3 id="安装hexo"><a href="#安装hexo" class="headerlink" title="安装hexo"></a>安装hexo</h3><p>安装命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br></pre></td></tr></table></figure>
+
+<h2 id="初始化项目"><a href="#初始化项目" class="headerlink" title="初始化项目"></a>初始化项目</h2><p>&emsp;&emsp;到目前为止，我们的准备工作已经完成了，我们拥有了hexo框架，github仓库。接下来需要做的就是使用hexo来初始化一个博客项目，hexo提供了一个命令行工具，用于快速创建项目、页面、编译、部署hexo博客。创建博客项目的命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir myblogsite</span><br><span class="line"><span class="built_in">cd</span> myblogsite</span><br><span class="line">hexo init &#123;name&#125; <span class="comment">## name就是你要创建的项目的名字，一般取签名说的github的用户名就可以了。</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;这个步骤中hexo为我们的博客项目创建了{name}文件夹，这个文件夹下面还有node_modules、scaffolds、themes等文件夹，先不管这些文件夹有啥作用，继续后面的步骤。我{name}文件夹下面可以看到一个source/_post文件夹，这个下面可以存放markdown个是的文本文件，hexo可以将这个文件编译成静态的html,然后我们就可以用来部署了。将markdown格式的文件编译成html的命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> &#123;name&#125;</span><br><span class="line">hexo generate <span class="comment">## 也可以使用  hexo g 命令</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;执行上面的命令后可以发现在{name}/public下生成了许多文件，这就是转换过程重生成的文件。可以通过如下的命令在本地调试查看生成的效果：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo server</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;在上面的命令执行完成后，如果服务启动正常，那么会打印如下的log：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">INFO  Start processing</span><br><span class="line">INFO  Hexo is running at http://localhost:4000 . Press Ctrl+C to stop.</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;可以看到，访问的地址为”<a href="http://localhost:4000&quot;，在浏览器中打开就可以看到效果了。">http://localhost:4000&quot;，在浏览器中打开就可以看到效果了。</a></p>
+<h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><p>&emsp;&emsp;从上面的步骤中已经生成了静态的页面，接下来只需要部署到github就可以了。在部署之前需要安装一个git的部署插件，安装命令如下:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;接下来需要配置部署地址。打开项目文件夹下面的”_config.yml”文件，找到”Deployment”配置项，配置成如下格式:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Deployment</span></span><br><span class="line"><span class="comment">## Docs: https://hexo.io/docs/deployment.html</span></span><br><span class="line">deploy:</span><br><span class="line">  <span class="built_in">type</span>: git</span><br><span class="line">  repo: https://github.com/wdxx/wdxx.github.io.git</span><br><span class="line">  branch: master</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;将type配置成git,repo配置成github项目地址，branch配置成github仓库分支。配置完地址之后执行如下部署命令:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
+<p>部署过程会上传编译好的结果，log如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Counting objects: 58, <span class="keyword">done</span>.</span><br><span class="line">Delta compression using up to 4 threads.</span><br><span class="line">Compressing objects: 100% (52/52), <span class="keyword">done</span>.</span><br><span class="line">Writing objects: 100% (58/58), 358.87 KiB | 0 bytes/s, <span class="keyword">done</span>.</span><br><span class="line">Total 58 (delta 8), reused 0 (delta 0)</span><br><span class="line">remote: Resolving deltas: 100% (8/8), <span class="keyword">done</span>.</span><br><span class="line">To https://github.com/wdxx/wdxx.github.io.git</span><br><span class="line">   3cd02f7..13b140e  HEAD -&gt; master</span><br><span class="line">Branch master <span class="built_in">set</span> up to track remote branch master from https://github.com/wdxx/wdxx.github.io.git.</span><br><span class="line">INFO  Deploy <span class="keyword">done</span>: git</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;现在就可以打开<a href="https://wdxx.github.io/" target="_blank" rel="noopener">https://wdxx.github.io/</a>看看部署好后的效果了。</p>
+<h2 id="修改主题"><a href="#修改主题" class="headerlink" title="修改主题"></a>修改主题</h2><p>&emsp;&emsp;hexo提供了各种各样的主题用于定义自己喜欢的样式，一般使用最流行的<a href="https://github.com/theme-next/hexo-theme-next/tree/v7.8.0" target="_blank" rel="noopener">next</a>主题，主题需要自己单独下载，存放在工程的themes目录下。下载next的命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/theme-next/hexo-theme-next.git themes/next</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;下载完主题后，需要在工程目录的”_config.yml”中将主题切换为next,在该文件中找到”Extensions”字段，配置成如下格式:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Extensions</span></span><br><span class="line"><span class="comment">## Plugins: https://hexo.io/plugins/</span></span><br><span class="line"><span class="comment">## Themes: https://hexo.io/themes/</span></span><br><span class="line">theme: next</span><br></pre></td></tr></table></figure>
+
+<h2 id="重新部署"><a href="#重新部署" class="headerlink" title="重新部署"></a>重新部署</h2><p>&emsp;&emsp;在修改完配置，或者新发布文章后，需要重新编译然后部署，命令如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo generate</span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置站点信息"><a href="#配置站点信息" class="headerlink" title="配置站点信息"></a>配置站点信息</h2><p>&emsp;&emsp;可以在 _config.yml 中修改大部分的配置。这里我们主要修改site区域的配置。各参数说明如下:  </p>
+<table>
+<thead>
+<tr>
+<th align="left">参数</th>
+<th align="right">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">title</td>
+<td align="right">网站标题</td>
+</tr>
+<tr>
+<td align="left">subtitle</td>
+<td align="right">网站副标题</td>
+</tr>
+<tr>
+<td align="left">description</td>
+<td align="right">网站描述</td>
+</tr>
+<tr>
+<td align="left">keywords</td>
+<td align="right">网站的关键词。使用半角逗号 , 分隔多个关键词</td>
+</tr>
+<tr>
+<td align="left">author</td>
+<td align="right">您的名字</td>
+</tr>
+<tr>
+<td align="left">language</td>
+<td align="right">网站使用的语言。对于简体中文用户来说，使用不同的主题可能需要设置成不同的值，请参考你的主题的文档自行设置，常见的有 zh-Hans和 zh-CN。</td>
+</tr>
+<tr>
+<td align="left">timezone</td>
+<td align="right">网站时区。Hexo 默认使用您电脑的时区。请参考 时区列表 进行设置，如 America/New_York, Japan, 和 UTC 。一般的，对于中国大陆地区可以使用 Asia/Shanghai。</td>
+</tr>
+</tbody></table>
+<p>我的博客具体配置如下:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Site</span></span><br><span class="line">title: wdxxliu</span><br><span class="line">subtitle: 个人博客</span><br><span class="line">description: 一个关于嵌入式方向的个人博客</span><br><span class="line">keywords: <span class="string">"Python C/C++ Makefile Linux 编译 工具链"</span></span><br><span class="line">author: wdxx</span><br><span class="line">language: zh-CN</span><br><span class="line">timezone: Asia/Shanghai</span><br></pre></td></tr></table></figure>
+
+
+
+]]></content>
+  </entry>
+  <entry>
+    <title>android simpleperf工具使用入门</title>
+    <url>/2020/05/15/android-simpleperf/</url>
+    <content><![CDATA[<p>&emsp;&emsp;Simpleperf 是一个通用的命令行 CPU 性能剖析工具，在Android NDK中已经自带了。需要注意的是，如果自带的simpleperf不能使用，就需要在适配当前Android设备的源码中编译了。simpleperf的源码在AOSP的system/extras/simpleperf下，其中doc目录详细介绍了如何使用该工具。</p>
+<a id="more"></a>
+
+<h2 id="在源码中编译simpleperf"><a href="#在源码中编译simpleperf" class="headerlink" title="在源码中编译simpleperf"></a>在源码中编译simpleperf</h2><p>&emsp;&emsp;可以通过如下命令在Andorid设备的源码中编译simpleperf:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> build/envsetup.sh</span><br><span class="line">lunch aosp_arm64-eng</span><br><span class="line">make simpleperf -j32</span><br></pre></td></tr></table></figure>
+<p>最后将会生成out/target/product/xxx/system/xbin/simpleperf，这就是需要push到Android设备的simpleperf。</p>
+<h3 id="push-simpleperf"><a href="#push-simpleperf" class="headerlink" title="push simpleperf"></a>push simpleperf</h3><p>&emsp;&emsp;在push之前需要需要保证Android设备具有root权限，一般通过adb root选项进行提权。然后通过如下命令将simpleperf push到设备。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">adb root</span><br><span class="line">adb shell mkdir /data/bin</span><br><span class="line">adb push &lt;编译出来的simpleperf&gt; /data/bin/simpleperf</span><br><span class="line">adb shell setenforce 0</span><br></pre></td></tr></table></figure>
+<p>进行了上述步骤后，就可以在设备中使用simpleperf了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">adb shell /data/bin/simpleperf --version</span><br><span class="line"><span class="comment"># simpleperf I command.cpp:131] Simpleperf version 1.c65e6065befd</span></span><br><span class="line"><span class="comment">#</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="simpleperf使用介绍"><a href="#simpleperf使用介绍" class="headerlink" title="simpleperf使用介绍"></a>simpleperf使用介绍</h2><p>&emsp;&emsp;simpleperf的record命令用于转储已需要分析的进程的样本。 每个样本可以包含诸如样本生成时间，自上一个样本以来的事件数，线程的程序计数器，线程的调用链之类的信息。后续的分析步骤都是基于这个样本信息来分析的。</p>
+<h3 id="采集样本数据"><a href="#采集样本数据" class="headerlink" title="采集样本数据"></a>采集样本数据</h3><p>首先确认需要分析的进程。比如分析当前cpu占用最高的进程。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top -m 5 <span class="comment"># 得到执行的进程名字</span></span><br><span class="line"><span class="comment">## 根据pidof得到需要分析的进程id号</span></span><br><span class="line">pidof &lt;进程名&gt;</span><br></pre></td></tr></table></figure>
+<p>得到进程id后就可以进行数据采集了。如果使用simpleperf的recod命令请参<a href="https://android.googlesource.com/platform/system/extras/+/refs/heads/master/simpleperf/doc/executable_commands_reference.md" target="_blank" rel="noopener">考官方文档</a>中的<code>The record command</code>小节。<br>如下的命令记录进行号为11961的record：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/data/bin/simpleperf record -p 11961 -o /sdcard/perf_11961.data --duration 360</span><br></pre></td></tr></table></figure>
+<p>结果保存在/sdcard/perf_11961.data,记录持续时间为360秒。这里只记录了默认的<code>cpu-cycles</code>event，如果需要记录更加多的event需要指定-e参数。通过<code>simpleperf list</code>命令查看支持哪些events。</p>
+<h3 id="查看特定进程调用的动态库"><a href="#查看特定进程调用的动态库" class="headerlink" title="查看特定进程调用的动态库"></a>查看特定进程调用的动态库</h3><p>通过report命令可以查看这种report数据：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./simpleperf report --sort dso -i /sdcard/perf_11961.data</span><br><span class="line">simpleperf W dso.cpp:361] failed to <span class="built_in">read</span> symbols from [vdso]: File not found</span><br><span class="line">Cmdline: /data/bin/simpleperf record -p 11961 -o /sdcard/perf_11961.data --duration 360</span><br><span class="line">Arch: arm64</span><br><span class="line">Event: cpu-cycles (<span class="built_in">type</span> 0, config 0)</span><br><span class="line">Samples: 649</span><br><span class="line">Event count: 136430910</span><br><span class="line"></span><br><span class="line">Overhead  Shared Object</span><br><span class="line">57.91%    [kernel.kallsyms]</span><br><span class="line">20.03%    /system/lib64/libart.so</span><br><span class="line">9.43%     /system/lib64/libandroidfw.so</span><br><span class="line">5.05%     /system/framework/arm64/boot-framework.oat</span><br><span class="line">3.58%     /system/lib64/libc.so</span><br><span class="line">1.67%     /system/framework/arm64/boot-core-oj.oat</span><br><span class="line">0.89%     /system/lib64/libbinder.so</span><br><span class="line">0.39%     /system/lib64/libc++.so</span><br><span class="line">0.38%     /system/lib64/libopenjdk.so</span><br><span class="line">0.27%     /system/lib64/libz.so</span><br><span class="line">0.15%     /system/lib64/libandroid_runtime.so</span><br><span class="line">0.13%     [vdso]</span><br><span class="line">0.07%     /system/framework/arm64/boot-core-libart.oat</span><br><span class="line">0.05%     /system/lib64/libutils.so</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看函数调用关系"><a href="#查看函数调用关系" class="headerlink" title="查看函数调用关系"></a>查看函数调用关系</h3><p>simpleperf report还可以导出函数调用关系,–symfs可以指定符号表的目录。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/data/bin/simpleperf report -g  -i /sdcard/perf_19357.data --symfs . &gt; /sdcard/g_19357.dat</span><br></pre></td></tr></table></figure>
+
+<h4 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h4><ol>
+<li><a href="https://blog.csdn.net/zhuyong006/article/details/103112571" target="_blank" rel="noopener">https://blog.csdn.net/zhuyong006/article/details/103112571</a></li>
+<li><a href="https://developer.android.com/ndk/guides/simpleperf" target="_blank" rel="noopener">https://developer.android.com/ndk/guides/simpleperf</a></li>
+</ol>
+]]></content>
+      <tags>
+        <tag>android</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>如何解压android系统镜像</title>
+    <url>/2020/05/18/unpack-filesystem-data/</url>
+    <content><![CDATA[<p>&emsp;&emsp;在android的开发过程中，经常需要用到将andorid system.img 或者 vendor.img等ext文件系统格式的镜像给解压出来分析，如果当前Linux系统有root权限，那么可以直接mount 镜像来进行提取，但是一般开发服务器是不提供root权限的，所以本文讨论如何在没有root权限的情况下对文件系统镜像进行提取。以AndroidQ super.img为例进行说明。</p>
+<a id="more"></a>
+
+<h2 id="super-img"><a href="#super-img" class="headerlink" title="super.img"></a>super.img</h2><p>&emsp;&emsp;super.img是AndroidQ引入的，用于处理动态分区特性。例如将system、vendor<br>、product分区定义为动态分区，那么编译完成时这三个分区的镜像就会合并成一个super.img镜像，当然也能将super.img拆分成system.img、vendor.img、product.img镜像。</p>
+<h3 id="如何拆分super-img"><a href="#如何拆分super-img" class="headerlink" title="如何拆分super.img"></a>如何拆分super.img</h3><p>&emsp;&emsp;Android Q 自带了lpunpack工具来对super.img进行解压。下面是lpunpack的使用介绍。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./lpunpack - <span class="built_in">command</span>-line tool <span class="keyword">for</span> extracting partition images from super</span><br><span class="line"></span><br><span class="line">Usage:</span><br><span class="line">  ./lpunpack [options...] SUPER_IMAGE [OUTPUT_DIR]</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">  -p, --partition=NAME     Extract the named partition. This can</span><br><span class="line">                           be specified multiple <span class="built_in">times</span>.</span><br><span class="line">  -S, --slot=NUM           Slot number (default is 0).</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;例如：<code>lpunpack super.img</code>默认会将所有的分区文件提取出来，可以通过-p选择提取指定的分区镜像。需要注意的是，lpunpack工具aosp代码默认不会编译，可以通过将lpunpack加入PRODUCT_HOST_PACKAGES，然后编译，源码在aosp源码的system/extras/partition_tools目录。<br>&emsp;&emsp;aosp源码的system/extras/partition_tools目录下面还有几个常用工具，一起介绍下。<br>lpmake：用于生成一个super.img文件，具体使用方法可以通过<code>lpmake -h</code>查看。<br>lpdump：用于dump一个super.img文件中包含哪些分区等元数据。<br>lpflash：用于烧录镜像到设备，<code>Usage: lpflash /dev/block/sdX /path/to/image/file</code>。</p>
+<h2 id="如何拆分system-img"><a href="#如何拆分system-img" class="headerlink" title="如何拆分system.img"></a>如何拆分system.img</h2><p>&emsp;&emsp;通过上个步骤的lpunpack后，会得到system.img.如果system.img镜像的格式是sparse格式的（super.img解压后的不需要这个步骤，已经是raw格式的了），需要将其转换为raw格式，转换工具为<code>simg2img</code>，在aosp编译后的out/host/linux-x86/bin目录，转换命令如下:  </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">simg2img system.img  system.img.raw</span><br></pre></td></tr></table></figure>
+<p>system.img一般为ext文件系统，这里以ext文件系统解压作为讲解。最常用的方法就是使用e2fsprogs中的debugfs了。比如想将system.img中的内容解压到system目录，使用debugfs的命令如下:  </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir system</span><br><span class="line">debugfs system.img  -R <span class="string">"rdump / system"</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;还有一种方法是使用nlitsme提供的extfstools工具，在github上有下载该工具的源码。但是extfstools依赖c++17与boost库，所以需要先编译gcc 6以上的版本与boost库。</p>
+<h3 id="编译gcc"><a href="#编译gcc" class="headerlink" title="编译gcc"></a>编译gcc</h3><p>&emsp;&emsp;在gcc 6以上的对c++17的特性支持比较全，关于gcc对c++版本的支持查看<a href="https://zh.cppreference.com/w/cpp/compiler_support" target="_blank" rel="noopener">这里</a>。所以选取了gcc-6.2.0，下载地址点<a href="https://ftp.gnu.org/gnu/gcc/gcc-6.2.0/gcc-6.2.0.tar.bz2" target="_blank" rel="noopener">这里</a>。  </p>
+<ol>
+<li>配置gcc  <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir build install</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">../$(gcc-source-scode-dir)/configure --prefix=&lt;install目录的绝对路径&gt; --<span class="built_in">enable</span>-languages=c,c++</span><br></pre></td></tr></table></figure>
+执行上面步骤的时候可能会出现如下报错:  <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">checking for objdir... .libs</span><br><span class="line">checking for the correct version of gmp.h... no</span><br><span class="line">configure: error: Building GCC requires GMP 4.2+, MPFR 2.4.0+ and MPC 0.8.0+.</span><br><span class="line">Try the --with-gmp, --with-mpfr and&#x2F;or --with-mpc options to specify</span><br><span class="line">their locations.  Source code for these libraries can be found at</span><br><span class="line">their respective hosting sites as well as at</span><br><span class="line">ftp:&#x2F;&#x2F;gcc.gnu.org&#x2F;pub&#x2F;gcc&#x2F;infrastructure&#x2F;.  See also</span><br><span class="line">http:&#x2F;&#x2F;gcc.gnu.org&#x2F;install&#x2F;prerequisites.html for additional info.  If</span><br><span class="line">you obtained GMP, MPFR and&#x2F;or MPC from a vendor distribution package,</span><br><span class="line">make sure that you have installed both the libraries and the header</span><br><span class="line">files.  They may be located in separate packages.</span><br></pre></td></tr></table></figure>
+解决方法是到gcc源码目录执行<code>./contrib/download_prerequisites</code>，然后重新配置gcc。</li>
+<li>编译与安装<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make -j32</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h3 id="编译boost"><a href="#编译boost" class="headerlink" title="编译boost"></a>编译boost</h3><p>&emsp;&emsp;boost的新版本下载地址请点击<a href="https://dl.bintray.com/boostorg/release/1.73.0/source/boost_1_73_0.tar.bz2" target="_blank" rel="noopener">这里</a>。关于新手怎么使用boost可以查看<a href="https://www.boost.org/doc/libs/1_73_0/more/getting_started/unix-variants.html" target="_blank" rel="noopener">官方文档</a>。</p>
+<ol>
+<li>配置boost  <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> &lt;bost_source_dir&gt;</span><br><span class="line">mkdir install</span><br><span class="line">./bootstrap.sh --with-toolset=gcc --prefix=&lt;Absolute address <span class="keyword">for</span> bost_source_dir&gt;/install --with-libraries=all</span><br></pre></td></tr></table></figure></li>
+<li>编译与安装  <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./b2 install</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h3 id="编译extfstools"><a href="#编译extfstools" class="headerlink" title="编译extfstools"></a>编译extfstools</h3><p>&emsp;&emsp;extfstools可以通过git命令从github<a href="https://github.com/nlitsme/extfstools.git" target="_blank" rel="noopener">地址</a>下载。由于我们的gcc与boost是安装的自定义目录，没有安装到系统目录，所以需要修改extfstools/Makefile来指定环境变量。在<code>CXXFLAGS</code>中加入<code>-I &lt;Absolute address for bost_source_dir&gt;/install/include</code>,在<code>LDFLAGS</code>中添加<code>-Wl,-rpath,&#39;$$ORIGIN/lib64&#39;</code>。这里修改链接选项的目的是使用我们新编译的gcc库。  </p>
+<ol>
+<li><p>拷贝gcc标准库  </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> &lt;extfstools <span class="built_in">source</span> dir&gt;</span><br><span class="line">mkdir lib64</span><br><span class="line"><span class="built_in">cd</span> lib64</span><br><span class="line">cp &lt;gcc install path&gt;/libgcc_s.so.1 libgcc_s.so.1</span><br><span class="line">cp &lt;gcc install path&gt;/libstdc++.so.6.0.22 libstdc++.so.6.0.22</span><br><span class="line">ln -s libstdc++.so.6.0.22 libstdc++.so.6</span><br><span class="line"><span class="built_in">cd</span> -</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编译  </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CXX=&lt;gcc install path&gt;/g++ make clean</span><br><span class="line">CXX=&lt;gcc install path&gt;/g++ make -j32</span><br></pre></td></tr></table></figure>
+<p>编译完成后，执行<code>./ext2rd --help</code>会打印如果使用说明：<br><img src="/images/ext2rd_help.png" alt=""><br>解压system.img:  </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./ext2rd system.img  ./:system</span><br></pre></td></tr></table></figure>
+<p>解压效果如下图:<br><img src="/images/system_filelist.png" alt=""></p>
+</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>android filesystem</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>openssl初探</title>
+    <url>/2020/05/21/openssl-first/</url>
+    <content><![CDATA[<h2 id="非对称加密算法概述"><a href="#非对称加密算法概述" class="headerlink" title="非对称加密算法概述"></a>非对称加密算法概述</h2><p>&emsp;&emsp;非对称加密算法也称公开密钥算法，其解决了对称加密算法密钥分配的问题，非对称加密算法基本特点如下：<br>1、加密密钥和解密密钥不同<br>2、密钥对中的一个密钥可以公开<br>3、根据公开密钥很难推算出私人密钥<br>&emsp;&emsp;根据非对称加密算法的特点，可用户数字签名、密钥交换、数据加密。但是由于非对称加密算法较对称加密算法加密速度慢很多，故最常用的用途是数字签名和密钥交换。<br>&emsp;&emsp;目前常用的非对称加密算法有RSA, DH和DSA三种，但并非都可以用于密钥交换和数字签名。而是RSA可用于数字签名和密钥交换，DH算法可用于密钥交换，而DSA算法专门用户数字签名。<br>&emsp;&emsp;openssl支持以上三种算法，并为三种算法提供了丰富的指令集，目前使用最多的算法是rsa加密算法，本文介绍OpenSSL在rsa加密算法上的使用。</p>
+<a id="more"></a>
+
+<h2 id="openssl-rsa算法相关指令与用法"><a href="#openssl-rsa算法相关指令与用法" class="headerlink" title="openssl rsa算法相关指令与用法"></a>openssl rsa算法相关指令与用法</h2><p>&emsp;&emsp;RSA虽然可以数字签名、密钥交换和数据加密，但是RSA加密数据速度慢，通常不使用RSA加密数据。对于在实际应用中是使用RSA算法进行签名还是进行加密，可以通过公钥与私钥的使用进行区别：<br>&emsp;&emsp;公钥加密：用途是密钥交换，用户A使用用户B的公钥将少量数据加密发送给B，B用自己的私钥解密数据。<br>&emsp;&emsp;私钥签名：用途是数字签名，用户A使用自己的私钥将数据的摘要信息加密一并发送给B，B用A的公钥解密摘要信息并验证。</p>
+<h3 id="openssl-genrsa命令介绍"><a href="#openssl-genrsa命令介绍" class="headerlink" title="openssl genrsa命令介绍"></a>openssl genrsa命令介绍</h3><p>openssl genras 命令用于生成秘钥对，其用法如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">xxx@cmos:~$ openssl genrsa -</span><br><span class="line">usage: genrsa [args] [numbits]                                                     //密钥位数，建议1024及以上</span><br><span class="line"> -des            encrypt the generated key with DES <span class="keyword">in</span> cbc mode                    //生成的密钥使用des方式进行加密</span><br><span class="line"> -des3           encrypt the generated key with DES <span class="keyword">in</span> ede cbc mode (168 bit key)  //生成的密钥使用des3方式进行加密</span><br><span class="line"> -seed</span><br><span class="line">                 encrypt PEM output with cbc seed                                  //生成的密钥还是要seed方式进行</span><br><span class="line"> -aes128, -aes192, -aes256</span><br><span class="line">                 encrypt PEM output with cbc aes                                   //生成的密钥使用aes方式进行加密</span><br><span class="line"> -camellia128, -camellia192, –camellia256 </span><br><span class="line">                 encrypt PEM output with cbc camellia                              //生成的密钥使用camellia方式进行加密</span><br><span class="line"> -out file       output the key to <span class="string">'file                                           //生成的密钥文件，可从中提取公钥</span></span><br><span class="line"><span class="string"> -passout arg    output file pass phrase source                                    //指定密钥文件的加密口令，可从文件、环境变量、终端等输入</span></span><br><span class="line"><span class="string"> -f4             use F4 (0x10001) for the E value                                  //选择指数e的值，默认指定该项，e值为65537 -3              use 3 for the E value                                             //选择指数e的值，默认值为65537，使用该选项则指数指定为3</span></span><br><span class="line"><span class="string"> -engine e       use engine e, possibly a hardware device.                         //指定三方加密库或者硬件</span></span><br><span class="line"><span class="string"> -rand file:file:...</span></span><br><span class="line"><span class="string">                 load the file (or the files in the directory) into                //产生随机数的种子文件</span></span><br><span class="line"><span class="string">                 the random number generator</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;通过上面的使用介绍我们来创建一个私钥，我们指定私钥的加密算法为aes128，创建密码为123456（在使用私钥时需要输入密码，如果设置了创建密码），密钥位数为2048位。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">openssl genrsa -aes128 -out rsa_2048.pem -passout pass:123456 2048</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;在创建rsa私钥的时候是必须设置口令的，此密码用于加密私钥文件。以后在使用openssl提供的命令或者api再操作此私钥文件时需要输入口令。如果觉得输入口令不方便，也可以通过如下命令将口令去除：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">openssl rsa -in rsa_2048.pem -out rsa_2048.pem</span><br></pre></td></tr></table></figure>
+
+<h3 id="openssl-rsa-命令介绍"><a href="#openssl-rsa-命令介绍" class="headerlink" title="openssl rsa 命令介绍"></a>openssl rsa 命令介绍</h3><p>rsa指令用户管理生成的密钥，其用法如下:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">xxx@cmos:~$ openssl rsa -</span><br><span class="line">unknown option -</span><br><span class="line">rsa [options] &lt;infile &gt;outfile     </span><br><span class="line"><span class="built_in">where</span> options are</span><br><span class="line"> -inform arg     input format - one of DER NET PEM                      //输入文件格式，默认pem格式</span><br><span class="line"> -outform arg    output format - one of DER NET PEM                     //输入文件格式，默认pem格式</span><br><span class="line"> -<span class="keyword">in</span> arg         input file                                             //输入文件</span><br><span class="line"> -sgckey         Use IIS SGC key format                                 //指定SGC编码格式，兼容老版本，不应再使用</span><br><span class="line"> -passin arg     input file pass phrase <span class="built_in">source</span>                          //指定输入文件的加密口令，可来自文件、终端、环境变量等</span><br><span class="line"> -out arg        output file                                            //输出文件</span><br><span class="line"> -passout arg    output file pass phrase <span class="built_in">source</span>                         //指定输出文件的加密口令，可来自文件、终端、环境变量等</span><br><span class="line"> -des            encrypt PEM output with cbc des                        //使用des加密输出的文件</span><br><span class="line"> -des3           encrypt PEM output with ede cbc des using 168 bit key  //使用des3加密输出的文件</span><br><span class="line"> -seed           encrypt PEM output with cbc seed                       //使用seed加密输出的文件</span><br><span class="line"> -aes128, -aes192, -aes256</span><br><span class="line">                 encrypt PEM output with cbc aes                        //使用aes加密输出的文件</span><br><span class="line"> -camellia128, -camellia192, -camellia256</span><br><span class="line">                 encrypt PEM output with cbc camellia                   //使用camellia加密输出的文件呢</span><br><span class="line"> -text           <span class="built_in">print</span> the key <span class="keyword">in</span> text                                  //以明文形式输出各个参数值</span><br><span class="line"> -noout          don<span class="string">'t print key out                                    //不输出密钥到任何文件</span></span><br><span class="line"><span class="string"> -modulus        print the RSA key modulus                              //输出模数指</span></span><br><span class="line"><span class="string"> -check          verify key consistency                                 //检查输入密钥的正确性和一致性</span></span><br><span class="line"><span class="string"> -pubin          expect a public key in input file                      //指定输入文件是公钥</span></span><br><span class="line"><span class="string"> -pubout         output a public key                                    //指定输出文件是公钥</span></span><br><span class="line"><span class="string"> -engine e       use engine e, possibly a hardware device.              //指定三方加密库或者硬件</span></span><br><span class="line"><span class="string">xlzh@cmos:~$</span></span><br></pre></td></tr></table></figure>
+<ol>
+<li><p>rsa添加和去除密钥的保护口令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/*生成不加密的RSA密钥*/</span><br><span class="line">xxx@cmos:~/<span class="built_in">test</span>$ openssl genrsa -out RSA.pem</span><br><span class="line">Generating RSA private key, 512 bit long modulus</span><br><span class="line">..............++++++++++++</span><br><span class="line">.....++++++++++++</span><br><span class="line">e is 65537 (0x10001)</span><br><span class="line">/*为RSA密钥增加口令保护*/</span><br><span class="line">xxx@cmos:~/<span class="built_in">test</span>$ openssl rsa -<span class="keyword">in</span> RSA.pem -des3 -passout pass:123456 -out E_RSA.pem</span><br><span class="line">writing RSA key</span><br><span class="line">/*为RSA密钥去除口令保护*/</span><br><span class="line">xxx@cmos:~/<span class="built_in">test</span>$ openssl rsa -<span class="keyword">in</span> E_RSA.pem -passin pass:123456 -out P_RSA.pem</span><br><span class="line">writing RSA key</span><br><span class="line">/*比较原始后的RSA密钥和去除口令后的RSA密钥，是一样*/</span><br><span class="line">xxx@cmos:~/<span class="built_in">test</span>$ diff RSA.pem P_RSA.pem</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改密钥的保护口令与算法</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/*生成RSA密钥*/</span><br><span class="line">xxx@cmos:~/<span class="built_in">test</span>$ openssl genrsa -des3 -passout pass:123456 -out RSA.pem</span><br><span class="line">Generating RSA private key, 512 bit long modulus</span><br><span class="line">..................++++++++++++</span><br><span class="line">......................++++++++++++</span><br><span class="line">e is 65537 (0x10001)</span><br><span class="line">/*修改加密算法为aes128，口令是123456*/</span><br><span class="line">xxx@cmos:~/<span class="built_in">test</span>$ openssl rsa -<span class="keyword">in</span> RSA.pem -passin pass:123456 -aes128 -passout pass:123456 -out E_RSA.pem</span><br><span class="line">writing RSA key</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看密钥对中的各个参数</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">xxx@cmos:~/<span class="built_in">test</span>$ openssl rsa -<span class="keyword">in</span> RSA.pem -des -passin pass:123456 -text -noout</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>提取密钥中的公钥并打印模数值(生成私钥后，一般第一步就是导出公钥)</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/*提取公钥，用pubout参数指定输出为公钥*/</span><br><span class="line">xxx@cmos:~/<span class="built_in">test</span>$ openssl rsa -<span class="keyword">in</span> RSA.pem -passin pass:123456 -pubout -out pub.pem</span><br><span class="line">writing RSA key</span><br><span class="line">/*打印公钥中模数值*/</span><br><span class="line">xxx@cmos:~/<span class="built_in">test</span>$ openssl rsa -<span class="keyword">in</span> pub.pem -pubin -modulus -noout</span><br><span class="line">Modulus=C35E0B54041D78466EAE7DE67C1DA4D26575BC1608CE6A199012E11D10ED36E2F7C651D4D8B40D93691D901E2CF4E21687E912B77DCCE069373A7F6585E946EF</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>转换密钥的格式</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/*把pem格式转化成der格式，使用outform指定der格式*/</span><br><span class="line">xxx@cmos:~/<span class="built_in">test</span>$ openssl rsa -<span class="keyword">in</span> RSA.pem -passin pass:123456 -des -passout pass:123456 -outform der -out rsa.der</span><br><span class="line">writing RSA key</span><br><span class="line">/*把der格式转化成pem格式，使用inform指定der格式*/</span><br><span class="line">xxx@cmos:~/<span class="built_in">test</span>$ openssl rsa -<span class="keyword">in</span> rsa.der -inform der -passin pass:123456 -out rsa.pem</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h3 id="openssl-rsautl-命令介绍"><a href="#openssl-rsautl-命令介绍" class="headerlink" title="openssl rsautl 命令介绍"></a>openssl rsautl 命令介绍</h3><p>&emsp;&emsp;前面介绍的genrsa与rsa命令是生成密钥与对密钥进行管理的命令，rsautl则是真正用于密钥交换和数字签名，实质上就是用公钥或者私钥进行加密。<br>&emsp;&emsp;而无论是使用公钥加密还是私钥加密，RSA每次能够加密的数据长度不能超过RSA密钥长度，并且根据具体的补齐方式不同输入的加密数据最大长度也不一样，而输出长度则总是跟RSA密钥长度相等。RSA不同的补齐方法对应的输入输入长度如下表：  </p>
+<table>
+<thead>
+<tr>
+<th align="left">数据补齐方式</th>
+<th align="left">输入数据长度</th>
+<th align="left">输出数据长度</th>
+<th align="right">参数字符串</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">PKCS#1 v1.5</td>
+<td align="left">少于(密钥长度-11)字节</td>
+<td align="left">同密钥长度</td>
+<td align="right">-pkcs</td>
+</tr>
+<tr>
+<td align="left">PKCS#1 OAEP</td>
+<td align="left">少于(密钥长度-11)字节</td>
+<td align="left">同密钥长度</td>
+<td align="right">-oaep</td>
+</tr>
+<tr>
+<td align="left">PKCS#1 for SSLv23</td>
+<td align="left">少于(密钥长度-11)字节</td>
+<td align="left">同密钥长度</td>
+<td align="right">-ssl</td>
+</tr>
+<tr>
+<td align="left">不使用补齐</td>
+<td align="left">同密钥长度</td>
+<td align="left">同密钥长度</td>
+<td align="right">-raw</td>
+</tr>
+</tbody></table>
+<p>rsautl指令用法如下:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">xlzh@cmos:~$ openssl rsautl - </span><br><span class="line">Usage: rsautl [options]                  </span><br><span class="line">-<span class="keyword">in</span> file        input file                                           //输入文件</span><br><span class="line">-out file       output file                                          //输出文件</span><br><span class="line">-inkey file     input key                                            //输入的密钥</span><br><span class="line">-keyform arg    private key format - default PEM                     //指定密钥格式</span><br><span class="line">-pubin          input is an RSA public                               //指定输入的是RSA公钥</span><br><span class="line">-certin         input is a certificate carrying an RSA public key    //指定输入的是证书文件</span><br><span class="line">-ssl            use SSL v2 padding                                   //使用SSLv23的填充方式</span><br><span class="line">-raw            use no padding                                       //不进行填充</span><br><span class="line">-pkcs           use PKCS<span class="comment">#1 v1.5 padding (default)                    //使用V1.5的填充方式</span></span><br><span class="line">-oaep           use PKCS<span class="comment">#1 OAEP                                      //使用OAEP的填充方式</span></span><br><span class="line">-sign           sign with private key                                //使用私钥做签名</span><br><span class="line">-verify         verify with public key                               //使用公钥认证签名</span><br><span class="line">-encrypt        encrypt with public key                              //使用公钥加密</span><br><span class="line">-decrypt        decrypt with private key                             //使用私钥解密</span><br><span class="line">-hexdump        hex dump output                                      //以16进制dump输出</span><br><span class="line">-engine e       use engine e, possibly a hardware device.            //指定三方库或者硬件设备</span><br><span class="line">-passin arg    pass phrase <span class="built_in">source</span>                                    //指定输入的密码</span><br></pre></td></tr></table></figure>
+<ol>
+<li><p>使用rsautl进行加密与解密操作（公钥加密，私钥解密）</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;*生成RSA密钥*&#x2F;</span><br><span class="line">xxx@cmos:~&#x2F;test$ openssl genrsa -des3 -passout pass:123456 -out RSA.pem </span><br><span class="line">Generating RSA private key, 512 bit long modulus</span><br><span class="line">............++++++++++++</span><br><span class="line">...++++++++++++</span><br><span class="line">e is 65537 (0x10001)</span><br><span class="line">&#x2F;*提取公钥*&#x2F;</span><br><span class="line">xxx@cmos:~&#x2F;test$ openssl rsa -in RSA.pem -passin pass:123456 -pubout -out pub.pem </span><br><span class="line">writing RSA key</span><br><span class="line">&#x2F;*使用RSA作为密钥进行加密，实际上使用其中的公钥进行加密*&#x2F;</span><br><span class="line">xxx@cmos:~&#x2F;test$ openssl rsautl -encrypt -in plain.txt -inkey RSA.pem -passin pass:123456 -out enc.txt</span><br><span class="line">&#x2F;*使用RSA作为密钥进行解密，实际上使用其中的私钥进行解密*&#x2F;</span><br><span class="line">xxx@cmos:~&#x2F;test$ openssl rsautl -decrypt -in enc.txt -inkey RSA.pem -passin pass:123456 -out replain.txt</span><br><span class="line">&#x2F;*比较原始文件和解密后文件*&#x2F;</span><br><span class="line">xxx@cmos:~&#x2F;test$ diff plain.txt replain.txt </span><br><span class="line">&#x2F;*使用公钥进行加密*&#x2F;</span><br><span class="line">xxx@cmos:~&#x2F;test$ openssl rsautl -encrypt -in plain.txt -inkey pub.pem -pubin -out enc1.txt</span><br><span class="line">&#x2F;*使用RSA作为密钥进行解密，实际上使用其中的私钥进行解密*&#x2F;</span><br><span class="line">xxx@cmos:~&#x2F;test$ openssl rsautl -decrypt -in enc1.txt -inkey RSA.pem -passin pass:123456 -out replain1.txt</span><br><span class="line">&#x2F;*比较原始文件和解密后文件*&#x2F;</span><br><span class="line">xxx@cmos:~&#x2F;test$ diff plain.txt replain1.txt</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用rsautl进行签名和验证操作</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;*提取PCKS8格式的私钥*&#x2F;</span><br><span class="line">xxx@cmos:~&#x2F;test$ openssl pkcs8 -topk8 -in RSA.pem -passin pass:123456 -out pri.pem -nocrypt</span><br><span class="line">&#x2F;*使用RSA密钥进行签名，实际上使用私钥进行加密*&#x2F;</span><br><span class="line">xxx@cmos:~&#x2F;test$ openssl rsautl -sign -in plain.txt -inkey RSA.pem -passin pass:123456 -out sign.txt</span><br><span class="line">&#x2F;*使用RSA密钥进行验证，实际上使用公钥进行解密*&#x2F;</span><br><span class="line">xxx@cmos:~&#x2F;test$ openssl rsautl -verify -in sign.txt -inkey RSA.pem -passin pass:123456 -out replain.txt</span><br><span class="line">&#x2F;*对比原始文件和签名解密后的文件*&#x2F;</span><br><span class="line">xxx@cmos:~&#x2F;test$ diff plain.txt replain.txt </span><br><span class="line">&#x2F;*使用私钥进行签名*&#x2F;</span><br><span class="line">xxx@cmos:~&#x2F;test$ openssl rsautl -sign -in plain.txt -inkey pri.pem  -out sign1.txt</span><br><span class="line">&#x2F;*使用公钥进行验证*&#x2F;</span><br><span class="line">xxx@cmos:~&#x2F;test$ openssl rsautl -verify -in sign1.txt -inkey pub.pem -pubin -out replain1.txt</span><br><span class="line">&#x2F;*对比原始文件和签名解密后的文件*&#x2F;</span><br><span class="line">xxx@cmos:~&#x2F;test$ cat plain replain1.txt</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;这种使用方法其实还是对原文件的加密与解密操作，因为真正的签名与验签过程是需要给源文件进行摘要提取，然后对摘要进行签名，主要通过openssl dgst命令进行。</p>
+</li>
+</ol>
+<h2 id="openssl-dgst签名与验签"><a href="#openssl-dgst签名与验签" class="headerlink" title="openssl dgst签名与验签"></a>openssl dgst签名与验签</h2><p>dgst指令用法介绍如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">xxx@cmos:~&#x2F;test$ openssl dgst -</span><br><span class="line">unknown option &#39;-&#39;</span><br><span class="line">options are</span><br><span class="line">-c              to output the digest with separating colons        &#x2F;&#x2F;输出的摘要信息以分号隔离，和-hex同时使用</span><br><span class="line">-r              to output the digest in coreutils format           &#x2F;&#x2F;指定输出的格式</span><br><span class="line">-d              to output debug info                               &#x2F;&#x2F;输出BIO调试信息</span><br><span class="line">-hex            output as hex dump                                 &#x2F;&#x2F;以16进制打印输出结果</span><br><span class="line">-binary         output in binary form                              &#x2F;&#x2F;输出二进制结果</span><br><span class="line">-hmac arg       set the HMAC key to arg                            &#x2F;&#x2F;指定hmac的key</span><br><span class="line">-non-fips-allow allow use of non FIPS digest                       &#x2F;&#x2F;允许使用不符合fips标准的摘要算法</span><br><span class="line">-sign   file    sign digest using private key in file              &#x2F;&#x2F;执行签名操作，后面指定私钥文件</span><br><span class="line">-verify file    verify a signature using public key in file        &#x2F;&#x2F;执行验证操作，后面指定公钥文件，与prverfify不能同时使用</span><br><span class="line">-prverify file  verify a signature using private key in file       &#x2F;&#x2F;执行验证操作，后面指定密钥文件，与verfify不能同时使用</span><br><span class="line">-keyform arg    key file format (PEM or ENGINE)                    &#x2F;&#x2F;指定密钥文件格式，pem或者engine</span><br><span class="line">-out filename   output to filename rather than stdout              &#x2F;&#x2F;指定输出文件，默认标准输出</span><br><span class="line">-signature file signature to verify                                &#x2F;&#x2F;指定签名文件，在验证签名时使用</span><br><span class="line">-sigopt nm:v    signature parameter                                &#x2F;&#x2F;签名参数</span><br><span class="line">-hmac key       create hashed MAC with key                         &#x2F;&#x2F;制作一个hmac 使用key</span><br><span class="line">-mac algorithm  create MAC (not neccessarily HMAC)                 &#x2F;&#x2F;制作一个mac</span><br><span class="line">-macopt nm:v    MAC algorithm parameters or key                    &#x2F;&#x2F;mac算法参数或者key</span><br><span class="line">-engine e       use engine e, possibly a hardware device.          &#x2F;&#x2F;使用硬件或者三方加密库</span><br><span class="line">-md4            to use the md4 message digest algorithm            &#x2F;&#x2F;摘要算法使用md4</span><br><span class="line">-md5            to use the md5 message digest algorithm            &#x2F;&#x2F;摘要算法使用md5</span><br><span class="line">-ripemd160      to use the ripemd160 message digest algorithm      &#x2F;&#x2F;摘要算法使用ripemd160</span><br><span class="line">-sha            to use the sha message digest algorithm            &#x2F;&#x2F;摘要算法使用sha</span><br><span class="line">-sha1           to use the sha1 message digest algorithm           &#x2F;&#x2F;摘要算法使用sha1</span><br><span class="line">-sha224         to use the sha224 message digest algorithm         &#x2F;&#x2F;摘要算法使用sha223</span><br><span class="line">-sha256         to use the sha256 message digest algorithm         &#x2F;&#x2F;摘要算法使用sha256</span><br><span class="line">-sha384         to use the sha384 message digest algorithm         &#x2F;&#x2F;摘要算法使用sha384</span><br><span class="line">-sha512         to use the sha512 message digest algorithm         &#x2F;&#x2F;摘要算法使用sha512</span><br><span class="line">-whirlpool      to use the whirlpool message digest algorithm      &#x2F;&#x2F;摘要算法使用whirlpool</span><br></pre></td></tr></table></figure>
+<p>使用RSA密钥进行签名验证操作:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl dgst -sha256 -sign rsa_2048.pem -out stroptr.c.sign stroptr.c  <span class="comment"># 生成摘要签名</span></span><br><span class="line">openssl  dgst  -verify pub.pem -sha256 -signature stroptr.c.sign  stroptr.c <span class="comment"># 验证签名</span></span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>openssl</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>将modules和exponent转换为公钥</title>
+    <url>/2020/05/22/modulus-and-exponent-to-publicKey/</url>
+    <content><![CDATA[<p>&emsp;&emsp;在使用加解密时，有时候我们拿到的是公钥中的modulus和exponent字段，当需要通过使用openssl工具进行验签或者加密的时候，就需要将这些信息转换成公钥了。本文介绍如何将modules和exponent转换为公钥。<br>&lt;!- more –&gt;</p>
+<h2 id="公钥文件分析"><a href="#公钥文件分析" class="headerlink" title="公钥文件分析"></a>公钥文件分析</h2><p>使用如下命令dump出公钥的信息：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ openssl rsa -pubin -in  pub.pem -noout -text</span><br><span class="line">Public-Key: (2048 bit)</span><br><span class="line">Modulus:</span><br><span class="line">    00:a0:10:a8:32:0b:cb:75:db:7d:8e:ba:a5:df:56:</span><br><span class="line">    b2:fb:9c:e9:34:b3:ae:7b:0b:07:a6:13:40:28:13:</span><br><span class="line">    be:78:5f:69:09:c1:bb:5e:52:62:aa:a3:f5:38:5d:</span><br><span class="line">    70:c2:3c:95:05:71:e8:87:57:10:a0:5d:7b:8a:f7:</span><br><span class="line">    dd:a3:e4:85:f5:e1:e7:ba:e2:34:4c:18:9f:46:55:</span><br><span class="line">    15:49:b5:48:92:22:ed:84:24:17:86:bf:69:10:55:</span><br><span class="line">    42:76:4b:55:bf:d3:ce:a4:2a:bd:5e:a2:e5:29:84:</span><br><span class="line">    4f:77:08:3a:22:04:5c:00:de:8b:9b:ee:7f:68:b0:</span><br><span class="line">    b0:9b:e8:bb:b1:99:e6:8a:cf:9e:b9:85:d2:86:d3:</span><br><span class="line">    5e:c2:a4:56:8d:f8:87:1d:6c:b3:73:83:3e:7b:bc:</span><br><span class="line">    5d:c6:e2:63:fd:e1:4d:18:df:53:0f:4e:13:6f:fd:</span><br><span class="line">    a6:b7:8c:e9:26:a3:4e:2b:fd:61:3d:d1:b5:f4:2f:</span><br><span class="line">    ad:55:12:57:2a:20:ed:30:e7:64:3c:87:26:47:ef:</span><br><span class="line">    97:48:30:df:44:f2:ed:c6:54:ed:5e:4f:dd:d9:3d:</span><br><span class="line">    64:51:02:f9:7b:56:77:44:63:b0:95:1a:5e:83:4b:</span><br><span class="line">    82:ce:59:f2:9e:e1:fc:16:1c:fc:f6:9c:55:37:73:</span><br><span class="line">    ae:6a:e9:76:0c:9e:3a:b1:fc:cf:76:20:6b:17:d4:</span><br><span class="line">    87:c3</span><br><span class="line">Exponent: 65537 (0x10001)</span><br></pre></td></tr></table></figure>
+<p>从上面的信息可以看到<code>exponent</code>的值为<code>65537</code>。上面的信息中发现我们的public key的长度是2048位的，但是modulus有257个字节，合计2056（257*8）位,经过验证发现<code>modulus</code>中的第一位<code>00</code>是不需要的。后面根据<a href="https://stackoverflow.com/questions/5403808/private-key-length-bytes" target="_blank" rel="noopener">网上资料</a>发现rsa格式的密钥，它的密钥长度跟<code>modulus</code>的长度是一致的，第一位<code>00</code>不影响<code>modulus</code>的大小，也就不会影响公钥的长度了。  </p>
+<h3 id="导出hex格式的modulus"><a href="#导出hex格式的modulus" class="headerlink" title="导出hex格式的modulus"></a>导出hex格式的modulus</h3><p>通过openssl asn1parse可以查看密钥的格式,关于pem格式的密钥的介绍请看<a href="https://www.cnblogs.com/adylee/p/9366518.html" target="_blank" rel="noopener">这里</a>。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ openssl asn1parse -in pub.pem  -i</span><br><span class="line">    0:d&#x3D;0  hl&#x3D;4 l&#x3D; 290 cons: SEQUENCE          </span><br><span class="line">    4:d&#x3D;1  hl&#x3D;2 l&#x3D;  13 cons:  SEQUENCE          </span><br><span class="line">    6:d&#x3D;2  hl&#x3D;2 l&#x3D;   9 prim:   OBJECT            :rsaEncryption</span><br><span class="line">   17:d&#x3D;2  hl&#x3D;2 l&#x3D;   0 prim:   NULL              </span><br><span class="line">   19:d&#x3D;1  hl&#x3D;4 l&#x3D; 271 prim:  BIT STRING</span><br></pre></td></tr></table></figure>
+<p>其中<code>BIT STRING</code>就是modulus，可以看到它的<code>offset</code>为19,通过如下命令导出hex格式的modulus：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ openssl asn1parse -in pub.pem  -i -dump -strparse 19</span><br><span class="line">    0:d&#x3D;0  hl&#x3D;4 l&#x3D; 266 cons: SEQUENCE          </span><br><span class="line">    4:d&#x3D;1  hl&#x3D;4 l&#x3D; 257 prim: INTEGER           :A010A8320BCB75DB7D8EBAA5DF56B2FB9CE934B3AE7B0B07A613402813BE785F6909C1BB5E5262AAA3F5385D70C23C950571E8875710A05D7B8AF7DDA3E485F5E1E7BAE2344C189F46551549B5489222ED84241786BF69105542764B55BFD3CEA42ABD5EA2E529844F77083A22045C00DE8B9BEE7F68B0B09BE8BBB199E68ACF9EB985D286D35EC2A4568DF8871D6CB373833E7BBC5DC6E263FDE14D18DF530F4E136FFDA6B78CE926A34E2BFD613DD1B5F42FAD5512572A20ED30E7643C872647EF974830DF44F2EDC654ED5E4FDDD93D645102F97B56774463B0951A5E834B82CE59F29EE1FC161CFCF69C553773AE6AE9760C9E3AB1FCCF76206B17D487C3</span><br><span class="line">  265:d&#x3D;1  hl&#x3D;2 l&#x3D;   3 prim: INTEGER           :010001</span><br></pre></td></tr></table></figure>
+<p>可以看到其中的modulus跟上小节中使用<code>openssl rsa</code>命令导出的一样，但是去掉了开头的<code>00</code>。</p>
+<h2 id="提取公钥"><a href="#提取公钥" class="headerlink" title="提取公钥"></a>提取公钥</h2><p>这里对公钥的提取需要使用到Python的<a href="https://github.com/dlitz/pycrypto" target="_blank" rel="noopener">pycrypto</a>库。代码如下:</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.PublicKey.RSA <span class="keyword">import</span> construct</span><br><span class="line">e = long(<span class="number">65537</span>) <span class="comment">## Exponent</span></span><br><span class="line">n = int(<span class="string">'A010A8320BCB75DB7D8EBAA5DF56B2FB9CE934B3AE7B0B07A613402813BE785F6909C1BB5E5262AAA3F5385D70C23C950571E8875710A05D7B8AF7DDA3E485F5E1E7BAE2344C189F46551549B5489222ED84241786BF69105542764B55BFD3CEA42ABD5EA2E529844F77083A22045C00DE8B9BEE7F68B0B09BE8BBB199E68ACF9EB985D286D35EC2A4568DF8871D6CB373833E7BBC5DC6E263FDE14D18DF530F4E136FFDA6B78CE926A34E2BFD613DD1B5F42FAD5512572A20ED30E7643C872647EF974830DF44F2EDC654ED5E4FDDD93D645102F97B56774463B0951A5E834B82CE59F29EE1FC161CFCF69C553773AE6AE9760C9E3AB1FCCF76206B17D487C3'</span>, <span class="number">16</span>) <span class="comment">## modulus</span></span><br><span class="line">pubkey = construct((n, e))</span><br><span class="line">strkey = pubkey.exportKey()</span><br><span class="line"><span class="keyword">print</span> strkey</span><br></pre></td></tr></table></figure>
+<p>需要注意的是e、n都需要是long类型的，不然会报错，最终获取到如下的key。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-----BEGIN PUBLIC KEY-----</span><br><span class="line">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoBCoMgvLddt9jrql31ay</span><br><span class="line">+5zpNLOuewsHphNAKBO+eF9pCcG7XlJiqqP1OF1wwjyVBXHoh1cQoF17ivfdo+SF</span><br><span class="line">9eHnuuI0TBifRlUVSbVIkiLthCQXhr9pEFVCdktVv9POpCq9XqLlKYRPdwg6IgRc</span><br><span class="line">AN6Lm+5&#x2F;aLCwm+i7sZnmis+euYXShtNewqRWjfiHHWyzc4M+e7xdxuJj&#x2F;eFNGN9T</span><br><span class="line">D04Tb&#x2F;2mt4zpJqNOK&#x2F;1hPdG19C+tVRJXKiDtMOdkPIcmR++XSDDfRPLtxlTtXk&#x2F;d</span><br><span class="line">2T1kUQL5e1Z3RGOwlRpeg0uCzlnynuH8Fhz89pxVN3Ouaul2DJ46sfzPdiBrF9SH</span><br><span class="line">wwIDAQAB</span><br><span class="line">-----END PUBLIC KEY-----</span><br></pre></td></tr></table></figure>
+
+<h3 id="关于Crypto-PublicKey-RSA-construct"><a href="#关于Crypto-PublicKey-RSA-construct" class="headerlink" title="关于Crypto.PublicKey.RSA.construct"></a>关于Crypto.PublicKey.RSA.construct</h3><p>下面是Crypto.PublicKey.RSA.construct方法的介绍:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&quot;&quot;&quot;Construct an RSA key from a tuple of valid RSA components.</span><br><span class="line">The modulus **n** must be the product of two primes.</span><br><span class="line">The public exponent **e** must be odd and larger than 1.</span><br><span class="line">In case of a private key, the following equations must apply:</span><br><span class="line">- e !&#x3D; 1</span><br><span class="line">- p*q &#x3D; n</span><br><span class="line">- e*d &#x3D; 1 mod (p-1)(q-1)</span><br><span class="line">- p*u &#x3D; 1 mod q</span><br><span class="line">:Parameters:</span><br><span class="line"> tup : tuple</span><br><span class="line">            A tuple of long integers, with at least 2 and no</span><br><span class="line">            more than 6 items. The items come in the following order:</span><br><span class="line">            1. RSA modulus (n).</span><br><span class="line">            2. Public exponent (e).</span><br><span class="line">            3. Private exponent (d). Only required if the key is private.</span><br><span class="line">            4. First factor of n (p). Optional.</span><br><span class="line">            5. Second factor of n (q). Optional.</span><br><span class="line">            6. CRT coefficient, (1&#x2F;p) mod q (u). Optional.</span><br><span class="line"></span><br><span class="line">:Return: An RSA key object (&#96;_RSAobj&#96;).</span><br><span class="line">&quot;&quot;&quot;</span><br></pre></td></tr></table></figure>
+<p>想要了解这堆说明，需要先了解下<a href="https://zhuanlan.zhihu.com/p/44185847" target="_blank" rel="noopener"><code>RSA</code>算法的原理</a>。根据这篇文章我们可以知道如下几点：<br>1、 模数n = p<em>q,其中q与q互质<br>2、 e是一个随机数，它不等于1，并且与(q-1)</em>(p-1)互质。（算法上m = (q-1)<em>(p-1)）。<br>3、 d是一个整数，(e</em>d)%m = 1, 这里得到的d是私钥的一部分。<br>公钥：(n, e)<br>私钥：(n, d)</p>
+<h4 id="加密过程"><a href="#加密过程" class="headerlink" title="加密过程"></a>加密过程</h4><p>假设明文为a，那么密文b = a^e % n，可以看到我们用到了<code>(n, e)</code>，所以加密的时候是使用公钥进行加密的。其中需要注意的是，要想使用公钥（n，e) 加密，要求被加密的数字必须小于n。</p>
+<h4 id="解密过程"><a href="#解密过程" class="headerlink" title="解密过程"></a>解密过程</h4><p>解密的时候用到私钥<code>(n, d)</code>，假设接收到的密文b,那么想要得到明文a,则需要通过如下计算：<br>a = b^d %n。</p>
+<h3 id="关于验证过程中的注意事项"><a href="#关于验证过程中的注意事项" class="headerlink" title="关于验证过程中的注意事项"></a>关于验证过程中的注意事项</h3><p>验证的时候保证明文的一致性，如明文存在文件中，由于windows 、linux文件格式不一样，可能看上去字符串一样，但是文件的hash是不一样的。</p>
+]]></content>
+      <tags>
+        <tag>加解密 openssl</tag>
+      </tags>
+  </entry>
+</search>
