@@ -178,6 +178,132 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/22/android-reverse-engineering-plan/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wdxx">
+      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wdxxliu">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/07/22/android-reverse-engineering-plan/" class="post-title-link" itemprop="url">android逆向学习计划</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-22 16:14:41" itemprop="dateCreated datePublished" datetime="2020-07-22T16:14:41+08:00">2020-07-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-24 15:37:54" itemprop="dateModified" datetime="2020-07-24T15:37:54+08:00">2020-07-24</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>参考<a href="https://zhuanlan.zhihu.com/p/101396731" target="_blank" rel="noopener">如何系统的学习安卓逆向</a>,制定如下学习计划。</p>
+<h2 id="一-安卓逆向基础（建议1周）"><a href="#一-安卓逆向基础（建议1周）" class="headerlink" title="一. 安卓逆向基础（建议1周）"></a>一. 安卓逆向基础（建议1周）</h2><ol>
+<li>学习安卓逆向第一步必须先把环境搭建好，这是你学习安卓逆向的开始，环境搭建好后表示正式迈入安卓逆向。在环境安装的工程中会遇到很多细节上的问题，针对这些坑可以去看看使用教程，或者看看网课老师的教程操作都可以。</li>
+<li>第二步就是要了解我们要分析的是什么文件，很多0基础的都不知道安卓逆向分析的什么文件。我们要分析的是应用程序或者安装包（就是.apk文件），了解apk是怎么生成的以及如何安装到我们的手机里面，apk是怎么运行的，也是我们探讨的内容。</li>
+<li>第三步如何逆向分析.apk文件，掌握apk反编译及回编译，完成这个操作使用的工具是apktool。</li>
+</ol>
+<h2 id="二-Java层逆向（建议3周）"><a href="#二-Java层逆向（建议3周）" class="headerlink" title="二. Java层逆向（建议3周）"></a>二. Java层逆向（建议3周）</h2><ol>
+<li>掌握Java语法基础，达到能看懂Java代码。</li>
+<li>了解smali语法，能看懂smali代码。</li>
+<li>掌握逆向分析apk中常用的方法和技巧。</li>
+</ol>
+<h2 id="三-Native层逆向（建议4周）"><a href="#三-Native层逆向（建议4周）" class="headerlink" title="三. Native层逆向（建议4周）"></a>三. Native层逆向（建议4周）</h2><ol>
+<li>了解安卓操作系统和四大组件。</li>
+<li>了解NDK开发流程，自己编写案例练习。</li>
+<li>掌握常用ARM汇编指令，达到能看懂ARM汇编指令。</li>
+<li>掌握ida工具的使用，熟练使用ida进行各种操作。</li>
+</ol>
+<h2 id="四-APK保护策略（建议1周）"><a href="#四-APK保护策略（建议1周）" class="headerlink" title="四. APK保护策略（建议1周）"></a>四. APK保护策略（建议1周）</h2><ol>
+<li>了解Java代码混淆、资源混淆。</li>
+<li>掌握签名验证、文件校验、模拟器检测。</li>
+<li>本地验证、网络验证。</li>
+<li>案例练习。</li>
+</ol>
+<h2 id="五-反调试与反-反调试（建议1周）"><a href="#五-反调试与反-反调试（建议1周）" class="headerlink" title="五. 反调试与反-反调试（建议1周）"></a>五. 反调试与反-反调试（建议1周）</h2><ol>
+<li>掌握常用反调试方法及过反调试技巧，比如关键文件检测、调试端口检测、进程名称检测、防附加、轮训检测TracerPid值、时间检测、信号检测等反调试。</li>
+<li>掌握IDA过反调试思路。</li>
+<li>案例练习。</li>
+</ol>
+<h2 id="六-HOOK框架（建议2周）"><a href="#六-HOOK框架（建议2周）" class="headerlink" title="六. HOOK框架（建议2周）"></a>六. HOOK框架（建议2周）</h2><ol>
+<li>掌握HOOK插件开发。</li>
+<li>掌握Xposed、Substrate、Fridad等框架。</li>
+<li>案例练习。</li>
+</ol>
+<h2 id="七-常见加密算法（建议2周）"><a href="#七-常见加密算法（建议2周）" class="headerlink" title="七. 常见加密算法（建议2周）"></a>七. 常见加密算法（建议2周）</h2><ol>
+<li>掌握编码算法、消息摘要算法、对称加密算法（Java加密与解密的艺术）。</li>
+<li>掌握非对称加密算法、数字签名算法。</li>
+</ol>
+<h2 id="八-协议加解密分析（建议4周）"><a href="#八-协议加解密分析（建议4周）" class="headerlink" title="八. 协议加解密分析（建议4周）"></a>八. 协议加解密分析（建议4周）</h2><ol>
+<li>了解客户端与服务器如何进行交互的（OSI模型、TCP/IP模型）。</li>
+<li>掌握常用的抓包工具及环境配置，HTTP协议与HTTPS安全协议，数字证书、SSL证书检测（计算机网络与通信、信息安全工程师）。</li>
+<li>案例练习。</li>
+</ol>
+<h2 id="九-文件结构（建议2周）"><a href="#九-文件结构（建议2周）" class="headerlink" title="九. 文件结构（建议2周）"></a>九. 文件结构（建议2周）</h2><ol>
+<li>掌握DEX、ELF、XML、ARSC等文件结构。</li>
+<li>自编写文件解析工具。</li>
+</ol>
+<h2 id="十-系统源码分析（建议2周）"><a href="#十-系统源码分析（建议2周）" class="headerlink" title="十. 系统源码分析（建议2周）"></a>十. 系统源码分析（建议2周）</h2><ol>
+<li>了解安卓操作系统启动流程、Zygote启动流程。</li>
+<li>掌握Dalvik虚拟机、ART虚拟机、SO加载流程。</li>
+</ol>
+<h2 id="十一-加固与脱壳（建议4周）"><a href="#十一-加固与脱壳（建议4周）" class="headerlink" title="十一. 加固与脱壳（建议4周）"></a>十一. 加固与脱壳（建议4周）</h2><ol>
+<li>了解Dex文件整体加密、Dex代码抽取加密。</li>
+<li>了解so文件整体加密、函数加密、区段加密、加壳、混淆。</li>
+<li>分析通用脱壳机的实现原理及应用场景。</li>
+<li>了解主流加固特点及对应的脱壳技巧。</li>
+</ol>
+<h2 id="十二-学习方法"><a href="#十二-学习方法" class="headerlink" title="十二. 学习方法"></a>十二. 学习方法</h2><ol>
+<li>看一遍教程后自己实战操作，养成做笔记的习惯。</li>
+<li>注重基础，一定要把Java层和Native层搞懂。</li>
+<li>学习中不要纠结细节，要学会抓大放小。</li>
+<li>学完后自己画脑图，回顾学习的过程中那些不理解在花时间去看，此过程就是查漏补缺。</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/30/printk-ratelimited/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -710,12 +836,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
