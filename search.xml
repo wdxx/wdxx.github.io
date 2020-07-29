@@ -374,4 +374,19 @@
         <tag>android逆向</tag>
       </tags>
   </entry>
+  <entry>
+    <title>dexfile 文件格式</title>
+    <url>/2020/07/24/dexfile/</url>
+    <content><![CDATA[<p>Android APK中，最终java文件会被编译为classes.dex文件。如果要分析APK就得了解dex文件的格式。<br>dex文件的格式在AOSP源码的<code>dalvik/libdex/DexFile.h</code>有定义。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>Andorid SDK 下载</title>
+    <url>/2020/07/29/downloadAndroidSDK/</url>
+    <content><![CDATA[<h2 id="下载commandlinetools"><a href="#下载commandlinetools" class="headerlink" title="下载commandlinetools"></a>下载commandlinetools</h2><p>下载地址：<a href="https://developer.android.com/studio" target="_blank" rel="noopener">https://developer.android.com/studio</a> 点击进去可以查看<code>Command line tools only</code>小节</p>
+<h2 id="解压安装commandlinetools"><a href="#解压安装commandlinetools" class="headerlink" title="解压安装commandlinetools"></a>解压安装commandlinetools</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cp commandlinetools-linux-6609375_latest.zip ~/</span><br><span class="line">mkdir -p ~/Android/platform-tools</span><br><span class="line">unzip  ~/Android/commandlinetools-linux-6609375_latest.zip -d ~/Android/platform-tools/</span><br><span class="line"><span class="built_in">export</span> ANDROID_HOME=~/Android</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>$:<span class="variable">$ANDROID_HOME</span>/cmdline-tools/tools/bin</span><br></pre></td></tr></table></figure>
+
+<p>##安装android sdk<br>安装sdk请参考官方文档：<code>https://developer.android.com/studio/command-line/sdkmanager</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sdkmanager <span class="string">"platform-tools"</span> <span class="string">"platforms;android-28"</span></span><br></pre></td></tr></table></figure>]]></content>
+  </entry>
 </search>
