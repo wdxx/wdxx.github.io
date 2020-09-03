@@ -178,6 +178,210 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/21/openssl-first/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wdxx">
+      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wdxxliu">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/21/openssl-first/" class="post-title-link" itemprop="url">openssl初探</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-05-21 14:57:26 / 修改时间：20:09:49" itemprop="dateCreated datePublished" datetime="2020-05-21T14:57:26+08:00">2020-05-21</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="非对称加密算法概述"><a href="#非对称加密算法概述" class="headerlink" title="非对称加密算法概述"></a>非对称加密算法概述</h2><p>&emsp;&emsp;非对称加密算法也称公开密钥算法，其解决了对称加密算法密钥分配的问题，非对称加密算法基本特点如下：<br>1、加密密钥和解密密钥不同<br>2、密钥对中的一个密钥可以公开<br>3、根据公开密钥很难推算出私人密钥<br>&emsp;&emsp;根据非对称加密算法的特点，可用户数字签名、密钥交换、数据加密。但是由于非对称加密算法较对称加密算法加密速度慢很多，故最常用的用途是数字签名和密钥交换。<br>&emsp;&emsp;目前常用的非对称加密算法有RSA, DH和DSA三种，但并非都可以用于密钥交换和数字签名。而是RSA可用于数字签名和密钥交换，DH算法可用于密钥交换，而DSA算法专门用户数字签名。<br>&emsp;&emsp;openssl支持以上三种算法，并为三种算法提供了丰富的指令集，目前使用最多的算法是rsa加密算法，本文介绍OpenSSL在rsa加密算法上的使用。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/05/21/openssl-first/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/18/unpack-filesystem-data/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wdxx">
+      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wdxxliu">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/18/unpack-filesystem-data/" class="post-title-link" itemprop="url">如何解压android系统镜像</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-05-18 16:35:01 / 修改时间：20:08:25" itemprop="dateCreated datePublished" datetime="2020-05-18T16:35:01+08:00">2020-05-18</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>&emsp;&emsp;在android的开发过程中，经常需要用到将andorid system.img 或者 vendor.img等ext文件系统格式的镜像给解压出来分析，如果当前Linux系统有root权限，那么可以直接mount 镜像来进行提取，但是一般开发服务器是不提供root权限的，所以本文讨论如何在没有root权限的情况下对文件系统镜像进行提取。以AndroidQ super.img为例进行说明。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/05/18/unpack-filesystem-data/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/15/android-simpleperf/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wdxx">
+      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wdxxliu">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/05/15/android-simpleperf/" class="post-title-link" itemprop="url">android simpleperf工具使用入门</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-15 16:12:06" itemprop="dateCreated datePublished" datetime="2020-05-15T16:12:06+08:00">2020-05-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-05-16 09:52:23" itemprop="dateModified" datetime="2020-05-16T09:52:23+08:00">2020-05-16</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>&emsp;&emsp;Simpleperf 是一个通用的命令行 CPU 性能剖析工具，在Android NDK中已经自带了。需要注意的是，如果自带的simpleperf不能使用，就需要在适配当前Android设备的源码中编译了。simpleperf的源码在AOSP的system/extras/simpleperf下，其中doc目录详细介绍了如何使用该工具。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/05/15/android-simpleperf/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/08/hello-world/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -315,12 +519,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">14</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>

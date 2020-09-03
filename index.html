@@ -178,6 +178,216 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/09/03/linux-nfs/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wdxx">
+      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wdxxliu">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/03/linux-nfs/" class="post-title-link" itemprop="url">linux nfs 挂载</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-09-03 09:46:36 / 修改时间：10:17:40" itemprop="dateCreated datePublished" datetime="2020-09-03T09:46:36+08:00">2020-09-03</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在Linux服务器上使用nfs挂载需要先安装nfs server。下面是Ubuntu上安装nfs server的命令。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install nfs-kernel-server</span><br><span class="line"><span class="comment">## nfs 配置目录在/etc/exports</span></span><br></pre></td></tr></table></figure>
+<p>客户端需要安装<code>nfs-common</code>,安装方法如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install nfs-common</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/09/03/linux-nfs/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/20/cpp-ofstream-ifstream/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wdxx">
+      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wdxxliu">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/20/cpp-ofstream-ifstream/" class="post-title-link" itemprop="url">cpp_ofstream_ifstream</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-08-20 16:23:36 / 修改时间：16:56:24" itemprop="dateCreated datePublished" datetime="2020-08-20T16:23:36+08:00">2020-08-20</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>ofstream是从内存到硬盘，ifstream是从硬盘到内存，其实所谓的流缓冲就是内存空间。<br>在C++中，有一个stream这个类，所有的I/O都以这个“流”类为基础的，包括我们要认识的文件I/O。<br>stream这个类有两个重要的运算符：<br>1、插入器(&lt;&lt;)<br>向流输出数据。比如说系统有一个默认的标准输出流(cout)，一般情况下就是指的显示器，所以，cout&lt;&lt;”Write Stdout”&lt;&lt;’\n’;就表示把字符串”Write Stdout”和换行字符(‘\n’)输出到标准输出流。<br>2、析取器(&gt;&gt;)<br>从流中输入数据。比如说系统有一个默认的标准输入流(cin)，一般情况下就是指的键盘，所以，cin&gt;&gt;x;就表示从标准输入流中读取一个指定类型的数据。<br>在C++中，对文件的操作是通过stream的子类fstream(file stream)来实现的，所以，要用这种方式操作文件，就必须加入头文件fstream.h。</p>
+<p>特别提出的是，fstream有两个子类：ifstream(input file stream)和ofstream(outpu file stream)，ifstream默认以输入方式打开文件，ofstream默认以输出方式打开文件。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/19/linux-filesystem/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wdxx">
+      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wdxxliu">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/19/linux-filesystem/" class="post-title-link" itemprop="url">linux_filesystem</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-19 10:02:20" itemprop="dateCreated datePublished" datetime="2020-08-19T10:02:20+08:00">2020-08-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-20 11:42:21" itemprop="dateModified" datetime="2020-08-20T11:42:21+08:00">2020-08-20</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Linux中常见的文件系统是ext4文件系统，那文件系统的基本组成是什么样的呢？Linux操作系统中，文件除了实际的数据之外还有诸如权限、文件属性类的数据。文件系统通常会将实际的数据存放在<code>block</code>中，而权限及文件属性数据存放在<code>inode</code>中。</p>
+<h2 id="inode-和-block-概述"><a href="#inode-和-block-概述" class="headerlink" title="inode 和 block 概述"></a>inode 和 block 概述</h2><p>文件是存储在硬盘上的，硬盘的最小存储单位叫做扇区<code>sector</code>，每个扇区存储<code>512字节</code>。操作系统读取硬盘的时候，不会一个个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个块<code>block</code>。这种由多个扇区组成的块，是文件存取的最小单位。块的大小，最常见的是<code>4KB</code>，即连续八个sector组成一个<code>block</code>。</p>
+<p>文件数据存储在块中，那么还必须找到一个地方存储文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种存储文件元信息的区域就叫做<code>inode</code>，中文译名为<code>索引节点</code>，也叫<code>i节点</code>。因此，一个文件必须占用一个<code>inode</code>，但至少占用一个<code>block</code>。</p>
+<ul>
+<li>元信息：inode</li>
+<li>数据: block</li>
+</ul>
+<h2 id="inode内容"><a href="#inode内容" class="headerlink" title="inode内容"></a>inode内容</h2><p><code>inode</code>包含很多的文件元信息，但不包含文件名，例如：字节数、属主<code>UserID</code>、属组<code>GroupID</code>、读写执行权限、时间戳等。</p>
+<p>而文件名存放在目录当中，但Linux系统内部不使用文件名，而是使用<code>inode号码</code>识别文件。对于系统来说文件名只是<code>inode号码</code>便于识别的别称。</p>
+<h2 id="inode号码"><a href="#inode号码" class="headerlink" title="inode号码"></a>inode号码</h2><p>可以通过<code>stat</code>命令或者<code>ls -i</code>命令查看文件或者目录的<code>inode号码</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">stat</span> readme.txt</span><br><span class="line">  文件：<span class="string">"readme.txt"</span></span><br><span class="line">  大小：6          块：8          IO 块：4096   普通文件</span><br><span class="line">设备：fc02h/64514d Inode：88617255    硬链接：1</span><br><span class="line">权限：(0664/-rw-rw-r--)  Uid：( 5002/xxx)   Gid：( 1003/xxx)</span><br><span class="line">最近访问：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">最近更改：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">最近改动：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">创建时间：-</span><br><span class="line"></span><br><span class="line">ls -i readme.txt</span><br><span class="line">88617255 readme.txt</span><br></pre></td></tr></table></figure>
+<p>表面上，用户通过文件名打开文件，实际上，系统内部将这个过程分为三步：</p>
+<ol>
+<li>系统找到这个文件名对应的<code>inode号码</code>；</li>
+<li>通过<code>inode号码</code>，获取<code>inode信息</code>；</li>
+<li>根据<code>inode信息</code>，找到文件数据所在的<code>block</code>，并读出数据。<br>其实系统还要根据<code>inode信息</code>，看用户是否具有<code>访问权限</code>，有就指向对应的数据<code>block</code>，没有就返回权限拒绝。</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/18/kernel-get-process-info/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -632,210 +842,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/21/openssl-first/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wdxx">
-      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wdxxliu">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/21/openssl-first/" class="post-title-link" itemprop="url">openssl初探</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-05-21 14:57:26 / 修改时间：20:09:49" itemprop="dateCreated datePublished" datetime="2020-05-21T14:57:26+08:00">2020-05-21</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="非对称加密算法概述"><a href="#非对称加密算法概述" class="headerlink" title="非对称加密算法概述"></a>非对称加密算法概述</h2><p>&emsp;&emsp;非对称加密算法也称公开密钥算法，其解决了对称加密算法密钥分配的问题，非对称加密算法基本特点如下：<br>1、加密密钥和解密密钥不同<br>2、密钥对中的一个密钥可以公开<br>3、根据公开密钥很难推算出私人密钥<br>&emsp;&emsp;根据非对称加密算法的特点，可用户数字签名、密钥交换、数据加密。但是由于非对称加密算法较对称加密算法加密速度慢很多，故最常用的用途是数字签名和密钥交换。<br>&emsp;&emsp;目前常用的非对称加密算法有RSA, DH和DSA三种，但并非都可以用于密钥交换和数字签名。而是RSA可用于数字签名和密钥交换，DH算法可用于密钥交换，而DSA算法专门用户数字签名。<br>&emsp;&emsp;openssl支持以上三种算法，并为三种算法提供了丰富的指令集，目前使用最多的算法是rsa加密算法，本文介绍OpenSSL在rsa加密算法上的使用。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/05/21/openssl-first/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/18/unpack-filesystem-data/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wdxx">
-      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wdxxliu">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/18/unpack-filesystem-data/" class="post-title-link" itemprop="url">如何解压android系统镜像</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-05-18 16:35:01 / 修改时间：20:08:25" itemprop="dateCreated datePublished" datetime="2020-05-18T16:35:01+08:00">2020-05-18</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>&emsp;&emsp;在android的开发过程中，经常需要用到将andorid system.img 或者 vendor.img等ext文件系统格式的镜像给解压出来分析，如果当前Linux系统有root权限，那么可以直接mount 镜像来进行提取，但是一般开发服务器是不提供root权限的，所以本文讨论如何在没有root权限的情况下对文件系统镜像进行提取。以AndroidQ super.img为例进行说明。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/05/18/unpack-filesystem-data/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/15/android-simpleperf/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wdxx">
-      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wdxxliu">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/15/android-simpleperf/" class="post-title-link" itemprop="url">android simpleperf工具使用入门</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-15 16:12:06" itemprop="dateCreated datePublished" datetime="2020-05-15T16:12:06+08:00">2020-05-15</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-16 09:52:23" itemprop="dateModified" datetime="2020-05-16T09:52:23+08:00">2020-05-16</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>&emsp;&emsp;Simpleperf 是一个通用的命令行 CPU 性能剖析工具，在Android NDK中已经自带了。需要注意的是，如果自带的simpleperf不能使用，就需要在适配当前Android设备的源码中编译了。simpleperf的源码在AOSP的system/extras/simpleperf下，其中doc目录详细介绍了如何使用该工具。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/05/15/android-simpleperf/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -905,12 +911,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">14</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>

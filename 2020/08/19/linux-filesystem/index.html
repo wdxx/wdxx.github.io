@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="在Android调试过程中，发现启动log中出现如下log： 1234567[   48.471014] printk: init: 46 output lines suppressed due to ratelimiting[   48.617226] init: [libfs_mgr]dt_fstab: Skip disabled entry for partition vendor[   4">
+  <meta name="description" content="Linux中常见的文件系统是ext4文件系统，那文件系统的基本组成是什么样的呢？Linux操作系统中，文件除了实际的数据之外还有诸如权限、文件属性类的数据。文件系统通常会将实际的数据存放在block中，而权限及文件属性数据存放在inode中。 inode 和 block 概述文件是存储在硬盘上的，硬盘的最小存储单位叫做扇区sector，每个扇区存储512字节。操作系统读取硬盘的时候，不会一个个扇区">
 <meta property="og:type" content="article">
-<meta property="og:title" content="printk_ratelimited 导致log打印不全">
-<meta property="og:url" content="http://yoursite.com/2020/06/30/printk-ratelimited/index.html">
+<meta property="og:title" content="linux_filesystem">
+<meta property="og:url" content="http://yoursite.com/2020/08/19/linux-filesystem/index.html">
 <meta property="og:site_name" content="wdxxliu">
-<meta property="og:description" content="在Android调试过程中，发现启动log中出现如下log： 1234567[   48.471014] printk: init: 46 output lines suppressed due to ratelimiting[   48.617226] init: [libfs_mgr]dt_fstab: Skip disabled entry for partition vendor[   4">
+<meta property="og:description" content="Linux中常见的文件系统是ext4文件系统，那文件系统的基本组成是什么样的呢？Linux操作系统中，文件除了实际的数据之外还有诸如权限、文件属性类的数据。文件系统通常会将实际的数据存放在block中，而权限及文件属性数据存放在inode中。 inode 和 block 概述文件是存储在硬盘上的，硬盘的最小存储单位叫做扇区sector，每个扇区存储512字节。操作系统读取硬盘的时候，不会一个个扇区">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-06-30T12:48:19.000Z">
-<meta property="article:modified_time" content="2020-06-30T12:58:01.535Z">
+<meta property="article:published_time" content="2020-08-19T02:02:20.000Z">
+<meta property="article:modified_time" content="2020-08-20T03:42:21.137Z">
 <meta property="article:author" content="wdxx">
-<meta property="article:tag" content="kernel printk 调试">
+<meta property="article:tag" content="Linux filesystem 文件系统">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://yoursite.com/2020/06/30/printk-ratelimited/">
+<link rel="canonical" href="http://yoursite.com/2020/08/19/linux-filesystem/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>printk_ratelimited 导致log打印不全 | wdxxliu</title>
+  <title>linux_filesystem | wdxxliu</title>
   
 
 
@@ -181,7 +181,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/30/printk-ratelimited/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/19/linux-filesystem/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -194,7 +194,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          printk_ratelimited 导致log打印不全
+          linux_filesystem
         </h1>
 
         <div class="post-meta">
@@ -203,10 +203,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-06-30 20:48:19 / 修改时间：20:58:01" itemprop="dateCreated datePublished" datetime="2020-06-30T20:48:19+08:00">2020-06-30</time>
+              <time title="创建时间：2020-08-19 10:02:20" itemprop="dateCreated datePublished" datetime="2020-08-19T10:02:20+08:00">2020-08-19</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-20 11:42:21" itemprop="dateModified" datetime="2020-08-20T11:42:21+08:00">2020-08-20</time>
+              </span>
 
           
 
@@ -219,10 +225,24 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>在Android调试过程中，发现启动log中出现如下log：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[   48.471014] printk: init: 46 output lines suppressed due to ratelimiting</span><br><span class="line">[   48.617226] init: [libfs_mgr]dt_fstab: Skip disabled entry for partition vendor</span><br><span class="line">[   48.631023] init: [libfs_mgr]Warning: unknown flag: wrappedkey</span><br><span class="line">[   48.639762] init: DM_DEV_STATUS failed for system_ext: No such device or address</span><br><span class="line">[   48.647430] init: Could not update logical partition</span><br><span class="line">[   48.653314] init: DM_DEV_STATUS failed for product: No such device or address</span><br><span class="line">[   48.660748] init: Could not update logical partition</span><br></pre></td></tr></table></figure>
-<p>也就是说<code>printk: init: 46 output lines suppressed due to ratelimiting</code>有部分log没有打印出来，解决办法就是修改kernel源码。修改文件位于<code>include/linux/ratelimit.h</code>。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 下面表示5秒内最多打印10条记录，可以将DEFAULT_RATELIMIT_BURST修改成50，那么5秒内就可以打印50条了。当然也不是越大越好，因为需要考虑考log对系统服务器的影响，不要引起阻塞。</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEFAULT_RATELIMIT_INTERVAL      (5 * HZ)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEFAULT_RATELIMIT_BURST         10  <span class="comment">// 可以修改成50</span></span></span><br></pre></td></tr></table></figure>
+        <p>Linux中常见的文件系统是ext4文件系统，那文件系统的基本组成是什么样的呢？Linux操作系统中，文件除了实际的数据之外还有诸如权限、文件属性类的数据。文件系统通常会将实际的数据存放在<code>block</code>中，而权限及文件属性数据存放在<code>inode</code>中。</p>
+<h2 id="inode-和-block-概述"><a href="#inode-和-block-概述" class="headerlink" title="inode 和 block 概述"></a>inode 和 block 概述</h2><p>文件是存储在硬盘上的，硬盘的最小存储单位叫做扇区<code>sector</code>，每个扇区存储<code>512字节</code>。操作系统读取硬盘的时候，不会一个个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个块<code>block</code>。这种由多个扇区组成的块，是文件存取的最小单位。块的大小，最常见的是<code>4KB</code>，即连续八个sector组成一个<code>block</code>。</p>
+<p>文件数据存储在块中，那么还必须找到一个地方存储文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种存储文件元信息的区域就叫做<code>inode</code>，中文译名为<code>索引节点</code>，也叫<code>i节点</code>。因此，一个文件必须占用一个<code>inode</code>，但至少占用一个<code>block</code>。</p>
+<ul>
+<li>元信息：inode</li>
+<li>数据: block</li>
+</ul>
+<h2 id="inode内容"><a href="#inode内容" class="headerlink" title="inode内容"></a>inode内容</h2><p><code>inode</code>包含很多的文件元信息，但不包含文件名，例如：字节数、属主<code>UserID</code>、属组<code>GroupID</code>、读写执行权限、时间戳等。</p>
+<p>而文件名存放在目录当中，但Linux系统内部不使用文件名，而是使用<code>inode号码</code>识别文件。对于系统来说文件名只是<code>inode号码</code>便于识别的别称。</p>
+<h2 id="inode号码"><a href="#inode号码" class="headerlink" title="inode号码"></a>inode号码</h2><p>可以通过<code>stat</code>命令或者<code>ls -i</code>命令查看文件或者目录的<code>inode号码</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">stat</span> readme.txt</span><br><span class="line">  文件：<span class="string">"readme.txt"</span></span><br><span class="line">  大小：6          块：8          IO 块：4096   普通文件</span><br><span class="line">设备：fc02h/64514d Inode：88617255    硬链接：1</span><br><span class="line">权限：(0664/-rw-rw-r--)  Uid：( 5002/xxx)   Gid：( 1003/xxx)</span><br><span class="line">最近访问：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">最近更改：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">最近改动：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">创建时间：-</span><br><span class="line"></span><br><span class="line">ls -i readme.txt</span><br><span class="line">88617255 readme.txt</span><br></pre></td></tr></table></figure>
+<p>表面上，用户通过文件名打开文件，实际上，系统内部将这个过程分为三步：</p>
+<ol>
+<li>系统找到这个文件名对应的<code>inode号码</code>；</li>
+<li>通过<code>inode号码</code>，获取<code>inode信息</code>；</li>
+<li>根据<code>inode信息</code>，找到文件数据所在的<code>block</code>，并读出数据。<br>其实系统还要根据<code>inode信息</code>，看用户是否具有<code>访问权限</code>，有就指向对应的数据<code>block</code>，没有就返回权限拒绝。</li>
+</ol>
+
     </div>
 
     
@@ -231,7 +251,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/kernel-printk-%E8%B0%83%E8%AF%95/" rel="tag"># kernel printk 调试</a>
+              <a href="/tags/Linux-filesystem-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" rel="tag"># Linux filesystem 文件系统</a>
           </div>
 
         
@@ -240,12 +260,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/05/25/EDK2-new-app/" rel="prev" title="如何在EDK II中编写应用程序">
-      <i class="fa fa-chevron-left"></i> 如何在EDK II中编写应用程序
+    <a href="/2020/08/18/kernel-get-process-info/" rel="prev" title="如何在kernel中获取当前进程的信息">
+      <i class="fa fa-chevron-left"></i> 如何在kernel中获取当前进程的信息
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/07/22/android-reverse-engineering-plan/" rel="next" title="android逆向学习计划">
-      android逆向学习计划 <i class="fa fa-chevron-right"></i>
+    <a href="/2020/08/20/cpp-ofstream-ifstream/" rel="next" title="cpp_ofstream_ifstream">
+      cpp_ofstream_ifstream <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -306,6 +326,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#inode-和-block-概述"><span class="nav-number">1.</span> <span class="nav-text">inode 和 block 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#inode内容"><span class="nav-number">2.</span> <span class="nav-text">inode内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#inode号码"><span class="nav-number">3.</span> <span class="nav-text">inode号码</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -424,7 +445,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'wdxx.github.io',
       owner       : 'wdxx',
       admin       : ['wdxx'],
-      id          : '06e5e48ff0266d61fa29691b009c223e',
+      id          : '335d92262e71600d2419eab5ec513237',
         language: 'zh-CN',
       distractionFreeMode: true
     });

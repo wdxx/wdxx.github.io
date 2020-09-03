@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="在Android调试过程中，发现启动log中出现如下log： 1234567[   48.471014] printk: init: 46 output lines suppressed due to ratelimiting[   48.617226] init: [libfs_mgr]dt_fstab: Skip disabled entry for partition vendor[   4">
+  <meta name="description" content="在Linux服务器上使用nfs挂载需要先安装nfs server。下面是Ubuntu上安装nfs server的命令。 12sudo apt-get install nfs-kernel-server## nfs 配置目录在&#x2F;etc&#x2F;exports 客户端需要安装nfs-common,安装方法如下： 1sudo apt-get install nfs-common">
 <meta property="og:type" content="article">
-<meta property="og:title" content="printk_ratelimited 导致log打印不全">
-<meta property="og:url" content="http://yoursite.com/2020/06/30/printk-ratelimited/index.html">
+<meta property="og:title" content="linux nfs 挂载">
+<meta property="og:url" content="http://yoursite.com/2020/09/03/linux-nfs/index.html">
 <meta property="og:site_name" content="wdxxliu">
-<meta property="og:description" content="在Android调试过程中，发现启动log中出现如下log： 1234567[   48.471014] printk: init: 46 output lines suppressed due to ratelimiting[   48.617226] init: [libfs_mgr]dt_fstab: Skip disabled entry for partition vendor[   4">
+<meta property="og:description" content="在Linux服务器上使用nfs挂载需要先安装nfs server。下面是Ubuntu上安装nfs server的命令。 12sudo apt-get install nfs-kernel-server## nfs 配置目录在&#x2F;etc&#x2F;exports 客户端需要安装nfs-common,安装方法如下： 1sudo apt-get install nfs-common">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-06-30T12:48:19.000Z">
-<meta property="article:modified_time" content="2020-06-30T12:58:01.535Z">
+<meta property="article:published_time" content="2020-09-03T01:46:36.000Z">
+<meta property="article:modified_time" content="2020-09-03T02:17:40.427Z">
 <meta property="article:author" content="wdxx">
-<meta property="article:tag" content="kernel printk 调试">
+<meta property="article:tag" content="Python C&#x2F;C++ Makefile Linux 编译 工具链">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://yoursite.com/2020/06/30/printk-ratelimited/">
+<link rel="canonical" href="http://yoursite.com/2020/09/03/linux-nfs/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>printk_ratelimited 导致log打印不全 | wdxxliu</title>
+  <title>linux nfs 挂载 | wdxxliu</title>
   
 
 
@@ -181,7 +181,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/30/printk-ratelimited/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/09/03/linux-nfs/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -194,7 +194,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          printk_ratelimited 导致log打印不全
+          linux nfs 挂载
         </h1>
 
         <div class="post-meta">
@@ -205,7 +205,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-06-30 20:48:19 / 修改时间：20:58:01" itemprop="dateCreated datePublished" datetime="2020-06-30T20:48:19+08:00">2020-06-30</time>
+              <time title="创建时间：2020-09-03 09:46:36 / 修改时间：10:17:40" itemprop="dateCreated datePublished" datetime="2020-09-03T09:46:36+08:00">2020-09-03</time>
             </span>
 
           
@@ -219,10 +219,36 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>在Android调试过程中，发现启动log中出现如下log：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[   48.471014] printk: init: 46 output lines suppressed due to ratelimiting</span><br><span class="line">[   48.617226] init: [libfs_mgr]dt_fstab: Skip disabled entry for partition vendor</span><br><span class="line">[   48.631023] init: [libfs_mgr]Warning: unknown flag: wrappedkey</span><br><span class="line">[   48.639762] init: DM_DEV_STATUS failed for system_ext: No such device or address</span><br><span class="line">[   48.647430] init: Could not update logical partition</span><br><span class="line">[   48.653314] init: DM_DEV_STATUS failed for product: No such device or address</span><br><span class="line">[   48.660748] init: Could not update logical partition</span><br></pre></td></tr></table></figure>
-<p>也就是说<code>printk: init: 46 output lines suppressed due to ratelimiting</code>有部分log没有打印出来，解决办法就是修改kernel源码。修改文件位于<code>include/linux/ratelimit.h</code>。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 下面表示5秒内最多打印10条记录，可以将DEFAULT_RATELIMIT_BURST修改成50，那么5秒内就可以打印50条了。当然也不是越大越好，因为需要考虑考log对系统服务器的影响，不要引起阻塞。</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEFAULT_RATELIMIT_INTERVAL      (5 * HZ)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEFAULT_RATELIMIT_BURST         10  <span class="comment">// 可以修改成50</span></span></span><br></pre></td></tr></table></figure>
+        <p>在Linux服务器上使用nfs挂载需要先安装nfs server。下面是Ubuntu上安装nfs server的命令。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install nfs-kernel-server</span><br><span class="line"><span class="comment">## nfs 配置目录在/etc/exports</span></span><br></pre></td></tr></table></figure>
+<p>客户端需要安装<code>nfs-common</code>,安装方法如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install nfs-common</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h3 id="nfs-server配置"><a href="#nfs-server配置" class="headerlink" title="nfs server配置"></a>nfs server配置</h3><p>nfs server的配置文件在<code>/etc/exports</code>文件中，需要有<code>root</code>权限才能编辑。例如<code>/work/nfs_share 192.168.2.55(rw,sync,no_subtree_check)</code>表示允许192.168.2.55使用nfs挂载当前服务器的<code>/work/nfs_share</code>目录。下面列举下nfs配置的各个参数：</p>
+<ul>
+<li>ro 该主机对该共享目录有只读权限</li>
+<li>rw 该主机对该共享目录有读写权限</li>
+<li>root_squash 客户机用root用户访问该共享文件夹时，将root用户映射成匿名用户</li>
+<li>no_root_squash 客户机用root访问该共享文件夹时，不映射root用户</li>
+<li>all_squash 客户机上的任何用户访问该共享目录时都映射成匿名用户</li>
+<li>anonuid 将客户机上的用户映射成指定的本地用户ID的用户</li>
+<li>anongid 将客户机上的用户映射成属于指定的本地用户组ID</li>
+<li>sync 资料同步写入到内存与硬盘中</li>
+<li>async 资料会先暂存于内存中，而非直接写入硬盘</li>
+<li>insecure 允许从这台机器过来的非授权访问 </li>
+<li>subtree_check 如果共享/usr/bin之类的子目录时，强制NFS检查父目录的权限（默认）</li>
+<li>no_subtree_check 和上面相对，不检查父目录权限</li>
+<li>wdelay 如果多个用户要写入NFS目录，则归组写入（默认）</li>
+<li>no_wdelay 如果多个用户要写入NFS目录，则立即写入，当使用async时，无需此设置。</li>
+<li>hide 在NFS共享目录中不共享其子目录</li>
+<li>no_hide 共享NFS目录的子目录</li>
+<li>secure NFS通过1024以下的安全TCP/IP端口发送</li>
+<li>insecure NFS通过1024以上的端口发送<br>例子：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#x2F; user01(rw) user02(rw,no_root_squash) 表示共享服务器上的根目录(&#x2F;)只有user01和user02两台主机可以访问，且有读写权限；user01主机用root用户身份访问时，将客户机的root用户映射成服务器上的匿名用户(root_squash,该参数为缺省参数)，相当于在服务器使用nobody用户访问目录；user02主机用root用户身份访问该共享目录时，不映射root用户(no_root_squash),即相当于在服务器上用root身份访问该目录</span><br><span class="line"></span><br><span class="line">　　&#x2F;root&#x2F;share&#x2F; 192.168.1.2(rw,insecure,sync,all_squash) 表示共享服务器上的&#x2F;root&#x2F;share&#x2F;目录只有192.168.1.2主机可以访问，且有读写权限；此主机用任何身份访问时，将客户机的用户都映射成服务器上的匿名用户(all_squash),相当于在服务器上用nobody用户访问该目录（若客户机要在该共享目录上保存文件（即写操作），则服务器上的nobody用户对该目录必须有写的权限）</span><br><span class="line"></span><br><span class="line">　　&#x2F;home&#x2F;ylw&#x2F; .test.com (rw,insecure,sync,all_squash) 表示共享&#x2F;home&#x2F;ylw&#x2F;目录，.test.com域中所有的主机都可以访问该目录，且有读写权限</span><br><span class="line"></span><br><span class="line">　　&#x2F;home&#x2F;share&#x2F; .test.com (ro,sync,all_squash,anonuid&#x3D;zh3,anongid&#x3D;wa4) 表示共享目录&#x2F;home&#x2F;share&#x2F;，*.test.com域中的所有主机都可以访问，但只有只读的权限，所有用户都映射成服务器上的uid为zh3、gid为wa4的用户</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://blog.csdn.net/qq_36357820/article/details/78488077" target="_blank" rel="noopener">https://blog.csdn.net/qq_36357820/article/details/78488077</a></p>
+
     </div>
 
     
@@ -230,9 +256,6 @@
     
 
       <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/kernel-printk-%E8%B0%83%E8%AF%95/" rel="tag"># kernel printk 调试</a>
-          </div>
 
         
 
@@ -240,13 +263,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/05/25/EDK2-new-app/" rel="prev" title="如何在EDK II中编写应用程序">
-      <i class="fa fa-chevron-left"></i> 如何在EDK II中编写应用程序
+    <a href="/2020/08/20/cpp-ofstream-ifstream/" rel="prev" title="cpp_ofstream_ifstream">
+      <i class="fa fa-chevron-left"></i> cpp_ofstream_ifstream
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/07/22/android-reverse-engineering-plan/" rel="next" title="android逆向学习计划">
-      android逆向学习计划 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -306,6 +326,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#nfs-server配置"><span class="nav-number">1.</span> <span class="nav-text">nfs server配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number"></span> <span class="nav-text">参考</span></a></div>
       </div>
       <!--/noindex-->
 
@@ -424,7 +445,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'wdxx.github.io',
       owner       : 'wdxx',
       admin       : ['wdxx'],
-      id          : '06e5e48ff0266d61fa29691b009c223e',
+      id          : '25f80bbc09684bdba602984791ae7d60',
         language: 'zh-CN',
       distractionFreeMode: true
     });
