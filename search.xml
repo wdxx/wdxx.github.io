@@ -550,4 +550,30 @@
         <tag>c/c++</tag>
       </tags>
   </entry>
+  <entry>
+    <title>脱机安装cx_oracle</title>
+    <url>/2020/12/15/cx-oracle-install/</url>
+    <content><![CDATA[<p>当服务器没有root权限的时候，安装某些Python模块就不方便了，该文章记录下，当没有root权限时，本地安装Python第三方模块的临时办法，以<code>cx_Oracle</code>模块进行说明。<br>###准备工作<br>在安装<code>cx_Oracle</code>之前，服务器是需要安装<code>basic packages</code>与<code>Development and Runtime packages</code>，下载网址为：<a href="https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html。" target="_blank" rel="noopener">https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html。</a><br>当前本地环境为<code>python 2.7</code>，选择了如下的包：<br>instantclient-basic-linux.x64-11.2.0.4.0.zip<br>instantclient-sdk-linux.x64-11.2.0.4.0.zip</p>
+<a id="more"></a>
+
+<h3 id="安装oracle-instantclient"><a href="#安装oracle-instantclient" class="headerlink" title="安装oracle instantclient"></a>安装oracle instantclient</h3><p>将上一步骤的zip包解压。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir -p ~/tools/oracle</span><br><span class="line">cp instantclient-basic-linux.x64-11.2.0.4.0.zip ~/tools/oracle</span><br><span class="line">cp instantclient-sdk-linux.x64-11.2.0.4.0.zip ~/tools/oracle</span><br><span class="line"><span class="built_in">cd</span> ~/tools/oracle</span><br><span class="line">unzip instantclient-sdk-linux.x64-11.2.0.4.0.zip</span><br><span class="line">unzip instantclient-basic-linux.x64-11.2.0.4.0.zip</span><br><span class="line"><span class="built_in">cd</span> instantclient_11_2</span><br><span class="line">cp -R sdk/* ./</span><br><span class="line">cp -R ./sdk/include/* .</span><br><span class="line">ln -s libclntsh.so.12.1 libclntsh.so</span><br><span class="line">ln -s libocci.so.12.1 libocci.so</span><br><span class="line"><span class="built_in">export</span> ORACLE_HOME=~/tools/oralce/instantclient_11_2/</span><br><span class="line"><span class="built_in">export</span> LD_LIBRARY_PATH=<span class="variable">$LD_LIBRARY_PATH</span>:<span class="variable">$ORACLE_HOME</span></span><br></pre></td></tr></table></figure>
+
+<p>###编译安装cx_Oracle<br>先需要下载cx_Oracle的源码，从<a href="https://github.com/oracle/python-cx_Oracle" target="_blank" rel="noopener">github网站</a>,可以下载到。由于我使用的<code>python 2.7</code>根据介绍，使用<a href="https://github.com/oracle/python-cx_Oracle/archive/5.3.zip" target="_blank" rel="noopener">5.x的版本</a>。<br>下载后安装步骤如下:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">unzip python-cx_Oracle-5.3.zip</span><br><span class="line"><span class="built_in">cd</span> python-cx_Oracle-5.3</span><br><span class="line">python setup.py build</span><br><span class="line">mkdir install</span><br><span class="line"><span class="built_in">export</span> PYTHONPATH=<span class="variable">$PYTHONPATH</span>:~/tools/oralce/python-cx_Oracle-5.3/install</span><br><span class="line">python setup.py install --prefix=~/tools/oralce/python-cx_Oracle-5.3/install</span><br><span class="line"><span class="comment">## 注意上个步骤会报错，执行下面的步骤继续</span></span><br><span class="line"><span class="built_in">export</span> PYTHONPATH=<span class="variable">$PYTHONPATH</span>:~/tools/oralce/python-cx_Oracle-5.3/installlib/python2.7/site-packages/</span><br><span class="line">python setup.py install --prefix=~/tools/oralce/python-cx_Oracle-5.3/install</span><br></pre></td></tr></table></figure>
+<p>按照上面的步骤就可以安装成功了。</p>
+<p>###cx_Oracle使用<br>因为当前不是在系统路径安装的，所以重新开一个窗口会导致<code>import cx_Oracle</code>失败，需要编写一个脚本来进行环境变量的设置，然后加入到<code>.bashrc</code>中也是可以的。<br>下面是设置环境变量的脚本(<code>envsetup.sh</code>):</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> ORACLE_HOME=~/tools/oralce/instantclient_11_2/</span><br><span class="line"><span class="built_in">export</span> LD_LIBRARY_PATH=<span class="variable">$LD_LIBRARY_PATH</span>:<span class="variable">$ORACLE_HOME</span></span><br><span class="line"><span class="built_in">export</span> PYTHONPATH=<span class="variable">$PYTHONPATH</span>:~/tools/oralce/python-cx_Oracle-5.3/installlib/python2.7/site-packages/</span><br></pre></td></tr></table></figure>
+<p>上面的步骤执行完后，就可以在Python中导入<code>cx_Oracle</code>模块了。</p>
+<p>###总结<br>其实该方法可以推广到其他模块的安装，当你需要在本地临时验证时。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ol>
+<li><a href="https://www.cnblogs.com/doctormo/p/12059738.html" target="_blank" rel="noopener">https://www.cnblogs.com/doctormo/p/12059738.html</a></li>
+<li><a href="https://blog.csdn.net/yuan_lo/article/details/48289317" target="_blank" rel="noopener">https://blog.csdn.net/yuan_lo/article/details/48289317</a></li>
+<li><a href="https://stackoverflow.com/questions/25885467/cx-oracle-pip-install-fails-oci-h-no-such-file-or-directory" target="_blank" rel="noopener">https://stackoverflow.com/questions/25885467/cx-oracle-pip-install-fails-oci-h-no-such-file-or-directory</a></li>
+</ol>
+]]></content>
+      <tags>
+        <tag>python oracle</tag>
+      </tags>
+  </entry>
 </search>

@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="下载commandlinetools下载地址：https:&#x2F;&#x2F;developer.android.com&#x2F;studio 点击进去可以查看Command line tools only小节 解压安装commandlinetools12345cp commandlinetools-linux-6609375_latest.zip ~&#x2F;mkdir -p ~&#x2F;Android&#x2F;platform-toolsu">
+  <meta name="description" content="当服务器没有root权限的时候，安装某些Python模块就不方便了，该文章记录下，当没有root权限时，本地安装Python第三方模块的临时办法，以cx_Oracle模块进行说明。###准备工作在安装cx_Oracle之前，服务器是需要安装basic packages与Development and Runtime packages，下载网址为：https:&#x2F;&#x2F;www.oracle.com&#x2F;dat">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Andorid SDK 下载">
-<meta property="og:url" content="http://yoursite.com/2020/07/29/downloadAndroidSDK/index.html">
+<meta property="og:title" content="脱机安装cx_oracle">
+<meta property="og:url" content="http://yoursite.com/2020/12/15/cx-oracle-install/index.html">
 <meta property="og:site_name" content="wdxxliu">
-<meta property="og:description" content="下载commandlinetools下载地址：https:&#x2F;&#x2F;developer.android.com&#x2F;studio 点击进去可以查看Command line tools only小节 解压安装commandlinetools12345cp commandlinetools-linux-6609375_latest.zip ~&#x2F;mkdir -p ~&#x2F;Android&#x2F;platform-toolsu">
+<meta property="og:description" content="当服务器没有root权限的时候，安装某些Python模块就不方便了，该文章记录下，当没有root权限时，本地安装Python第三方模块的临时办法，以cx_Oracle模块进行说明。###准备工作在安装cx_Oracle之前，服务器是需要安装basic packages与Development and Runtime packages，下载网址为：https:&#x2F;&#x2F;www.oracle.com&#x2F;dat">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-07-29T13:56:54.000Z">
-<meta property="article:modified_time" content="2020-07-29T14:03:43.850Z">
+<meta property="article:published_time" content="2020-12-15T14:10:38.000Z">
+<meta property="article:modified_time" content="2020-12-15T14:39:30.315Z">
 <meta property="article:author" content="wdxx">
-<meta property="article:tag" content="Python C&#x2F;C++ Makefile Linux 编译 工具链">
+<meta property="article:tag" content="python oracle">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://yoursite.com/2020/07/29/downloadAndroidSDK/">
+<link rel="canonical" href="http://yoursite.com/2020/12/15/cx-oracle-install/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>Andorid SDK 下载 | wdxxliu</title>
+  <title>脱机安装cx_oracle | wdxxliu</title>
   
 
 
@@ -181,7 +181,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/29/downloadAndroidSDK/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/12/15/cx-oracle-install/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -194,7 +194,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Andorid SDK 下载
+          脱机安装cx_oracle
         </h1>
 
         <div class="post-meta">
@@ -205,7 +205,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-07-29 21:56:54 / 修改时间：22:03:43" itemprop="dateCreated datePublished" datetime="2020-07-29T21:56:54+08:00">2020-07-29</time>
+              <time title="创建时间：2020-12-15 22:10:38 / 修改时间：22:39:30" itemprop="dateCreated datePublished" datetime="2020-12-15T22:10:38+08:00">2020-12-15</time>
             </span>
 
           
@@ -219,11 +219,25 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="下载commandlinetools"><a href="#下载commandlinetools" class="headerlink" title="下载commandlinetools"></a>下载commandlinetools</h2><p>下载地址：<a href="https://developer.android.com/studio" target="_blank" rel="noopener">https://developer.android.com/studio</a> 点击进去可以查看<code>Command line tools only</code>小节</p>
-<h2 id="解压安装commandlinetools"><a href="#解压安装commandlinetools" class="headerlink" title="解压安装commandlinetools"></a>解压安装commandlinetools</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cp commandlinetools-linux-6609375_latest.zip ~/</span><br><span class="line">mkdir -p ~/Android/platform-tools</span><br><span class="line">unzip  ~/Android/commandlinetools-linux-6609375_latest.zip -d ~/Android/platform-tools/</span><br><span class="line"><span class="built_in">export</span> ANDROID_HOME=~/Android</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>$:<span class="variable">$ANDROID_HOME</span>/cmdline-tools/tools/bin</span><br></pre></td></tr></table></figure>
+        <p>当服务器没有root权限的时候，安装某些Python模块就不方便了，该文章记录下，当没有root权限时，本地安装Python第三方模块的临时办法，以<code>cx_Oracle</code>模块进行说明。<br>###准备工作<br>在安装<code>cx_Oracle</code>之前，服务器是需要安装<code>basic packages</code>与<code>Development and Runtime packages</code>，下载网址为：<a href="https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html。" target="_blank" rel="noopener">https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html。</a><br>当前本地环境为<code>python 2.7</code>，选择了如下的包：<br>instantclient-basic-linux.x64-11.2.0.4.0.zip<br>instantclient-sdk-linux.x64-11.2.0.4.0.zip</p>
+<a id="more"></a>
 
-<p>##安装android sdk<br>安装sdk请参考官方文档：<code>https://developer.android.com/studio/command-line/sdkmanager</code></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sdkmanager <span class="string">"platform-tools"</span> <span class="string">"platforms;android-28"</span></span><br></pre></td></tr></table></figure>
+<h3 id="安装oracle-instantclient"><a href="#安装oracle-instantclient" class="headerlink" title="安装oracle instantclient"></a>安装oracle instantclient</h3><p>将上一步骤的zip包解压。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p ~/tools/oracle</span><br><span class="line">cp instantclient-basic-linux.x64-11.2.0.4.0.zip ~/tools/oracle</span><br><span class="line">cp instantclient-sdk-linux.x64-11.2.0.4.0.zip ~/tools/oracle</span><br><span class="line"><span class="built_in">cd</span> ~/tools/oracle</span><br><span class="line">unzip instantclient-sdk-linux.x64-11.2.0.4.0.zip</span><br><span class="line">unzip instantclient-basic-linux.x64-11.2.0.4.0.zip</span><br><span class="line"><span class="built_in">cd</span> instantclient_11_2</span><br><span class="line">cp -R sdk/* ./</span><br><span class="line">cp -R ./sdk/include/* .</span><br><span class="line">ln -s libclntsh.so.12.1 libclntsh.so</span><br><span class="line">ln -s libocci.so.12.1 libocci.so</span><br><span class="line"><span class="built_in">export</span> ORACLE_HOME=~/tools/oralce/instantclient_11_2/</span><br><span class="line"><span class="built_in">export</span> LD_LIBRARY_PATH=<span class="variable">$LD_LIBRARY_PATH</span>:<span class="variable">$ORACLE_HOME</span></span><br></pre></td></tr></table></figure>
+
+<p>###编译安装cx_Oracle<br>先需要下载cx_Oracle的源码，从<a href="https://github.com/oracle/python-cx_Oracle" target="_blank" rel="noopener">github网站</a>,可以下载到。由于我使用的<code>python 2.7</code>根据介绍，使用<a href="https://github.com/oracle/python-cx_Oracle/archive/5.3.zip" target="_blank" rel="noopener">5.x的版本</a>。<br>下载后安装步骤如下:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">unzip python-cx_Oracle-5.3.zip</span><br><span class="line"><span class="built_in">cd</span> python-cx_Oracle-5.3</span><br><span class="line">python setup.py build</span><br><span class="line">mkdir install</span><br><span class="line"><span class="built_in">export</span> PYTHONPATH=<span class="variable">$PYTHONPATH</span>:~/tools/oralce/python-cx_Oracle-5.3/install</span><br><span class="line">python setup.py install --prefix=~/tools/oralce/python-cx_Oracle-5.3/install</span><br><span class="line"><span class="comment">## 注意上个步骤会报错，执行下面的步骤继续</span></span><br><span class="line"><span class="built_in">export</span> PYTHONPATH=<span class="variable">$PYTHONPATH</span>:~/tools/oralce/python-cx_Oracle-5.3/installlib/python2.7/site-packages/</span><br><span class="line">python setup.py install --prefix=~/tools/oralce/python-cx_Oracle-5.3/install</span><br></pre></td></tr></table></figure>
+<p>按照上面的步骤就可以安装成功了。</p>
+<p>###cx_Oracle使用<br>因为当前不是在系统路径安装的，所以重新开一个窗口会导致<code>import cx_Oracle</code>失败，需要编写一个脚本来进行环境变量的设置，然后加入到<code>.bashrc</code>中也是可以的。<br>下面是设置环境变量的脚本(<code>envsetup.sh</code>):</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> ORACLE_HOME=~/tools/oralce/instantclient_11_2/</span><br><span class="line"><span class="built_in">export</span> LD_LIBRARY_PATH=<span class="variable">$LD_LIBRARY_PATH</span>:<span class="variable">$ORACLE_HOME</span></span><br><span class="line"><span class="built_in">export</span> PYTHONPATH=<span class="variable">$PYTHONPATH</span>:~/tools/oralce/python-cx_Oracle-5.3/installlib/python2.7/site-packages/</span><br></pre></td></tr></table></figure>
+<p>上面的步骤执行完后，就可以在Python中导入<code>cx_Oracle</code>模块了。</p>
+<p>###总结<br>其实该方法可以推广到其他模块的安装，当你需要在本地临时验证时。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ol>
+<li><a href="https://www.cnblogs.com/doctormo/p/12059738.html" target="_blank" rel="noopener">https://www.cnblogs.com/doctormo/p/12059738.html</a></li>
+<li><a href="https://blog.csdn.net/yuan_lo/article/details/48289317" target="_blank" rel="noopener">https://blog.csdn.net/yuan_lo/article/details/48289317</a></li>
+<li><a href="https://stackoverflow.com/questions/25885467/cx-oracle-pip-install-fails-oci-h-no-such-file-or-directory" target="_blank" rel="noopener">https://stackoverflow.com/questions/25885467/cx-oracle-pip-install-fails-oci-h-no-such-file-or-directory</a></li>
+</ol>
+
     </div>
 
     
@@ -231,6 +245,9 @@
     
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/python-oracle/" rel="tag"># python oracle</a>
+          </div>
 
         
 
@@ -238,13 +255,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/07/24/dexfile/" rel="prev" title="dexfile 文件格式">
-      <i class="fa fa-chevron-left"></i> dexfile 文件格式
+    <a href="/2020/12/07/unnamed-inline-namespaces/" rel="prev" title="匿名命名空间与inline命名空间">
+      <i class="fa fa-chevron-left"></i> 匿名命名空间与inline命名空间
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/08/18/kernel-get-process-info/" rel="next" title="如何在kernel中获取当前进程的信息">
-      如何在kernel中获取当前进程的信息 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -304,7 +318,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#下载commandlinetools"><span class="nav-number">1.</span> <span class="nav-text">下载commandlinetools</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解压安装commandlinetools"><span class="nav-number">2.</span> <span class="nav-text">解压安装commandlinetools</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装oracle-instantclient"><span class="nav-number">1.</span> <span class="nav-text">安装oracle instantclient</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">2.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -423,7 +437,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'wdxx.github.io',
       owner       : 'wdxx',
       admin       : ['wdxx'],
-      id          : '1fe6242b03117a91ef1771e652236c59',
+      id          : '8ce674651eaa0202768cdc8fc14a419b',
         language: 'zh-CN',
       distractionFreeMode: true
     });
