@@ -576,4 +576,17 @@
         <tag>python oracle</tag>
       </tags>
   </entry>
+  <entry>
+    <title>c++ 内存管理</title>
+    <url>/2020/12/23/cpp-new-delete/</url>
+    <content><![CDATA[<p>本文主要记录下c/c++中使用堆内存的注意事项。</p>
+<h3 id="堆内存使用完后，指针设置为nullptr"><a href="#堆内存使用完后，指针设置为nullptr" class="headerlink" title="堆内存使用完后，指针设置为nullptr"></a>堆内存使用完后，指针设置为nullptr</h3><p>在使用完new(malloc)的内存后，应该习惯在释放完该内存后，将指针设置为<code>nullptr</code>。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> *p = <span class="keyword">new</span> <span class="keyword">int</span>;</span><br><span class="line">*p = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">delete</span> p;</span><br><span class="line">p = <span class="literal">nullptr</span>;</span><br></pre></td></tr></table></figure>
+
+<p>###应该关注new的内存是否分配成功<br>在申请内存过程中，有极小概率的情况申请分配内存失败，应该处理出现申请分配内存失败的情况。有一种简便的方法用于申请内存时，如果申请失败，那么返回一个空指针，这各方法时通过在new与类型之间加入常量<code>std::nothrow</code>实现的。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> *p = <span class="keyword">new</span> (<span class="built_in">std</span>::nothrow) <span class="keyword">int</span>;</span><br><span class="line"><span class="keyword">if</span> (!p) &#123;</span><br><span class="line">    <span class="comment">// 错误处理</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"No enough memory!"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>内存管理 new delete</tag>
+      </tags>
+  </entry>
 </search>
