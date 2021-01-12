@@ -178,6 +178,135 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/18/kernel-get-process-info/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wdxx">
+      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wdxxliu">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/18/kernel-get-process-info/" class="post-title-link" itemprop="url">如何在kernel中获取当前进程的信息</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-08-18 16:37:06 / 修改时间：16:55:12" itemprop="dateCreated datePublished" datetime="2020-08-18T16:37:06+08:00">2020-08-18</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>&emsp;&emsp;在kernel中有时候可能需要根据当前进行的某些信息进行逻辑处理，本文就是介绍如果在kernel中如果获取当前进程的信息。<br>&emsp;&emsp;在kernel中关于进程信息的一个重要的结构体就是task_struct，定义如下:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> &#123;</span></span><br><span class="line"><span class="comment">//这个是进程的运行时状态，-1代表不可运行，0代表可运行，&gt;0代表已停止。</span></span><br><span class="line"> <span class="keyword">volatile</span> <span class="keyword">long</span> state;</span><br><span class="line"> <span class="comment">/*</span></span><br><span class="line"><span class="comment">flags是进程当前的状态标志，具体的如：</span></span><br><span class="line"><span class="comment">0x00000002表示进程正在被创建；</span></span><br><span class="line"><span class="comment">0x00000004表示进程正准备退出；</span></span><br><span class="line"><span class="comment">0x00000040 表示此进程被fork出，但是并没有执行exec；</span></span><br><span class="line"><span class="comment">0x00000400表示此进程由于其他进程发送相关信号而被杀死 。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"> <span class="keyword">unsigned</span> <span class="keyword">int</span> flags;</span><br><span class="line"><span class="comment">//表示此进程的运行优先级</span></span><br><span class="line"> <span class="keyword">unsigned</span> <span class="keyword">int</span> rt_priority;</span><br><span class="line"><span class="comment">//这里出现了list_head结构体，详情请参考</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">tasks</span>;</span></span><br><span class="line"><span class="comment">//这里出现了mm_struct 结构体，该结构体记录了进程内存使用的相关情况，详情请参考</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">mm_struct</span> *<span class="title">mm</span>;</span></span><br><span class="line"><span class="comment">/* 接下来是进程的一些状态参数*/</span></span><br><span class="line"> <span class="keyword">int</span> exit_state;</span><br><span class="line"> <span class="keyword">int</span> exit_code, exit_signal;</span><br><span class="line"><span class="comment">//这个是进程号</span></span><br><span class="line"> <span class="keyword">pid_t</span> pid;</span><br><span class="line"><span class="comment">//这个是进程组号</span></span><br><span class="line"> <span class="keyword">pid_t</span> tgid;</span><br><span class="line"><span class="comment">//real_parent是该进程的”亲生父亲“，不管其是否被“寄养”。</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> *<span class="title">real_parent</span>;</span></span><br><span class="line"><span class="comment">//parent是该进程现在的父进程，有可能是”继父“</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> *<span class="title">parent</span>;</span></span><br><span class="line"><span class="comment">//这里children指的是该进程孩子的链表，可以得到所有孩子的进程描述符，但是需使用list_for_each和list_entry，list_entry其实直接使用了container_of，详情请参考</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">children</span>;</span></span><br><span class="line"><span class="comment">//同理，sibling该进程兄弟的链表，也就是其父亲的所有孩子的链表。用法与children相似。</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">sibling</span>;</span></span><br><span class="line"><span class="comment">//这个是主线程的进程描述符，也许你会奇怪，为什么线程用进程描述符表示，因为linux并没有单独实现线程的相关结构体，只是用一个进程来代替线程，然后对其做一些特殊的处理。</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> *<span class="title">group_leader</span>;</span></span><br><span class="line"><span class="comment">//这个是该进程所有线程的链表。</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">thread_group</span>;</span></span><br><span class="line"><span class="comment">//顾名思义，这个是该进程使用cpu时间的信息，utime是在用户态下执行的时间，stime是在内核态下执行的时间。</span></span><br><span class="line"> <span class="keyword">cputime_t</span> utime, stime;</span><br><span class="line"><span class="comment">//下面的是启动的时间，只是时间基准不一样。</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span> <span class="title">start_time</span>;</span> </span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span> <span class="title">real_start_time</span>;</span></span><br><span class="line"><span class="comment">//comm是保存该进程名字的字符数组，长度最长为15，因为TASK_COMM_LEN为16。</span></span><br><span class="line"> <span class="keyword">char</span> comm[TASK_COMM_LEN];</span><br><span class="line"><span class="comment">/* 文件系统信息计数*/</span></span><br><span class="line"> <span class="keyword">int</span> link_count, total_link_count;</span><br><span class="line"><span class="comment">/*该进程在特定CPU下的状态*/</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">thread_struct</span> <span class="title">thread</span>;</span></span><br><span class="line"><span class="comment">/* 文件系统相关信息结构体*/</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">fs_struct</span> *<span class="title">fs</span>;</span></span><br><span class="line"><span class="comment">/* 打开的文件相关信息结构体*/</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">files_struct</span> *<span class="title">files</span>;</span></span><br><span class="line"> <span class="comment">/* 信号相关信息的句柄*/</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">signal_struct</span> *<span class="title">signal</span>;</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">sighand_struct</span> *<span class="title">sighand</span>;</span></span><br><span class="line"> <span class="comment">/*这些是松弛时间值，用来规定select()和poll()的超时时间，单位是纳秒nanoseconds */</span></span><br><span class="line"> <span class="keyword">unsigned</span> <span class="keyword">long</span> timer_slack_ns;</span><br><span class="line"> <span class="keyword">unsigned</span> <span class="keyword">long</span> default_timer_slack_ns;</span><br><span class="line">&#125;；</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/08/18/kernel-get-process-info/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/29/downloadAndroidSDK/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wdxx">
+      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wdxxliu">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/07/29/downloadAndroidSDK/" class="post-title-link" itemprop="url">Andorid SDK 下载</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-07-29 21:56:54 / 修改时间：22:03:43" itemprop="dateCreated datePublished" datetime="2020-07-29T21:56:54+08:00">2020-07-29</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="下载commandlinetools"><a href="#下载commandlinetools" class="headerlink" title="下载commandlinetools"></a>下载commandlinetools</h2><p>下载地址：<a href="https://developer.android.com/studio" target="_blank" rel="noopener">https://developer.android.com/studio</a> 点击进去可以查看<code>Command line tools only</code>小节</p>
+<h2 id="解压安装commandlinetools"><a href="#解压安装commandlinetools" class="headerlink" title="解压安装commandlinetools"></a>解压安装commandlinetools</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cp commandlinetools-linux-6609375_latest.zip ~/</span><br><span class="line">mkdir -p ~/Android/platform-tools</span><br><span class="line">unzip  ~/Android/commandlinetools-linux-6609375_latest.zip -d ~/Android/platform-tools/</span><br><span class="line"><span class="built_in">export</span> ANDROID_HOME=~/Android</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>$:<span class="variable">$ANDROID_HOME</span>/cmdline-tools/tools/bin</span><br></pre></td></tr></table></figure>
+
+<p>##安装android sdk<br>安装sdk请参考官方文档：<code>https://developer.android.com/studio/command-line/sdkmanager</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sdkmanager <span class="string">"platform-tools"</span> <span class="string">"platforms;android-28"</span></span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/24/dexfile/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -707,82 +836,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/08/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wdxx">
-      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wdxxliu">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/08/hello-world/" class="post-title-link" itemprop="url">Hexo+github博客搭建</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-08 17:44:14" itemprop="dateCreated datePublished" datetime="2020-05-08T17:44:14+08:00">2020-05-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-05-09 11:57:52" itemprop="dateModified" datetime="2020-05-09T11:57:52+08:00">2020-05-09</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>&emsp;&emsp;hexo是一个博客框架，可以将markdown文本编译成静态网页。github提供了github pages,这是一个静态网站托管服务。所以前者生成的静态网页可以托管在github pages上。通过在网上搜索，发现<a href="https://cuiqingcai.com/7625.html" target="_blank" rel="noopener">这篇文章</a>写的很详细，根据这篇文章部署了该<a href="https://wdxx.github.io/" target="_blank" rel="noopener">博客网站</a>。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/05/08/hello-world/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -848,12 +905,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-count">21</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
@@ -880,7 +937,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

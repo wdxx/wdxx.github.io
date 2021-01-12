@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="&amp;emsp;&amp;emsp;Keepalived 是一个基于VRRP协议来实现的LVS服务高可用方案，可以利用其来避免单点故障。一个LVS服务会有2台服务器运行Keepalived，一台为主服务器（MASTER），一台为备份服务器（BACKUP），但是对外表现为一个虚拟IP（VIP），主服务器会发送特定的消息给备份服务器，当备份服务器收不到这个消息的时候，即主服务器宕机的时候，备份服务器就会接管虚拟I">
+<meta property="og:type" content="article">
+<meta property="og:title" content="keepalived 安装与使用">
+<meta property="og:url" content="http://yoursite.com/2021/01/12/keepalived/index.html">
+<meta property="og:site_name" content="wdxxliu">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;Keepalived 是一个基于VRRP协议来实现的LVS服务高可用方案，可以利用其来避免单点故障。一个LVS服务会有2台服务器运行Keepalived，一台为主服务器（MASTER），一台为备份服务器（BACKUP），但是对外表现为一个虚拟IP（VIP），主服务器会发送特定的消息给备份服务器，当备份服务器收不到这个消息的时候，即主服务器宕机的时候，备份服务器就会接管虚拟I">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/images/keepalived-vrrp-network.png">
+<meta property="article:published_time" content="2021-01-12T02:35:15.000Z">
+<meta property="article:modified_time" content="2021-01-12T07:11:15.370Z">
+<meta property="article:author" content="wdxx">
+<meta property="article:tag" content="Linux keepalived">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/images/keepalived-vrrp-network.png">
+
+<link rel="canonical" href="http://yoursite.com/2021/01/12/keepalived/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>keepalived 安装与使用 | wdxxliu</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">wdxxliu</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">个人博客</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/12/keepalived/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wdxx">
+      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wdxxliu">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          keepalived 安装与使用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-01-12 10:35:15 / 修改时间：15:11:15" itemprop="dateCreated datePublished" datetime="2021-01-12T10:35:15+08:00">2021-01-12</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>&emsp;&emsp;Keepalived 是一个基于VRRP协议来实现的LVS服务高可用方案，可以利用其来避免单点故障。一个LVS服务会有2台服务器运行Keepalived，一台为主服务器（MASTER），一台为备份服务器（BACKUP），但是对外表现为一个虚拟IP（VIP），主服务器会发送特定的消息给备份服务器，当备份服务器收不到这个消息的时候，即主服务器宕机的时候，备份服务器就会接管虚拟IP，继续提供服务，从而保证了高可用性。说白了就是如果客户端在访问服务端时，如果服务端出了问题，可以及时自动的切换到另外一个服务器，而客户端感知不到，客户端通过VIP来访问服务端。</p>
+<a id="more"></a>
+<h3 id="keepalived-工作原理"><a href="#keepalived-工作原理" class="headerlink" title="keepalived 工作原理"></a>keepalived 工作原理</h3><p>下图是keepalived的工作原理图：<br><img src="/images/keepalived-vrrp-network.png" alt="keepalived工作原理">。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. LB1服务器：192.168.10.111 master</span><br><span class="line">2. LB2服务器：192.168.10.112 backup</span><br><span class="line">3. VIP: 192.168.10.121</span><br></pre></td></tr></table></figure>
+<ol>
+<li>keepalived在LB1与LB2上安装，一个为master一个为backup。图中LB1为master，所以刚开始的时候LB1服务器虚拟出VIP 192.168.10.121，当客户端访问192.168.10.121的时候实际访问的就是LB1服务器。</li>
+<li>keepavlied是基于VRRP协议的，关于什么是VRRP协议可以自行<a href="https://www.jianshu.com/p/7410507d57c3" target="_blank" rel="noopener">搜索</a>。根据VRRP协议可以知道，由于当前master为LB1，所以LB1会做如下工作：</li>
+</ol>
+<ul>
+<li>定时发送VRRP通告报文(时间间隔为Advertisement_Interval)</li>
+<li>使用虚拟MAC地址响应VIP的ARP请求</li>
+<li>转发目的MAC地址为虚拟MAC地址的IP报文</li>
+<li>抢占模式下，如果收到比自己优先级大的VRRP报文，或者跟自己优先级相等，且本地接口IP地址小于源端接口IP地址时，则转变为Backup状态</li>
+<li>收到Shutdown（关闭）消息后，则立即转变为Initialize状态</li>
+</ul>
+<ol start="3">
+<li>LB2当前为backup,backup机器会接受master发送的VRRP通告报文，判断master是否正常。如果一定时间间隔没有收到VRRP通告报文，即Master_Down_Interval（Master_Down_Interval = 3* Advertisement_Interval + Skew_time）超时，则判断为Master故障。backup的工作如下：</li>
+</ol>
+<ul>
+<li>接收Master发送的VRRP通告报文，判断Master是否正常</li>
+<li>对虚拟IP的ARP请求不做响应</li>
+<li>丢弃目的MAC地址为虚拟路由器MAC地址的IP报文</li>
+<li>丢弃目的IP地址为VIP地址的IP报文</li>
+<li>如果收到优先级比自己高，或与自己相等的VRRP报文，则重置Master_Down_Interval定时器（不进一步比较IP地址）</li>
+<li>如果收到优先级比自己小的VPPR报文，且优先级为0时，（表示原Master设备声明不参与该VRRP组了），定时器时间设置为Skew_time（偏移时间，Skew_time= (256 - priority)/256）</li>
+<li>如果收到优先级比自己小的VPPR报文，且优先级不为0时，丢弃该报文，立即转变为Master状态</li>
+<li>Master_Down_Interval定时器超时，立即转变为Master状态</li>
+<li>收到Shutdown（关闭）消息后，则立即转变为Initialize状态</li>
+</ul>
+<ol start="4">
+<li>当LB1上的web1服务出现问题时，此时可以降低LB1的优先级，或者停止LB1上的keepalived进程，从而将master转移到LB2上。此时客户端访问192.168.10.121即访问的LB2服务器。</li>
+</ol>
+<h3 id="keepalived-安装"><a href="#keepalived-安装" class="headerlink" title="keepalived 安装"></a>keepalived 安装</h3><p>测试环境为<code>CentOS Linux release 7.4.1708</code>,下面时安装命令。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y keepalived</span><br></pre></td></tr></table></figure>
+<p>配置文件路径为:/etc/keepalived/keepalived.conf<br>默认log就是syslog，/var/log/messages</p>
+<h3 id="keepalived配置"><a href="#keepalived配置" class="headerlink" title="keepalived配置"></a>keepalived配置</h3><ol>
+<li>master配置<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">! Configuration File for keepalived</span><br><span class="line"></span><br><span class="line">global_defs &#123;</span><br><span class="line">    router_id keep_231</span><br><span class="line">    script_user root</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_script check_sample_alive &#123;</span><br><span class="line">    script &quot;&#x2F;check_sample.sh&quot;</span><br><span class="line">    interval 2</span><br><span class="line">    weight -10</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state MASTER</span><br><span class="line">    interface eth0</span><br><span class="line">    virtual_router_id 51</span><br><span class="line">    priority 101</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    track_script &#123;</span><br><span class="line">        check_sample_alive</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    # 单播模式</span><br><span class="line">    unicast_src_ip 192.168.10.111</span><br><span class="line">    unicast_peer &#123;</span><br><span class="line">        192.168.10.112</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        192.168.10.121</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+关于配置文件的配置可以自行搜索，讲一下几个关键的。<code>script_user</code>表示执行<code>check_sample_alive</code>的用户。同时也可以在<code>global_defs</code>section定义<code>enable_script_security</code>来增加安全性，但是需要你的脚本所在位置所属为root的用户与用户组。也即是要<code>chown root:root /check_sample.sh</code><br>下面时<code>check_sample.sh</code>脚本的内容：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">active=`ps -ef | grep <span class="string">"python sample.py"</span> | grep -v <span class="string">"grep"</span> | wc -l`</span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$active</span> -eq 0 ];<span class="keyword">then</span></span><br><span class="line">  sleep 3</span><br><span class="line">  <span class="keyword">if</span> [ `ps -ef | grep <span class="string">"python sample.py"</span> | grep -v <span class="string">"grep"</span> | wc -l` -eq 0 ];<span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"sample.py died"</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line">  <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"sample.py is running..."</span></span><br></pre></td></tr></table></figure></li>
+<li>backup配置<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">! Configuration File for keepalived</span><br><span class="line"></span><br><span class="line">global_defs &#123;</span><br><span class="line">    router_id keep_232</span><br><span class="line">    script_user root</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_script check_sample_alive &#123;</span><br><span class="line">    script &quot;&#x2F;check_sample.sh&quot;</span><br><span class="line">    interval 2</span><br><span class="line">    weight 10</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface eth0</span><br><span class="line">    virtual_router_id 51</span><br><span class="line">    priority 90</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    track_script &#123;</span><br><span class="line">        check_sample_alive</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    unicast_src_ip 192.168.10.112</span><br><span class="line">    unicast_peer &#123;</span><br><span class="line">        192.168.10.111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        192.168.10.121</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h3 id="测试web服务器脚本"><a href="#测试web服务器脚本" class="headerlink" title="测试web服务器脚本"></a>测试web服务器脚本</h3><p>因为要测试master与backup是否能够正常切换，所以使用了python的wsgi脚本来简单的测试配置是否正确。下面是web服务器代码(sample.py)，它通过wsgi接口简单的返回当前主机的ip。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="keyword">from</span> wsgiref.simple_server <span class="keyword">import</span> make_server</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">simple_app</span><span class="params">(environ, start_response)</span>:</span></span><br><span class="line">    <span class="comment">#setup_testing_defaults(environ)</span></span><br><span class="line"></span><br><span class="line">    status = <span class="string">'200 OK'</span></span><br><span class="line">    headers = [(<span class="string">'Content-type'</span>, <span class="string">'text/plain'</span>)]</span><br><span class="line"></span><br><span class="line">    start_response(status, headers)</span><br><span class="line"></span><br><span class="line">    ip = socket.gethostbyname(socket.gethostname())</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ip</span><br><span class="line"></span><br><span class="line">httpd = make_server(<span class="string">''</span>, <span class="number">7000</span>, simple_app)</span><br><span class="line"></span><br><span class="line">httpd.serve_forever()</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>先在LB1与LB2服务器上启动keepalived。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service keepalived start</span><br></pre></td></tr></table></figure>
+<p>然后在LB1与LB2服务器上以后台方式启动sample.py。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sample.py &amp;</span><br></pre></td></tr></table></figure>
+<p>通过在浏览器中访问: <code>http://192.168.10.121:7000</code>可以看到浏览器会返回当前master的IP:<code>192.168.10.111</code>。然后将192.168.10.111上的sample.py进程杀掉，再访问<code>http://192.168.10.121:7000</code>可以看到浏览器会返回当前master的IP:<code>192.168.10.112</code>。可见切换成功。</p>
+<p>参考：</p>
+<ol>
+<li>入门：<a href="https://zhuanlan.zhihu.com/p/143295216" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/143295216</a></li>
+<li>入门：<a href="https://zhuanlan.zhihu.com/p/43971218" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/43971218</a></li>
+<li>VRRP原理：<a href="https://www.jianshu.com/p/214f89298646" target="_blank" rel="noopener">https://www.jianshu.com/p/214f89298646</a></li>
+<li>优先级设置：<a href="https://www.cnblogs.com/arjenlee/p/9258188.html" target="_blank" rel="noopener">https://www.cnblogs.com/arjenlee/p/9258188.html</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux-keepalived/" rel="tag"># Linux keepalived</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/12/24/cpp-char-point/" rel="prev" title="c++对char类型指针的处理">
+      <i class="fa fa-chevron-left"></i> c++对char类型指针的处理
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#keepalived-工作原理"><span class="nav-number">1.</span> <span class="nav-text">keepalived 工作原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#keepalived-安装"><span class="nav-number">2.</span> <span class="nav-text">keepalived 安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#keepalived配置"><span class="nav-number">3.</span> <span class="nav-text">keepalived配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试web服务器脚本"><span class="nav-number">4.</span> <span class="nav-text">测试web服务器脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试"><span class="nav-number">5.</span> <span class="nav-text">测试</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">wdxx</p>
+  <div class="site-description" itemprop="description">一个关于嵌入式方向的个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wdxx</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '50a49fec6904d42cabaf',
+      clientSecret: '4f382ee71b35d58f5b8e6358b4a63e8d55235130',
+      repo        : 'wdxx.github.io',
+      owner       : 'wdxx',
+      admin       : ['wdxx'],
+      id          : '67db442e5e7a1c27b54817cdaa573618',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>

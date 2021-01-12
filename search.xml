@@ -589,4 +589,88 @@
         <tag>内存管理 new delete</tag>
       </tags>
   </entry>
+  <entry>
+    <title>c++对char类型指针的处理</title>
+    <url>/2020/12/24/cpp-char-point/</url>
+    <content><![CDATA[<p>本文主要记录c++对char类型指针的处理。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span> Name[]&#123;<span class="string">"Lucy"</span>&#125;;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; Name &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *mName&#123;<span class="string">"Lucy"</span>&#125;;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; mName &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>上面程序的输出是一样的，但是编译器对<code>Name</code>与<code>mName</code>的处理是有区别的。<code>Name</code>是普通的字符数组，是一个局部变量，生命周期跟普通的变量一样。<code>mName</code>的生命周期存在于整个文件，跟<code>static</code>变量类似。看下面的例子：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">const</span> <span class="keyword">char</span>* <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"Lucy"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面函数并不会导致返回未知，因为返回的变量类似于<code>static</code>变量。再看下面的例子：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">char</span>* <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span> Name[]&#123;<span class="string">"Lucy"</span>&#125;;</span><br><span class="line">    <span class="keyword">return</span> Name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面函数的返回时未知的，它返回的是一个野指针，因为<code>Name</code>是局部变量，在函数返回时就被释放了，所以返回未知。</p>
+<h3 id="c-对cosnt-char-类型的优化"><a href="#c-对cosnt-char-类型的优化" class="headerlink" title="c++对cosnt char* 类型的优化"></a>c++对cosnt char* 类型的优化</h3><p>如果两个<code>const char *</code>指向相同内容的字符串，那么编译器可能会优化为两个指针指向同一个位置，看下面的例子。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> *NameA&#123;<span class="string">"Name"</span>&#125;;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *NameB&#123;<span class="string">"Name"</span>&#125;;</span><br><span class="line"></span><br><span class="line">    NameA[<span class="number">1</span>] = <span class="string">'A'</span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; NameA &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; NameB &lt;&lt;  <span class="string">'\n'</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; (<span class="keyword">long</span>)NameA &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; (<span class="keyword">long</span>)NameB &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>执行后可以看到<code>NameA</code>与<code>NameB</code>的值是相同的，也就是他们指向同一个内存地址。</p>
+]]></content>
+      <tags>
+        <tag>char类型指针  c++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>keepalived 安装与使用</title>
+    <url>/2021/01/12/keepalived/</url>
+    <content><![CDATA[<p>&emsp;&emsp;Keepalived 是一个基于VRRP协议来实现的LVS服务高可用方案，可以利用其来避免单点故障。一个LVS服务会有2台服务器运行Keepalived，一台为主服务器（MASTER），一台为备份服务器（BACKUP），但是对外表现为一个虚拟IP（VIP），主服务器会发送特定的消息给备份服务器，当备份服务器收不到这个消息的时候，即主服务器宕机的时候，备份服务器就会接管虚拟IP，继续提供服务，从而保证了高可用性。说白了就是如果客户端在访问服务端时，如果服务端出了问题，可以及时自动的切换到另外一个服务器，而客户端感知不到，客户端通过VIP来访问服务端。</p>
+<a id="more"></a>
+<h3 id="keepalived-工作原理"><a href="#keepalived-工作原理" class="headerlink" title="keepalived 工作原理"></a>keepalived 工作原理</h3><p>下图是keepalived的工作原理图：<br><img src="/images/keepalived-vrrp-network.png" alt="keepalived工作原理">。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1. LB1服务器：192.168.10.111 master</span><br><span class="line">2. LB2服务器：192.168.10.112 backup</span><br><span class="line">3. VIP: 192.168.10.121</span><br></pre></td></tr></table></figure>
+<ol>
+<li>keepalived在LB1与LB2上安装，一个为master一个为backup。图中LB1为master，所以刚开始的时候LB1服务器虚拟出VIP 192.168.10.121，当客户端访问192.168.10.121的时候实际访问的就是LB1服务器。</li>
+<li>keepavlied是基于VRRP协议的，关于什么是VRRP协议可以自行<a href="https://www.jianshu.com/p/7410507d57c3" target="_blank" rel="noopener">搜索</a>。根据VRRP协议可以知道，由于当前master为LB1，所以LB1会做如下工作：</li>
+</ol>
+<ul>
+<li>定时发送VRRP通告报文(时间间隔为Advertisement_Interval)</li>
+<li>使用虚拟MAC地址响应VIP的ARP请求</li>
+<li>转发目的MAC地址为虚拟MAC地址的IP报文</li>
+<li>抢占模式下，如果收到比自己优先级大的VRRP报文，或者跟自己优先级相等，且本地接口IP地址小于源端接口IP地址时，则转变为Backup状态</li>
+<li>收到Shutdown（关闭）消息后，则立即转变为Initialize状态</li>
+</ul>
+<ol start="3">
+<li>LB2当前为backup,backup机器会接受master发送的VRRP通告报文，判断master是否正常。如果一定时间间隔没有收到VRRP通告报文，即Master_Down_Interval（Master_Down_Interval = 3* Advertisement_Interval + Skew_time）超时，则判断为Master故障。backup的工作如下：</li>
+</ol>
+<ul>
+<li>接收Master发送的VRRP通告报文，判断Master是否正常</li>
+<li>对虚拟IP的ARP请求不做响应</li>
+<li>丢弃目的MAC地址为虚拟路由器MAC地址的IP报文</li>
+<li>丢弃目的IP地址为VIP地址的IP报文</li>
+<li>如果收到优先级比自己高，或与自己相等的VRRP报文，则重置Master_Down_Interval定时器（不进一步比较IP地址）</li>
+<li>如果收到优先级比自己小的VPPR报文，且优先级为0时，（表示原Master设备声明不参与该VRRP组了），定时器时间设置为Skew_time（偏移时间，Skew_time= (256 - priority)/256）</li>
+<li>如果收到优先级比自己小的VPPR报文，且优先级不为0时，丢弃该报文，立即转变为Master状态</li>
+<li>Master_Down_Interval定时器超时，立即转变为Master状态</li>
+<li>收到Shutdown（关闭）消息后，则立即转变为Initialize状态</li>
+</ul>
+<ol start="4">
+<li>当LB1上的web1服务出现问题时，此时可以降低LB1的优先级，或者停止LB1上的keepalived进程，从而将master转移到LB2上。此时客户端访问192.168.10.121即访问的LB2服务器。</li>
+</ol>
+<h3 id="keepalived-安装"><a href="#keepalived-安装" class="headerlink" title="keepalived 安装"></a>keepalived 安装</h3><p>测试环境为<code>CentOS Linux release 7.4.1708</code>,下面时安装命令。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y keepalived</span><br></pre></td></tr></table></figure>
+<p>配置文件路径为:/etc/keepalived/keepalived.conf<br>默认log就是syslog，/var/log/messages</p>
+<h3 id="keepalived配置"><a href="#keepalived配置" class="headerlink" title="keepalived配置"></a>keepalived配置</h3><ol>
+<li>master配置<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">! Configuration File for keepalived</span><br><span class="line"></span><br><span class="line">global_defs &#123;</span><br><span class="line">    router_id keep_231</span><br><span class="line">    script_user root</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_script check_sample_alive &#123;</span><br><span class="line">    script &quot;&#x2F;check_sample.sh&quot;</span><br><span class="line">    interval 2</span><br><span class="line">    weight -10</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state MASTER</span><br><span class="line">    interface eth0</span><br><span class="line">    virtual_router_id 51</span><br><span class="line">    priority 101</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    track_script &#123;</span><br><span class="line">        check_sample_alive</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    # 单播模式</span><br><span class="line">    unicast_src_ip 192.168.10.111</span><br><span class="line">    unicast_peer &#123;</span><br><span class="line">        192.168.10.112</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        192.168.10.121</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+关于配置文件的配置可以自行搜索，讲一下几个关键的。<code>script_user</code>表示执行<code>check_sample_alive</code>的用户。同时也可以在<code>global_defs</code>section定义<code>enable_script_security</code>来增加安全性，但是需要你的脚本所在位置所属为root的用户与用户组。也即是要<code>chown root:root /check_sample.sh</code><br>下面时<code>check_sample.sh</code>脚本的内容：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">active=`ps -ef | grep <span class="string">"python sample.py"</span> | grep -v <span class="string">"grep"</span> | wc -l`</span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$active</span> -eq 0 ];<span class="keyword">then</span></span><br><span class="line">  sleep 3</span><br><span class="line">  <span class="keyword">if</span> [ `ps -ef | grep <span class="string">"python sample.py"</span> | grep -v <span class="string">"grep"</span> | wc -l` -eq 0 ];<span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"sample.py died"</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line">  <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"sample.py is running..."</span></span><br></pre></td></tr></table></figure></li>
+<li>backup配置<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">! Configuration File for keepalived</span><br><span class="line"></span><br><span class="line">global_defs &#123;</span><br><span class="line">    router_id keep_232</span><br><span class="line">    script_user root</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_script check_sample_alive &#123;</span><br><span class="line">    script &quot;&#x2F;check_sample.sh&quot;</span><br><span class="line">    interval 2</span><br><span class="line">    weight 10</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface eth0</span><br><span class="line">    virtual_router_id 51</span><br><span class="line">    priority 90</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    track_script &#123;</span><br><span class="line">        check_sample_alive</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    unicast_src_ip 192.168.10.112</span><br><span class="line">    unicast_peer &#123;</span><br><span class="line">        192.168.10.111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        192.168.10.121</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h3 id="测试web服务器脚本"><a href="#测试web服务器脚本" class="headerlink" title="测试web服务器脚本"></a>测试web服务器脚本</h3><p>因为要测试master与backup是否能够正常切换，所以使用了python的wsgi脚本来简单的测试配置是否正确。下面是web服务器代码(sample.py)，它通过wsgi接口简单的返回当前主机的ip。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="keyword">from</span> wsgiref.simple_server <span class="keyword">import</span> make_server</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">simple_app</span><span class="params">(environ, start_response)</span>:</span></span><br><span class="line">    <span class="comment">#setup_testing_defaults(environ)</span></span><br><span class="line"></span><br><span class="line">    status = <span class="string">'200 OK'</span></span><br><span class="line">    headers = [(<span class="string">'Content-type'</span>, <span class="string">'text/plain'</span>)]</span><br><span class="line"></span><br><span class="line">    start_response(status, headers)</span><br><span class="line"></span><br><span class="line">    ip = socket.gethostbyname(socket.gethostname())</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ip</span><br><span class="line"></span><br><span class="line">httpd = make_server(<span class="string">''</span>, <span class="number">7000</span>, simple_app)</span><br><span class="line"></span><br><span class="line">httpd.serve_forever()</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>先在LB1与LB2服务器上启动keepalived。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">service keepalived start</span><br></pre></td></tr></table></figure>
+<p>然后在LB1与LB2服务器上以后台方式启动sample.py。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python sample.py &amp;</span><br></pre></td></tr></table></figure>
+<p>通过在浏览器中访问: <code>http://192.168.10.121:7000</code>可以看到浏览器会返回当前master的IP:<code>192.168.10.111</code>。然后将192.168.10.111上的sample.py进程杀掉，再访问<code>http://192.168.10.121:7000</code>可以看到浏览器会返回当前master的IP:<code>192.168.10.112</code>。可见切换成功。</p>
+<p>参考：</p>
+<ol>
+<li>入门：<a href="https://zhuanlan.zhihu.com/p/143295216" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/143295216</a></li>
+<li>入门：<a href="https://zhuanlan.zhihu.com/p/43971218" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/43971218</a></li>
+<li>VRRP原理：<a href="https://www.jianshu.com/p/214f89298646" target="_blank" rel="noopener">https://www.jianshu.com/p/214f89298646</a></li>
+<li>优先级设置：<a href="https://www.cnblogs.com/arjenlee/p/9258188.html" target="_blank" rel="noopener">https://www.cnblogs.com/arjenlee/p/9258188.html</a></li>
+</ol>
+]]></content>
+      <tags>
+        <tag>Linux keepalived</tag>
+      </tags>
+  </entry>
 </search>
