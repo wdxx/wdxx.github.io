@@ -469,8 +469,11 @@
     <content><![CDATA[<p>ofstream是从内存到硬盘，ifstream是从硬盘到内存，其实所谓的流缓冲就是内存空间。<br>在C++中，有一个stream这个类，所有的I/O都以这个“流”类为基础的，包括我们要认识的文件I/O。<br>stream这个类有两个重要的运算符：<br>1、插入器(&lt;&lt;)<br>向流输出数据。比如说系统有一个默认的标准输出流(cout)，一般情况下就是指的显示器，所以，cout&lt;&lt;”Write Stdout”&lt;&lt;’\n’;就表示把字符串”Write Stdout”和换行字符(‘\n’)输出到标准输出流。<br>2、析取器(&gt;&gt;)<br>从流中输入数据。比如说系统有一个默认的标准输入流(cin)，一般情况下就是指的键盘，所以，cin&gt;&gt;x;就表示从标准输入流中读取一个指定类型的数据。<br>在C++中，对文件的操作是通过stream的子类fstream(file stream)来实现的，所以，要用这种方式操作文件，就必须加入头文件fstream.h。</p>
 <p>特别提出的是，fstream有两个子类：ifstream(input file stream)和ofstream(outpu file stream)，ifstream默认以输入方式打开文件，ofstream默认以输出方式打开文件。</p>
 ]]></content>
+      <categories>
+        <category>c/c++</category>
+      </categories>
       <tags>
-        <tag>c++ ofstream ifstream</tag>
+        <tag>c/c++</tag>
       </tags>
   </entry>
   <entry>
@@ -505,6 +508,12 @@
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// typedef 定义的别名应该在后面加上`_t`，表面它是一个类型而不是变量</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> Score_t;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span>* Pint_t;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">float</span> <span class="keyword">distance_t</span>;</span><br></pre></td></tr></table></figure>
 <p>别名的用法：</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">using</span> <span class="keyword">score_t</span> = <span class="keyword">int</span>;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">distance_t</span> = <span class="keyword">float</span>;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">pairlist_t</span> = <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::pair&lt;<span class="built_in">std</span>::<span class="built_in">string</span>, <span class="keyword">int</span>&gt;&gt;;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>c/c++</category>
+      </categories>
+      <tags>
+        <tag>c/c++</tag>
+      </tags>
   </entry>
   <entry>
     <title>oracle</title>
@@ -585,8 +594,11 @@
 
 <p>###应该关注new的内存是否分配成功<br>在申请内存过程中，有极小概率的情况申请分配内存失败，应该处理出现申请分配内存失败的情况。有一种简便的方法用于申请内存时，如果申请失败，那么返回一个空指针，这各方法时通过在new与类型之间加入常量<code>std::nothrow</code>实现的。</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> *p = <span class="keyword">new</span> (<span class="built_in">std</span>::nothrow) <span class="keyword">int</span>;</span><br><span class="line"><span class="keyword">if</span> (!p) &#123;</span><br><span class="line">    <span class="comment">// 错误处理</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"No enough memory!"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>c/c++</category>
+      </categories>
       <tags>
-        <tag>内存管理 new delete</tag>
+        <tag>c/c++</tag>
       </tags>
   </entry>
   <entry>
@@ -604,8 +616,11 @@
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> *NameA&#123;<span class="string">"Name"</span>&#125;;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *NameB&#123;<span class="string">"Name"</span>&#125;;</span><br><span class="line"></span><br><span class="line">    NameA[<span class="number">1</span>] = <span class="string">'A'</span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; NameA &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; NameB &lt;&lt;  <span class="string">'\n'</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; (<span class="keyword">long</span>)NameA &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; (<span class="keyword">long</span>)NameB &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>执行后可以看到<code>NameA</code>与<code>NameB</code>的值是相同的，也就是他们指向同一个内存地址。</p>
 ]]></content>
+      <categories>
+        <category>c/c++</category>
+      </categories>
       <tags>
-        <tag>char类型指针  c++</tag>
+        <tag>c/c++</tag>
       </tags>
   </entry>
   <entry>
