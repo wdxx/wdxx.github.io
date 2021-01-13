@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>如何在EDK II中编写应用程序</title>
-    <url>/2020/05/25/EDK2-new-app/</url>
-    <content><![CDATA[<p>EDK2的开发一般分为驱动与应用的开发，本文介绍如何在EDK2中开发应用程序。官方的教程请参考：<a href="https://github.com/tianocore/tianocore.github.io/wiki/Getting-Started-Writing-Simple-Application" target="_blank" rel="noopener">Getting Started Writing Simple Application</a>。</p>
-<h3 id="如何编写C文件"><a href="#如何编写C文件" class="headerlink" title="如何编写C文件"></a>如何编写C文件</h3><p><code>https://github.com/tianocore/tianocore.github.io/wiki/Getting-Started-Writing-MyHelloWorld.c</code></p>
-<h3 id="如何编写inf文件"><a href="#如何编写inf文件" class="headerlink" title="如何编写inf文件"></a>如何编写inf文件</h3><h4 id="如何生成GUID"><a href="#如何生成GUID" class="headerlink" title="如何生成GUID"></a>如何生成GUID</h4><p>通过<a href="https://www.guidgen.com/" target="_blank" rel="noopener">guidgen网站</a>生成GUID。</p>
-]]></content>
-      <tags>
-        <tag>EDK2 EDKii EDK II</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>android simpleperf工具使用入门</title>
     <url>/2020/05/15/android-simpleperf/</url>
     <content><![CDATA[<p>&emsp;&emsp;Simpleperf 是一个通用的命令行 CPU 性能剖析工具，在Android NDK中已经自带了。需要注意的是，如果自带的simpleperf不能使用，就需要在适配当前Android设备的源码中编译了。simpleperf的源码在AOSP的system/extras/simpleperf下，其中doc目录详细介绍了如何使用该工具。</p>
@@ -44,45 +33,6 @@
 ]]></content>
       <tags>
         <tag>android</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>c/c++ 变量</title>
-    <url>/2020/12/04/c-cpp-variable/</url>
-    <content><![CDATA[<h3 id="关于c-c-变量溢出问题"><a href="#关于c-c-变量溢出问题" class="headerlink" title="关于c/c++变量溢出问题"></a>关于c/c++变量溢出问题</h3><ol>
-<li><p>无符号变量溢出<br>无符号变量没有负数，只有正数。例如：unsigned char var = 280;其实际值为280%256=24。</p>
-</li>
-<li><p>有符号变量溢出<br>有符号数最高位表示符号位，1为负数，0为正数。例如：unsigned char var = 128,溢出了，最高为1，所以为负数，根据负数为反码+1，可以知道实际值为-128。</p>
-<a id="more"></a>
-
-</li>
-</ol>
-<h3 id="关于c-c-变量，不同平台或者架构int变量size不一样问题"><a href="#关于c-c-变量，不同平台或者架构int变量size不一样问题" class="headerlink" title="关于c/c++变量，不同平台或者架构int变量size不一样问题"></a>关于c/c++变量，不同平台或者架构int变量size不一样问题</h3><ol>
-<li>在不同的平台或者编译器中，标准类型int所占用的size可能不一样，为了解决这给问题，C99中引入了<code>stdint.h</code>头文件来定义指定宽度类型。如:<code>std::int8_t</code>、<code>std::uint8_t</code>、<code>std::uint16_t</code>、<code>std::int32_t</code>、<code>std::int64_t</code>等。所以在C中可以通过引入<code>stdint.h</code>来使用这些类型。在C++11中，这些类型被纳入到<code>cstdint</code>头文件中。<br>使用如上头文件的时候，需要注意，可能某些平台并不支持，所以在代码可移植性方面较差。</li>
-<li>c++标准定义的类型(实际使用中，推荐用该方法，因为他是安全的)<br>std::int_fast8_t<br>std::int_fast32_t<br>std::uint_fast16_t<br>std::int_least8_t<br>std::uint_least16_t<br>std::int_least_64_t</li>
-</ol>
-<h3 id="constexpr关键字"><a href="#constexpr关键字" class="headerlink" title="constexpr关键字"></a>constexpr关键字</h3><p><code>constexpr</code>关键字是C++11中引入的关键字，用于申明常量的值需要在编译时确定。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> a =<span class="number">25</span>; <span class="comment">// ok</span></span><br><span class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> sum&#123;<span class="number">4</span>+<span class="number">11</span>&#125;; <span class="comment">// ok</span></span><br><span class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> var; <span class="comment">// not okay</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="关于全局变量与局部变量"><a href="#关于全局变量与局部变量" class="headerlink" title="关于全局变量与局部变量"></a>关于全局变量与局部变量</h3><ol>
-<li>同名局部变量在其作用域内会屏蔽全局变量，也就是局部变量会被优先使用<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">int</span> Var = <span class="number">9</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> Var = <span class="number">2</span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Var = "</span> &lt;&lt; Var &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-上面的程序运行结果为<code>Var = 2</code>。在C++中可以通过范围运算符<code>::</code>来指定使用全局变量。<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">int</span> Var = <span class="number">9</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> Var = <span class="number">2</span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Var = "</span> &lt;&lt; ::Var &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-上面的程序运行结果为<code>Var = 9</code>。</li>
-</ol>
-<h3 id="关于C-17中的inline-variables"><a href="#关于C-17中的inline-variables" class="headerlink" title="关于C++17中的inline variables"></a>关于C++17中的<code>inline variables</code></h3><p>c++17中为变量引入了<code>inline variable</code>类型。<code>inline variable</code>允许在多个文件中定义，而不会违反编译检查规则，当在多个文件中定义了同名的<code>inline variable</code>时，编译器在编译时将所有的同名<code>inline variables</code>实例化为一个变量。请看如下例子中的使用：<br>constants.h:</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> CONSTANTS_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CONSTANTS_H</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> constants &#123;</span><br><span class="line">    <span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keyword">double</span> pi &#123;<span class="number">3.14159</span>&#125;;</span><br><span class="line">    <span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keyword">double</span> avogadro &#123;<span class="number">6.022141</span>&#125;;</span><br><span class="line">    <span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keyword">double</span> gravity &#123;<span class="number">9.2</span>&#125;;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
-<p>main.cpp:</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"constants.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Enter a radius: "</span>;</span><br><span class="line">    <span class="keyword">int</span> radius;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cin</span> &gt;&gt; radius;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"The circumference is: "</span> &lt;&lt; <span class="number">2.0</span> * radius * constants::pi &lt;&lt; <span class="string">'\n'</span>; </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="c-中别名与typedef"><a href="#c-中别名与typedef" class="headerlink" title="c++中别名与typedef"></a>c++中别名与typedef</h3><p>typedef 用法：</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// typedef 定义的别名应该在后面加上`_t`，表面它是一个类型而不是变量</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> Score_t;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span>* Pint_t;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">float</span> <span class="keyword">distance_t</span>;</span><br></pre></td></tr></table></figure>
-<p>别名的用法：</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">using</span> <span class="keyword">score_t</span> = <span class="keyword">int</span>;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">distance_t</span> = <span class="keyword">float</span>;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">pairlist_t</span> = <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::pair&lt;<span class="built_in">std</span>::<span class="built_in">string</span>, <span class="keyword">int</span>&gt;&gt;;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>c/c++</category>
-      </categories>
-      <tags>
-        <tag>c/c++</tag>
       </tags>
   </entry>
   <entry>
@@ -158,6 +108,58 @@
       </tags>
   </entry>
   <entry>
+    <title>c/c++ 变量</title>
+    <url>/2020/12/04/c-cpp-variable/</url>
+    <content><![CDATA[<h3 id="关于c-c-变量溢出问题"><a href="#关于c-c-变量溢出问题" class="headerlink" title="关于c/c++变量溢出问题"></a>关于c/c++变量溢出问题</h3><ol>
+<li><p>无符号变量溢出<br>无符号变量没有负数，只有正数。例如：unsigned char var = 280;其实际值为280%256=24。</p>
+</li>
+<li><p>有符号变量溢出<br>有符号数最高位表示符号位，1为负数，0为正数。例如：unsigned char var = 128,溢出了，最高为1，所以为负数，根据负数为反码+1，可以知道实际值为-128。</p>
+<a id="more"></a>
+
+</li>
+</ol>
+<h3 id="关于c-c-变量，不同平台或者架构int变量size不一样问题"><a href="#关于c-c-变量，不同平台或者架构int变量size不一样问题" class="headerlink" title="关于c/c++变量，不同平台或者架构int变量size不一样问题"></a>关于c/c++变量，不同平台或者架构int变量size不一样问题</h3><ol>
+<li>在不同的平台或者编译器中，标准类型int所占用的size可能不一样，为了解决这给问题，C99中引入了<code>stdint.h</code>头文件来定义指定宽度类型。如:<code>std::int8_t</code>、<code>std::uint8_t</code>、<code>std::uint16_t</code>、<code>std::int32_t</code>、<code>std::int64_t</code>等。所以在C中可以通过引入<code>stdint.h</code>来使用这些类型。在C++11中，这些类型被纳入到<code>cstdint</code>头文件中。<br>使用如上头文件的时候，需要注意，可能某些平台并不支持，所以在代码可移植性方面较差。</li>
+<li>c++标准定义的类型(实际使用中，推荐用该方法，因为他是安全的)<br>std::int_fast8_t<br>std::int_fast32_t<br>std::uint_fast16_t<br>std::int_least8_t<br>std::uint_least16_t<br>std::int_least_64_t</li>
+</ol>
+<h3 id="constexpr关键字"><a href="#constexpr关键字" class="headerlink" title="constexpr关键字"></a>constexpr关键字</h3><p><code>constexpr</code>关键字是C++11中引入的关键字，用于申明常量的值需要在编译时确定。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> a =<span class="number">25</span>; <span class="comment">// ok</span></span><br><span class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> sum&#123;<span class="number">4</span>+<span class="number">11</span>&#125;; <span class="comment">// ok</span></span><br><span class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> var; <span class="comment">// not okay</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="关于全局变量与局部变量"><a href="#关于全局变量与局部变量" class="headerlink" title="关于全局变量与局部变量"></a>关于全局变量与局部变量</h3><ol>
+<li>同名局部变量在其作用域内会屏蔽全局变量，也就是局部变量会被优先使用<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">int</span> Var = <span class="number">9</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> Var = <span class="number">2</span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Var = "</span> &lt;&lt; Var &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+上面的程序运行结果为<code>Var = 2</code>。在C++中可以通过范围运算符<code>::</code>来指定使用全局变量。<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">int</span> Var = <span class="number">9</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> Var = <span class="number">2</span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Var = "</span> &lt;&lt; ::Var &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+上面的程序运行结果为<code>Var = 9</code>。</li>
+</ol>
+<h3 id="关于C-17中的inline-variables"><a href="#关于C-17中的inline-variables" class="headerlink" title="关于C++17中的inline variables"></a>关于C++17中的<code>inline variables</code></h3><p>c++17中为变量引入了<code>inline variable</code>类型。<code>inline variable</code>允许在多个文件中定义，而不会违反编译检查规则，当在多个文件中定义了同名的<code>inline variable</code>时，编译器在编译时将所有的同名<code>inline variables</code>实例化为一个变量。请看如下例子中的使用：<br>constants.h:</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> CONSTANTS_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CONSTANTS_H</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> constants &#123;</span><br><span class="line">    <span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keyword">double</span> pi &#123;<span class="number">3.14159</span>&#125;;</span><br><span class="line">    <span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keyword">double</span> avogadro &#123;<span class="number">6.022141</span>&#125;;</span><br><span class="line">    <span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keyword">double</span> gravity &#123;<span class="number">9.2</span>&#125;;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<p>main.cpp:</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"constants.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Enter a radius: "</span>;</span><br><span class="line">    <span class="keyword">int</span> radius;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cin</span> &gt;&gt; radius;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"The circumference is: "</span> &lt;&lt; <span class="number">2.0</span> * radius * constants::pi &lt;&lt; <span class="string">'\n'</span>; </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="c-中别名与typedef"><a href="#c-中别名与typedef" class="headerlink" title="c++中别名与typedef"></a>c++中别名与typedef</h3><p>typedef 用法：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// typedef 定义的别名应该在后面加上`_t`，表面它是一个类型而不是变量</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> Score_t;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span>* Pint_t;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">float</span> <span class="keyword">distance_t</span>;</span><br></pre></td></tr></table></figure>
+<p>别名的用法：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">using</span> <span class="keyword">score_t</span> = <span class="keyword">int</span>;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">distance_t</span> = <span class="keyword">float</span>;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">pairlist_t</span> = <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::pair&lt;<span class="built_in">std</span>::<span class="built_in">string</span>, <span class="keyword">int</span>&gt;&gt;;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>c/c++</category>
+      </categories>
+      <tags>
+        <tag>c/c++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>如何在EDK II中编写应用程序</title>
+    <url>/2020/05/25/EDK2-new-app/</url>
+    <content><![CDATA[<p>EDK2的开发一般分为驱动与应用的开发，本文介绍如何在EDK2中开发应用程序。官方的教程请参考：<a href="https://github.com/tianocore/tianocore.github.io/wiki/Getting-Started-Writing-Simple-Application" target="_blank" rel="noopener">Getting Started Writing Simple Application</a>。</p>
+<h3 id="如何编写C文件"><a href="#如何编写C文件" class="headerlink" title="如何编写C文件"></a>如何编写C文件</h3><p><code>https://github.com/tianocore/tianocore.github.io/wiki/Getting-Started-Writing-MyHelloWorld.c</code></p>
+<h3 id="如何编写inf文件"><a href="#如何编写inf文件" class="headerlink" title="如何编写inf文件"></a>如何编写inf文件</h3><h4 id="如何生成GUID"><a href="#如何生成GUID" class="headerlink" title="如何生成GUID"></a>如何生成GUID</h4><p>通过<a href="https://www.guidgen.com/" target="_blank" rel="noopener">guidgen网站</a>生成GUID。</p>
+]]></content>
+      <tags>
+        <tag>EDK2</tag>
+        <tag>EDKii</tag>
+        <tag>EDK II</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>c++对char类型指针的处理</title>
     <url>/2020/12/24/cpp-char-point/</url>
     <content><![CDATA[<p>本文主要记录c++对char类型指针的处理。</p>
@@ -180,14 +182,11 @@
       </tags>
   </entry>
   <entry>
-    <title>c++ 内存管理</title>
-    <url>/2020/12/23/cpp-new-delete/</url>
-    <content><![CDATA[<p>本文主要记录下c/c++中使用堆内存的注意事项。</p>
-<h3 id="堆内存使用完后，指针设置为nullptr"><a href="#堆内存使用完后，指针设置为nullptr" class="headerlink" title="堆内存使用完后，指针设置为nullptr"></a>堆内存使用完后，指针设置为nullptr</h3><p>在使用完new(malloc)的内存后，应该习惯在释放完该内存后，将指针设置为<code>nullptr</code>。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> *p = <span class="keyword">new</span> <span class="keyword">int</span>;</span><br><span class="line">*p = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">delete</span> p;</span><br><span class="line">p = <span class="literal">nullptr</span>;</span><br></pre></td></tr></table></figure>
-
-<p>###应该关注new的内存是否分配成功<br>在申请内存过程中，有极小概率的情况申请分配内存失败，应该处理出现申请分配内存失败的情况。有一种简便的方法用于申请内存时，如果申请失败，那么返回一个空指针，这各方法时通过在new与类型之间加入常量<code>std::nothrow</code>实现的。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> *p = <span class="keyword">new</span> (<span class="built_in">std</span>::nothrow) <span class="keyword">int</span>;</span><br><span class="line"><span class="keyword">if</span> (!p) &#123;</span><br><span class="line">    <span class="comment">// 错误处理</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"No enough memory!"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    <title>cpp_ofstream_ifstream</title>
+    <url>/2020/08/20/cpp-ofstream-ifstream/</url>
+    <content><![CDATA[<p>ofstream是从内存到硬盘，ifstream是从硬盘到内存，其实所谓的流缓冲就是内存空间。<br>在C++中，有一个stream这个类，所有的I/O都以这个“流”类为基础的，包括我们要认识的文件I/O。<br>stream这个类有两个重要的运算符：<br>1、插入器(&lt;&lt;)<br>向流输出数据。比如说系统有一个默认的标准输出流(cout)，一般情况下就是指的显示器，所以，cout&lt;&lt;”Write Stdout”&lt;&lt;’\n’;就表示把字符串”Write Stdout”和换行字符(‘\n’)输出到标准输出流。<br>2、析取器(&gt;&gt;)<br>从流中输入数据。比如说系统有一个默认的标准输入流(cin)，一般情况下就是指的键盘，所以，cin&gt;&gt;x;就表示从标准输入流中读取一个指定类型的数据。<br>在C++中，对文件的操作是通过stream的子类fstream(file stream)来实现的，所以，要用这种方式操作文件，就必须加入头文件fstream.h。</p>
+<p>特别提出的是，fstream有两个子类：ifstream(input file stream)和ofstream(outpu file stream)，ifstream默认以输入方式打开文件，ofstream默认以输出方式打开文件。</p>
+]]></content>
       <categories>
         <category>c/c++</category>
       </categories>
@@ -196,11 +195,14 @@
       </tags>
   </entry>
   <entry>
-    <title>cpp_ofstream_ifstream</title>
-    <url>/2020/08/20/cpp-ofstream-ifstream/</url>
-    <content><![CDATA[<p>ofstream是从内存到硬盘，ifstream是从硬盘到内存，其实所谓的流缓冲就是内存空间。<br>在C++中，有一个stream这个类，所有的I/O都以这个“流”类为基础的，包括我们要认识的文件I/O。<br>stream这个类有两个重要的运算符：<br>1、插入器(&lt;&lt;)<br>向流输出数据。比如说系统有一个默认的标准输出流(cout)，一般情况下就是指的显示器，所以，cout&lt;&lt;”Write Stdout”&lt;&lt;’\n’;就表示把字符串”Write Stdout”和换行字符(‘\n’)输出到标准输出流。<br>2、析取器(&gt;&gt;)<br>从流中输入数据。比如说系统有一个默认的标准输入流(cin)，一般情况下就是指的键盘，所以，cin&gt;&gt;x;就表示从标准输入流中读取一个指定类型的数据。<br>在C++中，对文件的操作是通过stream的子类fstream(file stream)来实现的，所以，要用这种方式操作文件，就必须加入头文件fstream.h。</p>
-<p>特别提出的是，fstream有两个子类：ifstream(input file stream)和ofstream(outpu file stream)，ifstream默认以输入方式打开文件，ofstream默认以输出方式打开文件。</p>
-]]></content>
+    <title>c++ 内存管理</title>
+    <url>/2020/12/23/cpp-new-delete/</url>
+    <content><![CDATA[<p>本文主要记录下c/c++中使用堆内存的注意事项。</p>
+<h3 id="堆内存使用完后，指针设置为nullptr"><a href="#堆内存使用完后，指针设置为nullptr" class="headerlink" title="堆内存使用完后，指针设置为nullptr"></a>堆内存使用完后，指针设置为nullptr</h3><p>在使用完new(malloc)的内存后，应该习惯在释放完该内存后，将指针设置为<code>nullptr</code>。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> *p = <span class="keyword">new</span> <span class="keyword">int</span>;</span><br><span class="line">*p = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">delete</span> p;</span><br><span class="line">p = <span class="literal">nullptr</span>;</span><br></pre></td></tr></table></figure>
+
+<p>###应该关注new的内存是否分配成功<br>在申请内存过程中，有极小概率的情况申请分配内存失败，应该处理出现申请分配内存失败的情况。有一种简便的方法用于申请内存时，如果申请失败，那么返回一个空指针，这各方法时通过在new与类型之间加入常量<code>std::nothrow</code>实现的。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> *p = <span class="keyword">new</span> (<span class="built_in">std</span>::nothrow) <span class="keyword">int</span>;</span><br><span class="line"><span class="keyword">if</span> (!p) &#123;</span><br><span class="line">    <span class="comment">// 错误处理</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"No enough memory!"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>c/c++</category>
       </categories>
@@ -231,7 +233,8 @@
 </ol>
 ]]></content>
       <tags>
-        <tag>python oracle</tag>
+        <tag>python</tag>
+        <tag>oracle</tag>
       </tags>
   </entry>
   <entry>
@@ -239,6 +242,9 @@
     <url>/2020/07/24/dexfile/</url>
     <content><![CDATA[<p>Android APK中，最终java文件会被编译为classes.dex文件。如果要分析APK就得了解dex文件的格式。<br>dex文件的格式在AOSP源码的<code>dalvik/libdex/DexFile.h</code>有定义。</p>
 ]]></content>
+      <tags>
+        <tag>android</tag>
+      </tags>
   </entry>
   <entry>
     <title>Andorid SDK 下载</title>
@@ -248,6 +254,9 @@
 
 <p>##安装android sdk<br>安装sdk请参考官方文档：<code>https://developer.android.com/studio/command-line/sdkmanager</code></p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sdkmanager <span class="string">"platform-tools"</span> <span class="string">"platforms;android-28"</span></span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>android</tag>
+      </tags>
   </entry>
   <entry>
     <title>Hexo+github博客搭建</title>
@@ -328,6 +337,9 @@
 
 
 ]]></content>
+      <tags>
+        <tag>博客搭建</tag>
+      </tags>
   </entry>
   <entry>
     <title>keepalived 安装与使用</title>
@@ -391,7 +403,8 @@
 </ol>
 ]]></content>
       <tags>
-        <tag>Linux keepalived</tag>
+        <tag>Linux</tag>
+        <tag>keepalived</tag>
       </tags>
   </entry>
   <entry>
@@ -406,61 +419,8 @@
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> get_task_comm(buf, tsk) (&#123;            \</span></span><br><span class="line">   BUILD_BUG_ON(<span class="keyword">sizeof</span>(buf) != TASK_COMM_LEN); \</span><br><span class="line">   __get_task_comm(buf, <span class="keyword">sizeof</span>(buf), tsk);     \</span><br><span class="line"> &#125;)</span><br><span class="line"></span><br><span class="line"> <span class="keyword">char</span> *__get_task_comm(<span class="keyword">char</span> *buf, <span class="keyword">size_t</span> buf_size, struct task_struct *tsk)</span><br><span class="line"> &#123;</span><br><span class="line">   task_lock(tsk);</span><br><span class="line">   <span class="built_in">strncpy</span>(buf, tsk-&gt;comm, buf_size);</span><br><span class="line">   task_unlock(tsk);</span><br><span class="line">   <span class="keyword">return</span> buf;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
-        <tag>kernel pid</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>linux_filesystem</title>
-    <url>/2020/08/19/linux-filesystem/</url>
-    <content><![CDATA[<p>Linux中常见的文件系统是ext4文件系统，那文件系统的基本组成是什么样的呢？Linux操作系统中，文件除了实际的数据之外还有诸如权限、文件属性类的数据。文件系统通常会将实际的数据存放在<code>block</code>中，而权限及文件属性数据存放在<code>inode</code>中。</p>
-<h2 id="inode-和-block-概述"><a href="#inode-和-block-概述" class="headerlink" title="inode 和 block 概述"></a>inode 和 block 概述</h2><p>文件是存储在硬盘上的，硬盘的最小存储单位叫做扇区<code>sector</code>，每个扇区存储<code>512字节</code>。操作系统读取硬盘的时候，不会一个个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个块<code>block</code>。这种由多个扇区组成的块，是文件存取的最小单位。块的大小，最常见的是<code>4KB</code>，即连续八个sector组成一个<code>block</code>。</p>
-<p>文件数据存储在块中，那么还必须找到一个地方存储文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种存储文件元信息的区域就叫做<code>inode</code>，中文译名为<code>索引节点</code>，也叫<code>i节点</code>。因此，一个文件必须占用一个<code>inode</code>，但至少占用一个<code>block</code>。</p>
-<ul>
-<li>元信息：inode</li>
-<li>数据: block</li>
-</ul>
-<h2 id="inode内容"><a href="#inode内容" class="headerlink" title="inode内容"></a>inode内容</h2><p><code>inode</code>包含很多的文件元信息，但不包含文件名，例如：字节数、属主<code>UserID</code>、属组<code>GroupID</code>、读写执行权限、时间戳等。</p>
-<p>而文件名存放在目录当中，但Linux系统内部不使用文件名，而是使用<code>inode号码</code>识别文件。对于系统来说文件名只是<code>inode号码</code>便于识别的别称。</p>
-<h2 id="inode号码"><a href="#inode号码" class="headerlink" title="inode号码"></a>inode号码</h2><p>可以通过<code>stat</code>命令或者<code>ls -i</code>命令查看文件或者目录的<code>inode号码</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">stat</span> readme.txt</span><br><span class="line">  文件：<span class="string">"readme.txt"</span></span><br><span class="line">  大小：6          块：8          IO 块：4096   普通文件</span><br><span class="line">设备：fc02h/64514d Inode：88617255    硬链接：1</span><br><span class="line">权限：(0664/-rw-rw-r--)  Uid：( 5002/xxx)   Gid：( 1003/xxx)</span><br><span class="line">最近访问：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">最近更改：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">最近改动：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">创建时间：-</span><br><span class="line"></span><br><span class="line">ls -i readme.txt</span><br><span class="line">88617255 readme.txt</span><br></pre></td></tr></table></figure>
-<p>表面上，用户通过文件名打开文件，实际上，系统内部将这个过程分为三步：</p>
-<ol>
-<li>系统找到这个文件名对应的<code>inode号码</code>；</li>
-<li>通过<code>inode号码</code>，获取<code>inode信息</code>；</li>
-<li>根据<code>inode信息</code>，找到文件数据所在的<code>block</code>，并读出数据。<br>其实系统还要根据<code>inode信息</code>，看用户是否具有<code>访问权限</code>，有就指向对应的数据<code>block</code>，没有就返回权限拒绝。</li>
-</ol>
-]]></content>
-      <tags>
-        <tag>Linux filesystem 文件系统</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>将modules和exponent转换为公钥</title>
-    <url>/2020/05/22/modulus-and-exponent-to-publicKey/</url>
-    <content><![CDATA[<p>&emsp;&emsp;在使用加解密时，有时候我们拿到的是公钥中的modulus和exponent字段，当需要通过使用openssl工具进行验签或者加密的时候，就需要将这些信息转换成公钥了。本文介绍如何将modules和exponent转换为公钥。</p>
-<a id="more"></a>
-<h2 id="公钥文件分析"><a href="#公钥文件分析" class="headerlink" title="公钥文件分析"></a>公钥文件分析</h2><p>使用如下命令dump出公钥的信息：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ openssl rsa -pubin -in  pub.pem -noout -text</span><br><span class="line">Public-Key: (2048 bit)</span><br><span class="line">Modulus:</span><br><span class="line">    00:a0:10:a8:32:0b:cb:75:db:7d:8e:ba:a5:df:56:</span><br><span class="line">    b2:fb:9c:e9:34:b3:ae:7b:0b:07:a6:13:40:28:13:</span><br><span class="line">    be:78:5f:69:09:c1:bb:5e:52:62:aa:a3:f5:38:5d:</span><br><span class="line">    70:c2:3c:95:05:71:e8:87:57:10:a0:5d:7b:8a:f7:</span><br><span class="line">    dd:a3:e4:85:f5:e1:e7:ba:e2:34:4c:18:9f:46:55:</span><br><span class="line">    15:49:b5:48:92:22:ed:84:24:17:86:bf:69:10:55:</span><br><span class="line">    42:76:4b:55:bf:d3:ce:a4:2a:bd:5e:a2:e5:29:84:</span><br><span class="line">    4f:77:08:3a:22:04:5c:00:de:8b:9b:ee:7f:68:b0:</span><br><span class="line">    b0:9b:e8:bb:b1:99:e6:8a:cf:9e:b9:85:d2:86:d3:</span><br><span class="line">    5e:c2:a4:56:8d:f8:87:1d:6c:b3:73:83:3e:7b:bc:</span><br><span class="line">    5d:c6:e2:63:fd:e1:4d:18:df:53:0f:4e:13:6f:fd:</span><br><span class="line">    a6:b7:8c:e9:26:a3:4e:2b:fd:61:3d:d1:b5:f4:2f:</span><br><span class="line">    ad:55:12:57:2a:20:ed:30:e7:64:3c:87:26:47:ef:</span><br><span class="line">    97:48:30:df:44:f2:ed:c6:54:ed:5e:4f:dd:d9:3d:</span><br><span class="line">    64:51:02:f9:7b:56:77:44:63:b0:95:1a:5e:83:4b:</span><br><span class="line">    82:ce:59:f2:9e:e1:fc:16:1c:fc:f6:9c:55:37:73:</span><br><span class="line">    ae:6a:e9:76:0c:9e:3a:b1:fc:cf:76:20:6b:17:d4:</span><br><span class="line">    87:c3</span><br><span class="line">Exponent: 65537 (0x10001)</span><br></pre></td></tr></table></figure>
-<p>从上面的信息可以看到<code>exponent</code>的值为<code>65537</code>。上面的信息中发现我们的public key的长度是2048位的，但是modulus有257个字节，合计2056（257*8）位,经过验证发现<code>modulus</code>中的第一位<code>00</code>是不需要的。后面根据<a href="https://stackoverflow.com/questions/5403808/private-key-length-bytes" target="_blank" rel="noopener">网上资料</a>发现rsa格式的密钥，它的密钥长度跟<code>modulus</code>的长度是一致的，第一位<code>00</code>不影响<code>modulus</code>的大小，也就不会影响公钥的长度了。  </p>
-<h3 id="导出hex格式的modulus"><a href="#导出hex格式的modulus" class="headerlink" title="导出hex格式的modulus"></a>导出hex格式的modulus</h3><p>通过openssl asn1parse可以查看密钥的格式,关于pem格式的密钥的介绍请看<a href="https://www.cnblogs.com/adylee/p/9366518.html" target="_blank" rel="noopener">这里</a>。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ openssl asn1parse -in pub.pem  -i</span><br><span class="line">    0:d&#x3D;0  hl&#x3D;4 l&#x3D; 290 cons: SEQUENCE          </span><br><span class="line">    4:d&#x3D;1  hl&#x3D;2 l&#x3D;  13 cons:  SEQUENCE          </span><br><span class="line">    6:d&#x3D;2  hl&#x3D;2 l&#x3D;   9 prim:   OBJECT            :rsaEncryption</span><br><span class="line">   17:d&#x3D;2  hl&#x3D;2 l&#x3D;   0 prim:   NULL              </span><br><span class="line">   19:d&#x3D;1  hl&#x3D;4 l&#x3D; 271 prim:  BIT STRING</span><br></pre></td></tr></table></figure>
-<p>其中<code>BIT STRING</code>就是modulus，可以看到它的<code>offset</code>为19,通过如下命令导出hex格式的modulus：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ openssl asn1parse -in pub.pem  -i -dump -strparse 19</span><br><span class="line">    0:d&#x3D;0  hl&#x3D;4 l&#x3D; 266 cons: SEQUENCE          </span><br><span class="line">    4:d&#x3D;1  hl&#x3D;4 l&#x3D; 257 prim: INTEGER           :A010A8320BCB75DB7D8EBAA5DF56B2FB9CE934B3AE7B0B07A613402813BE785F6909C1BB5E5262AAA3F5385D70C23C950571E8875710A05D7B8AF7DDA3E485F5E1E7BAE2344C189F46551549B5489222ED84241786BF69105542764B55BFD3CEA42ABD5EA2E529844F77083A22045C00DE8B9BEE7F68B0B09BE8BBB199E68ACF9EB985D286D35EC2A4568DF8871D6CB373833E7BBC5DC6E263FDE14D18DF530F4E136FFDA6B78CE926A34E2BFD613DD1B5F42FAD5512572A20ED30E7643C872647EF974830DF44F2EDC654ED5E4FDDD93D645102F97B56774463B0951A5E834B82CE59F29EE1FC161CFCF69C553773AE6AE9760C9E3AB1FCCF76206B17D487C3</span><br><span class="line">  265:d&#x3D;1  hl&#x3D;2 l&#x3D;   3 prim: INTEGER           :010001</span><br></pre></td></tr></table></figure>
-<p>可以看到其中的modulus跟上小节中使用<code>openssl rsa</code>命令导出的一样，但是去掉了开头的<code>00</code>。</p>
-<h2 id="提取公钥"><a href="#提取公钥" class="headerlink" title="提取公钥"></a>提取公钥</h2><p>这里对公钥的提取需要使用到Python的<a href="https://github.com/dlitz/pycrypto" target="_blank" rel="noopener">pycrypto</a>库。代码如下:</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.PublicKey.RSA <span class="keyword">import</span> construct</span><br><span class="line">e = long(<span class="number">65537</span>) <span class="comment">## Exponent</span></span><br><span class="line">n = int(<span class="string">'A010A8320BCB75DB7D8EBAA5DF56B2FB9CE934B3AE7B0B07A613402813BE785F6909C1BB5E5262AAA3F5385D70C23C950571E8875710A05D7B8AF7DDA3E485F5E1E7BAE2344C189F46551549B5489222ED84241786BF69105542764B55BFD3CEA42ABD5EA2E529844F77083A22045C00DE8B9BEE7F68B0B09BE8BBB199E68ACF9EB985D286D35EC2A4568DF8871D6CB373833E7BBC5DC6E263FDE14D18DF530F4E136FFDA6B78CE926A34E2BFD613DD1B5F42FAD5512572A20ED30E7643C872647EF974830DF44F2EDC654ED5E4FDDD93D645102F97B56774463B0951A5E834B82CE59F29EE1FC161CFCF69C553773AE6AE9760C9E3AB1FCCF76206B17D487C3'</span>, <span class="number">16</span>) <span class="comment">## modulus</span></span><br><span class="line">pubkey = construct((n, e))</span><br><span class="line">strkey = pubkey.exportKey()</span><br><span class="line"><span class="keyword">print</span> strkey</span><br></pre></td></tr></table></figure>
-<p>需要注意的是e、n都需要是long类型的，不然会报错，最终获取到如下的key。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-----BEGIN PUBLIC KEY-----</span><br><span class="line">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoBCoMgvLddt9jrql31ay</span><br><span class="line">+5zpNLOuewsHphNAKBO+eF9pCcG7XlJiqqP1OF1wwjyVBXHoh1cQoF17ivfdo+SF</span><br><span class="line">9eHnuuI0TBifRlUVSbVIkiLthCQXhr9pEFVCdktVv9POpCq9XqLlKYRPdwg6IgRc</span><br><span class="line">AN6Lm+5&#x2F;aLCwm+i7sZnmis+euYXShtNewqRWjfiHHWyzc4M+e7xdxuJj&#x2F;eFNGN9T</span><br><span class="line">D04Tb&#x2F;2mt4zpJqNOK&#x2F;1hPdG19C+tVRJXKiDtMOdkPIcmR++XSDDfRPLtxlTtXk&#x2F;d</span><br><span class="line">2T1kUQL5e1Z3RGOwlRpeg0uCzlnynuH8Fhz89pxVN3Ouaul2DJ46sfzPdiBrF9SH</span><br><span class="line">wwIDAQAB</span><br><span class="line">-----END PUBLIC KEY-----</span><br></pre></td></tr></table></figure>
-
-<h3 id="关于Crypto-PublicKey-RSA-construct"><a href="#关于Crypto-PublicKey-RSA-construct" class="headerlink" title="关于Crypto.PublicKey.RSA.construct"></a>关于Crypto.PublicKey.RSA.construct</h3><p>下面是Crypto.PublicKey.RSA.construct方法的介绍:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&quot;&quot;&quot;Construct an RSA key from a tuple of valid RSA components.</span><br><span class="line">The modulus **n** must be the product of two primes.</span><br><span class="line">The public exponent **e** must be odd and larger than 1.</span><br><span class="line">In case of a private key, the following equations must apply:</span><br><span class="line">- e !&#x3D; 1</span><br><span class="line">- p*q &#x3D; n</span><br><span class="line">- e*d &#x3D; 1 mod (p-1)(q-1)</span><br><span class="line">- p*u &#x3D; 1 mod q</span><br><span class="line">:Parameters:</span><br><span class="line"> tup : tuple</span><br><span class="line">            A tuple of long integers, with at least 2 and no</span><br><span class="line">            more than 6 items. The items come in the following order:</span><br><span class="line">            1. RSA modulus (n).</span><br><span class="line">            2. Public exponent (e).</span><br><span class="line">            3. Private exponent (d). Only required if the key is private.</span><br><span class="line">            4. First factor of n (p). Optional.</span><br><span class="line">            5. Second factor of n (q). Optional.</span><br><span class="line">            6. CRT coefficient, (1&#x2F;p) mod q (u). Optional.</span><br><span class="line"></span><br><span class="line">:Return: An RSA key object (&#96;_RSAobj&#96;).</span><br><span class="line">&quot;&quot;&quot;</span><br></pre></td></tr></table></figure>
-<p>想要了解这堆说明，需要先了解下<a href="https://zhuanlan.zhihu.com/p/44185847" target="_blank" rel="noopener"><code>RSA</code>算法的原理</a>。根据这篇文章我们可以知道如下几点：<br>1、 模数n = p<em>q,其中q与q互质<br>2、 e是一个随机数，它不等于1，并且与(q-1)</em>(p-1)互质。（算法上m = (q-1)<em>(p-1)）。<br>3、 d是一个整数，(e</em>d)%m = 1, 这里得到的d是私钥的一部分。<br>公钥：(n, e)<br>私钥：(n, d)</p>
-<h4 id="加密过程"><a href="#加密过程" class="headerlink" title="加密过程"></a>加密过程</h4><p>假设明文为a，那么密文b = a^e % n，可以看到我们用到了<code>(n, e)</code>，所以加密的时候是使用公钥进行加密的。其中需要注意的是，要想使用公钥（n，e) 加密，要求被加密的数字必须小于n。</p>
-<h4 id="解密过程"><a href="#解密过程" class="headerlink" title="解密过程"></a>解密过程</h4><p>解密的时候用到私钥<code>(n, d)</code>，假设接收到的密文b,那么想要得到明文a,则需要通过如下计算：<br>a = b^d %n。</p>
-<h3 id="关于验证过程中的注意事项"><a href="#关于验证过程中的注意事项" class="headerlink" title="关于验证过程中的注意事项"></a>关于验证过程中的注意事项</h3><p>验证的时候保证明文的一致性，如明文存在文件中，由于windows 、linux文件格式不一样，可能看上去字符串一样，但是文件的hash是不一样的。</p>
-]]></content>
-      <tags>
-        <tag>加解密 openssl</tag>
+        <tag>kernel</tag>
+        <tag>pid</tag>
       </tags>
   </entry>
   <entry>
@@ -496,6 +456,36 @@
 </ul>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://blog.csdn.net/qq_36357820/article/details/78488077" target="_blank" rel="noopener">https://blog.csdn.net/qq_36357820/article/details/78488077</a></p>
 ]]></content>
+      <tags>
+        <tag>linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>linux_filesystem</title>
+    <url>/2020/08/19/linux-filesystem/</url>
+    <content><![CDATA[<p>Linux中常见的文件系统是ext4文件系统，那文件系统的基本组成是什么样的呢？Linux操作系统中，文件除了实际的数据之外还有诸如权限、文件属性类的数据。文件系统通常会将实际的数据存放在<code>block</code>中，而权限及文件属性数据存放在<code>inode</code>中。</p>
+<h2 id="inode-和-block-概述"><a href="#inode-和-block-概述" class="headerlink" title="inode 和 block 概述"></a>inode 和 block 概述</h2><p>文件是存储在硬盘上的，硬盘的最小存储单位叫做扇区<code>sector</code>，每个扇区存储<code>512字节</code>。操作系统读取硬盘的时候，不会一个个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个块<code>block</code>。这种由多个扇区组成的块，是文件存取的最小单位。块的大小，最常见的是<code>4KB</code>，即连续八个sector组成一个<code>block</code>。</p>
+<p>文件数据存储在块中，那么还必须找到一个地方存储文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种存储文件元信息的区域就叫做<code>inode</code>，中文译名为<code>索引节点</code>，也叫<code>i节点</code>。因此，一个文件必须占用一个<code>inode</code>，但至少占用一个<code>block</code>。</p>
+<ul>
+<li>元信息：inode</li>
+<li>数据: block</li>
+</ul>
+<h2 id="inode内容"><a href="#inode内容" class="headerlink" title="inode内容"></a>inode内容</h2><p><code>inode</code>包含很多的文件元信息，但不包含文件名，例如：字节数、属主<code>UserID</code>、属组<code>GroupID</code>、读写执行权限、时间戳等。</p>
+<p>而文件名存放在目录当中，但Linux系统内部不使用文件名，而是使用<code>inode号码</code>识别文件。对于系统来说文件名只是<code>inode号码</code>便于识别的别称。</p>
+<h2 id="inode号码"><a href="#inode号码" class="headerlink" title="inode号码"></a>inode号码</h2><p>可以通过<code>stat</code>命令或者<code>ls -i</code>命令查看文件或者目录的<code>inode号码</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">stat</span> readme.txt</span><br><span class="line">  文件：<span class="string">"readme.txt"</span></span><br><span class="line">  大小：6          块：8          IO 块：4096   普通文件</span><br><span class="line">设备：fc02h/64514d Inode：88617255    硬链接：1</span><br><span class="line">权限：(0664/-rw-rw-r--)  Uid：( 5002/xxx)   Gid：( 1003/xxx)</span><br><span class="line">最近访问：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">最近更改：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">最近改动：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">创建时间：-</span><br><span class="line"></span><br><span class="line">ls -i readme.txt</span><br><span class="line">88617255 readme.txt</span><br></pre></td></tr></table></figure>
+<p>表面上，用户通过文件名打开文件，实际上，系统内部将这个过程分为三步：</p>
+<ol>
+<li>系统找到这个文件名对应的<code>inode号码</code>；</li>
+<li>通过<code>inode号码</code>，获取<code>inode信息</code>；</li>
+<li>根据<code>inode信息</code>，找到文件数据所在的<code>block</code>，并读出数据。<br>其实系统还要根据<code>inode信息</code>，看用户是否具有<code>访问权限</code>，有就指向对应的数据<code>block</code>，没有就返回权限拒绝。</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>Linux</tag>
+        <tag>filesystem</tag>
+        <tag>文件系统</tag>
+      </tags>
   </entry>
   <entry>
     <title>openssl初探</title>
@@ -586,6 +576,49 @@
       </tags>
   </entry>
   <entry>
+    <title>将modules和exponent转换为公钥</title>
+    <url>/2020/05/22/modulus-and-exponent-to-publicKey/</url>
+    <content><![CDATA[<p>&emsp;&emsp;在使用加解密时，有时候我们拿到的是公钥中的modulus和exponent字段，当需要通过使用openssl工具进行验签或者加密的时候，就需要将这些信息转换成公钥了。本文介绍如何将modules和exponent转换为公钥。</p>
+<a id="more"></a>
+<h2 id="公钥文件分析"><a href="#公钥文件分析" class="headerlink" title="公钥文件分析"></a>公钥文件分析</h2><p>使用如下命令dump出公钥的信息：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ openssl rsa -pubin -in  pub.pem -noout -text</span><br><span class="line">Public-Key: (2048 bit)</span><br><span class="line">Modulus:</span><br><span class="line">    00:a0:10:a8:32:0b:cb:75:db:7d:8e:ba:a5:df:56:</span><br><span class="line">    b2:fb:9c:e9:34:b3:ae:7b:0b:07:a6:13:40:28:13:</span><br><span class="line">    be:78:5f:69:09:c1:bb:5e:52:62:aa:a3:f5:38:5d:</span><br><span class="line">    70:c2:3c:95:05:71:e8:87:57:10:a0:5d:7b:8a:f7:</span><br><span class="line">    dd:a3:e4:85:f5:e1:e7:ba:e2:34:4c:18:9f:46:55:</span><br><span class="line">    15:49:b5:48:92:22:ed:84:24:17:86:bf:69:10:55:</span><br><span class="line">    42:76:4b:55:bf:d3:ce:a4:2a:bd:5e:a2:e5:29:84:</span><br><span class="line">    4f:77:08:3a:22:04:5c:00:de:8b:9b:ee:7f:68:b0:</span><br><span class="line">    b0:9b:e8:bb:b1:99:e6:8a:cf:9e:b9:85:d2:86:d3:</span><br><span class="line">    5e:c2:a4:56:8d:f8:87:1d:6c:b3:73:83:3e:7b:bc:</span><br><span class="line">    5d:c6:e2:63:fd:e1:4d:18:df:53:0f:4e:13:6f:fd:</span><br><span class="line">    a6:b7:8c:e9:26:a3:4e:2b:fd:61:3d:d1:b5:f4:2f:</span><br><span class="line">    ad:55:12:57:2a:20:ed:30:e7:64:3c:87:26:47:ef:</span><br><span class="line">    97:48:30:df:44:f2:ed:c6:54:ed:5e:4f:dd:d9:3d:</span><br><span class="line">    64:51:02:f9:7b:56:77:44:63:b0:95:1a:5e:83:4b:</span><br><span class="line">    82:ce:59:f2:9e:e1:fc:16:1c:fc:f6:9c:55:37:73:</span><br><span class="line">    ae:6a:e9:76:0c:9e:3a:b1:fc:cf:76:20:6b:17:d4:</span><br><span class="line">    87:c3</span><br><span class="line">Exponent: 65537 (0x10001)</span><br></pre></td></tr></table></figure>
+<p>从上面的信息可以看到<code>exponent</code>的值为<code>65537</code>。上面的信息中发现我们的public key的长度是2048位的，但是modulus有257个字节，合计2056（257*8）位,经过验证发现<code>modulus</code>中的第一位<code>00</code>是不需要的。后面根据<a href="https://stackoverflow.com/questions/5403808/private-key-length-bytes" target="_blank" rel="noopener">网上资料</a>发现rsa格式的密钥，它的密钥长度跟<code>modulus</code>的长度是一致的，第一位<code>00</code>不影响<code>modulus</code>的大小，也就不会影响公钥的长度了。  </p>
+<h3 id="导出hex格式的modulus"><a href="#导出hex格式的modulus" class="headerlink" title="导出hex格式的modulus"></a>导出hex格式的modulus</h3><p>通过openssl asn1parse可以查看密钥的格式,关于pem格式的密钥的介绍请看<a href="https://www.cnblogs.com/adylee/p/9366518.html" target="_blank" rel="noopener">这里</a>。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ openssl asn1parse -in pub.pem  -i</span><br><span class="line">    0:d&#x3D;0  hl&#x3D;4 l&#x3D; 290 cons: SEQUENCE          </span><br><span class="line">    4:d&#x3D;1  hl&#x3D;2 l&#x3D;  13 cons:  SEQUENCE          </span><br><span class="line">    6:d&#x3D;2  hl&#x3D;2 l&#x3D;   9 prim:   OBJECT            :rsaEncryption</span><br><span class="line">   17:d&#x3D;2  hl&#x3D;2 l&#x3D;   0 prim:   NULL              </span><br><span class="line">   19:d&#x3D;1  hl&#x3D;4 l&#x3D; 271 prim:  BIT STRING</span><br></pre></td></tr></table></figure>
+<p>其中<code>BIT STRING</code>就是modulus，可以看到它的<code>offset</code>为19,通过如下命令导出hex格式的modulus：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ openssl asn1parse -in pub.pem  -i -dump -strparse 19</span><br><span class="line">    0:d&#x3D;0  hl&#x3D;4 l&#x3D; 266 cons: SEQUENCE          </span><br><span class="line">    4:d&#x3D;1  hl&#x3D;4 l&#x3D; 257 prim: INTEGER           :A010A8320BCB75DB7D8EBAA5DF56B2FB9CE934B3AE7B0B07A613402813BE785F6909C1BB5E5262AAA3F5385D70C23C950571E8875710A05D7B8AF7DDA3E485F5E1E7BAE2344C189F46551549B5489222ED84241786BF69105542764B55BFD3CEA42ABD5EA2E529844F77083A22045C00DE8B9BEE7F68B0B09BE8BBB199E68ACF9EB985D286D35EC2A4568DF8871D6CB373833E7BBC5DC6E263FDE14D18DF530F4E136FFDA6B78CE926A34E2BFD613DD1B5F42FAD5512572A20ED30E7643C872647EF974830DF44F2EDC654ED5E4FDDD93D645102F97B56774463B0951A5E834B82CE59F29EE1FC161CFCF69C553773AE6AE9760C9E3AB1FCCF76206B17D487C3</span><br><span class="line">  265:d&#x3D;1  hl&#x3D;2 l&#x3D;   3 prim: INTEGER           :010001</span><br></pre></td></tr></table></figure>
+<p>可以看到其中的modulus跟上小节中使用<code>openssl rsa</code>命令导出的一样，但是去掉了开头的<code>00</code>。</p>
+<h2 id="提取公钥"><a href="#提取公钥" class="headerlink" title="提取公钥"></a>提取公钥</h2><p>这里对公钥的提取需要使用到Python的<a href="https://github.com/dlitz/pycrypto" target="_blank" rel="noopener">pycrypto</a>库。代码如下:</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.PublicKey.RSA <span class="keyword">import</span> construct</span><br><span class="line">e = long(<span class="number">65537</span>) <span class="comment">## Exponent</span></span><br><span class="line">n = int(<span class="string">'A010A8320BCB75DB7D8EBAA5DF56B2FB9CE934B3AE7B0B07A613402813BE785F6909C1BB5E5262AAA3F5385D70C23C950571E8875710A05D7B8AF7DDA3E485F5E1E7BAE2344C189F46551549B5489222ED84241786BF69105542764B55BFD3CEA42ABD5EA2E529844F77083A22045C00DE8B9BEE7F68B0B09BE8BBB199E68ACF9EB985D286D35EC2A4568DF8871D6CB373833E7BBC5DC6E263FDE14D18DF530F4E136FFDA6B78CE926A34E2BFD613DD1B5F42FAD5512572A20ED30E7643C872647EF974830DF44F2EDC654ED5E4FDDD93D645102F97B56774463B0951A5E834B82CE59F29EE1FC161CFCF69C553773AE6AE9760C9E3AB1FCCF76206B17D487C3'</span>, <span class="number">16</span>) <span class="comment">## modulus</span></span><br><span class="line">pubkey = construct((n, e))</span><br><span class="line">strkey = pubkey.exportKey()</span><br><span class="line"><span class="keyword">print</span> strkey</span><br></pre></td></tr></table></figure>
+<p>需要注意的是e、n都需要是long类型的，不然会报错，最终获取到如下的key。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-----BEGIN PUBLIC KEY-----</span><br><span class="line">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoBCoMgvLddt9jrql31ay</span><br><span class="line">+5zpNLOuewsHphNAKBO+eF9pCcG7XlJiqqP1OF1wwjyVBXHoh1cQoF17ivfdo+SF</span><br><span class="line">9eHnuuI0TBifRlUVSbVIkiLthCQXhr9pEFVCdktVv9POpCq9XqLlKYRPdwg6IgRc</span><br><span class="line">AN6Lm+5&#x2F;aLCwm+i7sZnmis+euYXShtNewqRWjfiHHWyzc4M+e7xdxuJj&#x2F;eFNGN9T</span><br><span class="line">D04Tb&#x2F;2mt4zpJqNOK&#x2F;1hPdG19C+tVRJXKiDtMOdkPIcmR++XSDDfRPLtxlTtXk&#x2F;d</span><br><span class="line">2T1kUQL5e1Z3RGOwlRpeg0uCzlnynuH8Fhz89pxVN3Ouaul2DJ46sfzPdiBrF9SH</span><br><span class="line">wwIDAQAB</span><br><span class="line">-----END PUBLIC KEY-----</span><br></pre></td></tr></table></figure>
+
+<h3 id="关于Crypto-PublicKey-RSA-construct"><a href="#关于Crypto-PublicKey-RSA-construct" class="headerlink" title="关于Crypto.PublicKey.RSA.construct"></a>关于Crypto.PublicKey.RSA.construct</h3><p>下面是Crypto.PublicKey.RSA.construct方法的介绍:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&quot;&quot;&quot;Construct an RSA key from a tuple of valid RSA components.</span><br><span class="line">The modulus **n** must be the product of two primes.</span><br><span class="line">The public exponent **e** must be odd and larger than 1.</span><br><span class="line">In case of a private key, the following equations must apply:</span><br><span class="line">- e !&#x3D; 1</span><br><span class="line">- p*q &#x3D; n</span><br><span class="line">- e*d &#x3D; 1 mod (p-1)(q-1)</span><br><span class="line">- p*u &#x3D; 1 mod q</span><br><span class="line">:Parameters:</span><br><span class="line"> tup : tuple</span><br><span class="line">            A tuple of long integers, with at least 2 and no</span><br><span class="line">            more than 6 items. The items come in the following order:</span><br><span class="line">            1. RSA modulus (n).</span><br><span class="line">            2. Public exponent (e).</span><br><span class="line">            3. Private exponent (d). Only required if the key is private.</span><br><span class="line">            4. First factor of n (p). Optional.</span><br><span class="line">            5. Second factor of n (q). Optional.</span><br><span class="line">            6. CRT coefficient, (1&#x2F;p) mod q (u). Optional.</span><br><span class="line"></span><br><span class="line">:Return: An RSA key object (&#96;_RSAobj&#96;).</span><br><span class="line">&quot;&quot;&quot;</span><br></pre></td></tr></table></figure>
+<p>想要了解这堆说明，需要先了解下<a href="https://zhuanlan.zhihu.com/p/44185847" target="_blank" rel="noopener"><code>RSA</code>算法的原理</a>。根据这篇文章我们可以知道如下几点：<br>1、 模数n = p<em>q,其中q与q互质<br>2、 e是一个随机数，它不等于1，并且与(q-1)</em>(p-1)互质。（算法上m = (q-1)<em>(p-1)）。<br>3、 d是一个整数，(e</em>d)%m = 1, 这里得到的d是私钥的一部分。<br>公钥：(n, e)<br>私钥：(n, d)</p>
+<h4 id="加密过程"><a href="#加密过程" class="headerlink" title="加密过程"></a>加密过程</h4><p>假设明文为a，那么密文b = a^e % n，可以看到我们用到了<code>(n, e)</code>，所以加密的时候是使用公钥进行加密的。其中需要注意的是，要想使用公钥（n，e) 加密，要求被加密的数字必须小于n。</p>
+<h4 id="解密过程"><a href="#解密过程" class="headerlink" title="解密过程"></a>解密过程</h4><p>解密的时候用到私钥<code>(n, d)</code>，假设接收到的密文b,那么想要得到明文a,则需要通过如下计算：<br>a = b^d %n。</p>
+<h3 id="关于验证过程中的注意事项"><a href="#关于验证过程中的注意事项" class="headerlink" title="关于验证过程中的注意事项"></a>关于验证过程中的注意事项</h3><p>验证的时候保证明文的一致性，如明文存在文件中，由于windows 、linux文件格式不一样，可能看上去字符串一样，但是文件的hash是不一样的。</p>
+]]></content>
+      <tags>
+        <tag>openssl</tag>
+        <tag>加解密</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>printk_ratelimited 导致log打印不全</title>
+    <url>/2020/06/30/printk-ratelimited/</url>
+    <content><![CDATA[<p>在Android调试过程中，发现启动log中出现如下log：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[   48.471014] printk: init: 46 output lines suppressed due to ratelimiting</span><br><span class="line">[   48.617226] init: [libfs_mgr]dt_fstab: Skip disabled entry for partition vendor</span><br><span class="line">[   48.631023] init: [libfs_mgr]Warning: unknown flag: wrappedkey</span><br><span class="line">[   48.639762] init: DM_DEV_STATUS failed for system_ext: No such device or address</span><br><span class="line">[   48.647430] init: Could not update logical partition</span><br><span class="line">[   48.653314] init: DM_DEV_STATUS failed for product: No such device or address</span><br><span class="line">[   48.660748] init: Could not update logical partition</span><br></pre></td></tr></table></figure>
+<p>也就是说<code>printk: init: 46 output lines suppressed due to ratelimiting</code>有部分log没有打印出来，解决办法就是修改kernel源码。修改文件位于<code>include/linux/ratelimit.h</code>。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 下面表示5秒内最多打印10条记录，可以将DEFAULT_RATELIMIT_BURST修改成50，那么5秒内就可以打印50条了。当然也不是越大越好，因为需要考虑考log对系统服务器的影响，不要引起阻塞。</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEFAULT_RATELIMIT_INTERVAL      (5 * HZ)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEFAULT_RATELIMIT_BURST         10  <span class="comment">// 可以修改成50</span></span></span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>kernel</tag>
+        <tag>printk</tag>
+        <tag>调试</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>oracle</title>
     <url>/2020/11/20/oracle/</url>
     <content><![CDATA[<p>Oracle数据库跟MySql数据库要复杂一些，有数据库、数据库实例等概念。</p>
@@ -612,16 +645,8 @@
 <h3 id="Microsoft-官方示例"><a href="#Microsoft-官方示例" class="headerlink" title="Microsoft 官方示例"></a>Microsoft 官方示例</h3><p><a href="https://docs.microsoft.com/zh-cn/office/client-developer/access/desktop-database-reference/ado-code-examples-in-microsoft-visual-c" target="_blank" rel="noopener">https://docs.microsoft.com/zh-cn/office/client-developer/access/desktop-database-reference/ado-code-examples-in-microsoft-visual-c</a></p>
 <h3 id="SOCI使用"><a href="#SOCI使用" class="headerlink" title="SOCI使用"></a>SOCI使用</h3><p><a href="https://www.jianshu.com/p/66ac4e90c602" target="_blank" rel="noopener">https://www.jianshu.com/p/66ac4e90c602</a></p>
 ]]></content>
-  </entry>
-  <entry>
-    <title>printk_ratelimited 导致log打印不全</title>
-    <url>/2020/06/30/printk-ratelimited/</url>
-    <content><![CDATA[<p>在Android调试过程中，发现启动log中出现如下log：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[   48.471014] printk: init: 46 output lines suppressed due to ratelimiting</span><br><span class="line">[   48.617226] init: [libfs_mgr]dt_fstab: Skip disabled entry for partition vendor</span><br><span class="line">[   48.631023] init: [libfs_mgr]Warning: unknown flag: wrappedkey</span><br><span class="line">[   48.639762] init: DM_DEV_STATUS failed for system_ext: No such device or address</span><br><span class="line">[   48.647430] init: Could not update logical partition</span><br><span class="line">[   48.653314] init: DM_DEV_STATUS failed for product: No such device or address</span><br><span class="line">[   48.660748] init: Could not update logical partition</span><br></pre></td></tr></table></figure>
-<p>也就是说<code>printk: init: 46 output lines suppressed due to ratelimiting</code>有部分log没有打印出来，解决办法就是修改kernel源码。修改文件位于<code>include/linux/ratelimit.h</code>。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 下面表示5秒内最多打印10条记录，可以将DEFAULT_RATELIMIT_BURST修改成50，那么5秒内就可以打印50条了。当然也不是越大越好，因为需要考虑考log对系统服务器的影响，不要引起阻塞。</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEFAULT_RATELIMIT_INTERVAL      (5 * HZ)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEFAULT_RATELIMIT_BURST         10  <span class="comment">// 可以修改成50</span></span></span><br></pre></td></tr></table></figure>]]></content>
       <tags>
-        <tag>kernel printk 调试</tag>
+        <tag>oracle</tag>
       </tags>
   </entry>
   <entry>
@@ -685,7 +710,8 @@
 </ol>
 ]]></content>
       <tags>
-        <tag>android filesystem</tag>
+        <tag>android</tag>
+        <tag>filesystem</tag>
       </tags>
   </entry>
 </search>
