@@ -1,38 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>android simpleperf工具使用入门</title>
-    <url>/2020/05/15/android-simpleperf/</url>
-    <content><![CDATA[<p>&emsp;&emsp;Simpleperf 是一个通用的命令行 CPU 性能剖析工具，在Android NDK中已经自带了。需要注意的是，如果自带的simpleperf不能使用，就需要在适配当前Android设备的源码中编译了。simpleperf的源码在AOSP的system/extras/simpleperf下，其中doc目录详细介绍了如何使用该工具。</p>
-<a id="more"></a>
-
-<h2 id="在源码中编译simpleperf"><a href="#在源码中编译simpleperf" class="headerlink" title="在源码中编译simpleperf"></a>在源码中编译simpleperf</h2><p>&emsp;&emsp;可以通过如下命令在Andorid设备的源码中编译simpleperf:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> build/envsetup.sh</span><br><span class="line">lunch aosp_arm64-eng</span><br><span class="line">make simpleperf -j32</span><br></pre></td></tr></table></figure>
-<p>最后将会生成out/target/product/xxx/system/xbin/simpleperf，这就是需要push到Android设备的simpleperf。</p>
-<h3 id="push-simpleperf"><a href="#push-simpleperf" class="headerlink" title="push simpleperf"></a>push simpleperf</h3><p>&emsp;&emsp;在push之前需要需要保证Android设备具有root权限，一般通过adb root选项进行提权。然后通过如下命令将simpleperf push到设备。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">adb root</span><br><span class="line">adb shell mkdir /data/bin</span><br><span class="line">adb push &lt;编译出来的simpleperf&gt; /data/bin/simpleperf</span><br><span class="line">adb shell setenforce 0</span><br></pre></td></tr></table></figure>
-<p>进行了上述步骤后，就可以在设备中使用simpleperf了。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">adb shell /data/bin/simpleperf --version</span><br><span class="line"><span class="comment"># simpleperf I command.cpp:131] Simpleperf version 1.c65e6065befd</span></span><br><span class="line"><span class="comment">#</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="simpleperf使用介绍"><a href="#simpleperf使用介绍" class="headerlink" title="simpleperf使用介绍"></a>simpleperf使用介绍</h2><p>&emsp;&emsp;simpleperf的record命令用于转储已需要分析的进程的样本。 每个样本可以包含诸如样本生成时间，自上一个样本以来的事件数，线程的程序计数器，线程的调用链之类的信息。后续的分析步骤都是基于这个样本信息来分析的。</p>
-<h3 id="采集样本数据"><a href="#采集样本数据" class="headerlink" title="采集样本数据"></a>采集样本数据</h3><p>首先确认需要分析的进程。比如分析当前cpu占用最高的进程。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top -m 5 <span class="comment"># 得到执行的进程名字</span></span><br><span class="line"><span class="comment">## 根据pidof得到需要分析的进程id号</span></span><br><span class="line">pidof &lt;进程名&gt;</span><br></pre></td></tr></table></figure>
-<p>得到进程id后就可以进行数据采集了。如果使用simpleperf的recod命令请参<a href="https://android.googlesource.com/platform/system/extras/+/refs/heads/master/simpleperf/doc/executable_commands_reference.md" target="_blank" rel="noopener">考官方文档</a>中的<code>The record command</code>小节。<br>如下的命令记录进行号为11961的record：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/data/bin/simpleperf record -p 11961 -o /sdcard/perf_11961.data --duration 360</span><br></pre></td></tr></table></figure>
-<p>结果保存在/sdcard/perf_11961.data,记录持续时间为360秒。这里只记录了默认的<code>cpu-cycles</code>event，如果需要记录更加多的event需要指定-e参数。通过<code>simpleperf list</code>命令查看支持哪些events。</p>
-<h3 id="查看特定进程调用的动态库"><a href="#查看特定进程调用的动态库" class="headerlink" title="查看特定进程调用的动态库"></a>查看特定进程调用的动态库</h3><p>通过report命令可以查看这种report数据：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./simpleperf report --sort dso -i /sdcard/perf_11961.data</span><br><span class="line">simpleperf W dso.cpp:361] failed to <span class="built_in">read</span> symbols from [vdso]: File not found</span><br><span class="line">Cmdline: /data/bin/simpleperf record -p 11961 -o /sdcard/perf_11961.data --duration 360</span><br><span class="line">Arch: arm64</span><br><span class="line">Event: cpu-cycles (<span class="built_in">type</span> 0, config 0)</span><br><span class="line">Samples: 649</span><br><span class="line">Event count: 136430910</span><br><span class="line"></span><br><span class="line">Overhead  Shared Object</span><br><span class="line">57.91%    [kernel.kallsyms]</span><br><span class="line">20.03%    /system/lib64/libart.so</span><br><span class="line">9.43%     /system/lib64/libandroidfw.so</span><br><span class="line">5.05%     /system/framework/arm64/boot-framework.oat</span><br><span class="line">3.58%     /system/lib64/libc.so</span><br><span class="line">1.67%     /system/framework/arm64/boot-core-oj.oat</span><br><span class="line">0.89%     /system/lib64/libbinder.so</span><br><span class="line">0.39%     /system/lib64/libc++.so</span><br><span class="line">0.38%     /system/lib64/libopenjdk.so</span><br><span class="line">0.27%     /system/lib64/libz.so</span><br><span class="line">0.15%     /system/lib64/libandroid_runtime.so</span><br><span class="line">0.13%     [vdso]</span><br><span class="line">0.07%     /system/framework/arm64/boot-core-libart.oat</span><br><span class="line">0.05%     /system/lib64/libutils.so</span><br></pre></td></tr></table></figure>
-
-<h3 id="查看函数调用关系"><a href="#查看函数调用关系" class="headerlink" title="查看函数调用关系"></a>查看函数调用关系</h3><p>simpleperf report还可以导出函数调用关系,–symfs可以指定符号表的目录。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/data/bin/simpleperf report -g  -i /sdcard/perf_19357.data --symfs . &gt; /sdcard/g_19357.dat</span><br></pre></td></tr></table></figure>
-
-<h4 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h4><ol>
-<li><a href="https://blog.csdn.net/zhuyong006/article/details/103112571" target="_blank" rel="noopener">https://blog.csdn.net/zhuyong006/article/details/103112571</a></li>
-<li><a href="https://developer.android.com/ndk/guides/simpleperf" target="_blank" rel="noopener">https://developer.android.com/ndk/guides/simpleperf</a></li>
-</ol>
+    <title>如何在EDK II中编写应用程序</title>
+    <url>/2020/05/25/EDK2-new-app/</url>
+    <content><![CDATA[<p>EDK2的开发一般分为驱动与应用的开发，本文介绍如何在EDK2中开发应用程序。官方的教程请参考：<a href="https://github.com/tianocore/tianocore.github.io/wiki/Getting-Started-Writing-Simple-Application" target="_blank" rel="noopener">Getting Started Writing Simple Application</a>。</p>
+<h3 id="如何编写C文件"><a href="#如何编写C文件" class="headerlink" title="如何编写C文件"></a>如何编写C文件</h3><p><code>https://github.com/tianocore/tianocore.github.io/wiki/Getting-Started-Writing-MyHelloWorld.c</code></p>
+<h3 id="如何编写inf文件"><a href="#如何编写inf文件" class="headerlink" title="如何编写inf文件"></a>如何编写inf文件</h3><h4 id="如何生成GUID"><a href="#如何生成GUID" class="headerlink" title="如何生成GUID"></a>如何生成GUID</h4><p>通过<a href="https://www.guidgen.com/" target="_blank" rel="noopener">guidgen网站</a>生成GUID。</p>
 ]]></content>
+      <categories>
+        <category>EDK2</category>
+      </categories>
       <tags>
-        <tag>android</tag>
+        <tag>EDK2</tag>
+        <tag>EDKii</tag>
+        <tag>EDK II</tag>
       </tags>
   </entry>
   <entry>
@@ -103,6 +84,9 @@
 <li>学完后自己画脑图，回顾学习的过程中那些不理解在花时间去看，此过程就是查漏补缺。</li>
 </ol>
 ]]></content>
+      <categories>
+        <category>android逆向</category>
+      </categories>
       <tags>
         <tag>android逆向</tag>
       </tags>
@@ -147,16 +131,41 @@
       </tags>
   </entry>
   <entry>
-    <title>如何在EDK II中编写应用程序</title>
-    <url>/2020/05/25/EDK2-new-app/</url>
-    <content><![CDATA[<p>EDK2的开发一般分为驱动与应用的开发，本文介绍如何在EDK2中开发应用程序。官方的教程请参考：<a href="https://github.com/tianocore/tianocore.github.io/wiki/Getting-Started-Writing-Simple-Application" target="_blank" rel="noopener">Getting Started Writing Simple Application</a>。</p>
-<h3 id="如何编写C文件"><a href="#如何编写C文件" class="headerlink" title="如何编写C文件"></a>如何编写C文件</h3><p><code>https://github.com/tianocore/tianocore.github.io/wiki/Getting-Started-Writing-MyHelloWorld.c</code></p>
-<h3 id="如何编写inf文件"><a href="#如何编写inf文件" class="headerlink" title="如何编写inf文件"></a>如何编写inf文件</h3><h4 id="如何生成GUID"><a href="#如何生成GUID" class="headerlink" title="如何生成GUID"></a>如何生成GUID</h4><p>通过<a href="https://www.guidgen.com/" target="_blank" rel="noopener">guidgen网站</a>生成GUID。</p>
+    <title>android simpleperf工具使用入门</title>
+    <url>/2020/05/15/android-simpleperf/</url>
+    <content><![CDATA[<p>&emsp;&emsp;Simpleperf 是一个通用的命令行 CPU 性能剖析工具，在Android NDK中已经自带了。需要注意的是，如果自带的simpleperf不能使用，就需要在适配当前Android设备的源码中编译了。simpleperf的源码在AOSP的system/extras/simpleperf下，其中doc目录详细介绍了如何使用该工具。</p>
+<a id="more"></a>
+
+<h2 id="在源码中编译simpleperf"><a href="#在源码中编译simpleperf" class="headerlink" title="在源码中编译simpleperf"></a>在源码中编译simpleperf</h2><p>&emsp;&emsp;可以通过如下命令在Andorid设备的源码中编译simpleperf:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">source</span> build/envsetup.sh</span><br><span class="line">lunch aosp_arm64-eng</span><br><span class="line">make simpleperf -j32</span><br></pre></td></tr></table></figure>
+<p>最后将会生成out/target/product/xxx/system/xbin/simpleperf，这就是需要push到Android设备的simpleperf。</p>
+<h3 id="push-simpleperf"><a href="#push-simpleperf" class="headerlink" title="push simpleperf"></a>push simpleperf</h3><p>&emsp;&emsp;在push之前需要需要保证Android设备具有root权限，一般通过adb root选项进行提权。然后通过如下命令将simpleperf push到设备。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">adb root</span><br><span class="line">adb shell mkdir /data/bin</span><br><span class="line">adb push &lt;编译出来的simpleperf&gt; /data/bin/simpleperf</span><br><span class="line">adb shell setenforce 0</span><br></pre></td></tr></table></figure>
+<p>进行了上述步骤后，就可以在设备中使用simpleperf了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">adb shell /data/bin/simpleperf --version</span><br><span class="line"><span class="comment"># simpleperf I command.cpp:131] Simpleperf version 1.c65e6065befd</span></span><br><span class="line"><span class="comment">#</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="simpleperf使用介绍"><a href="#simpleperf使用介绍" class="headerlink" title="simpleperf使用介绍"></a>simpleperf使用介绍</h2><p>&emsp;&emsp;simpleperf的record命令用于转储已需要分析的进程的样本。 每个样本可以包含诸如样本生成时间，自上一个样本以来的事件数，线程的程序计数器，线程的调用链之类的信息。后续的分析步骤都是基于这个样本信息来分析的。</p>
+<h3 id="采集样本数据"><a href="#采集样本数据" class="headerlink" title="采集样本数据"></a>采集样本数据</h3><p>首先确认需要分析的进程。比如分析当前cpu占用最高的进程。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top -m 5 <span class="comment"># 得到执行的进程名字</span></span><br><span class="line"><span class="comment">## 根据pidof得到需要分析的进程id号</span></span><br><span class="line">pidof &lt;进程名&gt;</span><br></pre></td></tr></table></figure>
+<p>得到进程id后就可以进行数据采集了。如果使用simpleperf的recod命令请参<a href="https://android.googlesource.com/platform/system/extras/+/refs/heads/master/simpleperf/doc/executable_commands_reference.md" target="_blank" rel="noopener">考官方文档</a>中的<code>The record command</code>小节。<br>如下的命令记录进行号为11961的record：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/data/bin/simpleperf record -p 11961 -o /sdcard/perf_11961.data --duration 360</span><br></pre></td></tr></table></figure>
+<p>结果保存在/sdcard/perf_11961.data,记录持续时间为360秒。这里只记录了默认的<code>cpu-cycles</code>event，如果需要记录更加多的event需要指定-e参数。通过<code>simpleperf list</code>命令查看支持哪些events。</p>
+<h3 id="查看特定进程调用的动态库"><a href="#查看特定进程调用的动态库" class="headerlink" title="查看特定进程调用的动态库"></a>查看特定进程调用的动态库</h3><p>通过report命令可以查看这种report数据：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./simpleperf report --sort dso -i /sdcard/perf_11961.data</span><br><span class="line">simpleperf W dso.cpp:361] failed to <span class="built_in">read</span> symbols from [vdso]: File not found</span><br><span class="line">Cmdline: /data/bin/simpleperf record -p 11961 -o /sdcard/perf_11961.data --duration 360</span><br><span class="line">Arch: arm64</span><br><span class="line">Event: cpu-cycles (<span class="built_in">type</span> 0, config 0)</span><br><span class="line">Samples: 649</span><br><span class="line">Event count: 136430910</span><br><span class="line"></span><br><span class="line">Overhead  Shared Object</span><br><span class="line">57.91%    [kernel.kallsyms]</span><br><span class="line">20.03%    /system/lib64/libart.so</span><br><span class="line">9.43%     /system/lib64/libandroidfw.so</span><br><span class="line">5.05%     /system/framework/arm64/boot-framework.oat</span><br><span class="line">3.58%     /system/lib64/libc.so</span><br><span class="line">1.67%     /system/framework/arm64/boot-core-oj.oat</span><br><span class="line">0.89%     /system/lib64/libbinder.so</span><br><span class="line">0.39%     /system/lib64/libc++.so</span><br><span class="line">0.38%     /system/lib64/libopenjdk.so</span><br><span class="line">0.27%     /system/lib64/libz.so</span><br><span class="line">0.15%     /system/lib64/libandroid_runtime.so</span><br><span class="line">0.13%     [vdso]</span><br><span class="line">0.07%     /system/framework/arm64/boot-core-libart.oat</span><br><span class="line">0.05%     /system/lib64/libutils.so</span><br></pre></td></tr></table></figure>
+
+<h3 id="查看函数调用关系"><a href="#查看函数调用关系" class="headerlink" title="查看函数调用关系"></a>查看函数调用关系</h3><p>simpleperf report还可以导出函数调用关系,–symfs可以指定符号表的目录。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/data/bin/simpleperf report -g  -i /sdcard/perf_19357.data --symfs . &gt; /sdcard/g_19357.dat</span><br></pre></td></tr></table></figure>
+
+<h4 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h4><ol>
+<li><a href="https://blog.csdn.net/zhuyong006/article/details/103112571" target="_blank" rel="noopener">https://blog.csdn.net/zhuyong006/article/details/103112571</a></li>
+<li><a href="https://developer.android.com/ndk/guides/simpleperf" target="_blank" rel="noopener">https://developer.android.com/ndk/guides/simpleperf</a></li>
+</ol>
 ]]></content>
+      <categories>
+        <category>android</category>
+      </categories>
       <tags>
-        <tag>EDK2</tag>
-        <tag>EDKii</tag>
-        <tag>EDK II</tag>
+        <tag>android</tag>
       </tags>
   </entry>
   <entry>
@@ -182,19 +191,6 @@
       </tags>
   </entry>
   <entry>
-    <title>cpp_ofstream_ifstream</title>
-    <url>/2020/08/20/cpp-ofstream-ifstream/</url>
-    <content><![CDATA[<p>ofstream是从内存到硬盘，ifstream是从硬盘到内存，其实所谓的流缓冲就是内存空间。<br>在C++中，有一个stream这个类，所有的I/O都以这个“流”类为基础的，包括我们要认识的文件I/O。<br>stream这个类有两个重要的运算符：<br>1、插入器(&lt;&lt;)<br>向流输出数据。比如说系统有一个默认的标准输出流(cout)，一般情况下就是指的显示器，所以，cout&lt;&lt;”Write Stdout”&lt;&lt;’\n’;就表示把字符串”Write Stdout”和换行字符(‘\n’)输出到标准输出流。<br>2、析取器(&gt;&gt;)<br>从流中输入数据。比如说系统有一个默认的标准输入流(cin)，一般情况下就是指的键盘，所以，cin&gt;&gt;x;就表示从标准输入流中读取一个指定类型的数据。<br>在C++中，对文件的操作是通过stream的子类fstream(file stream)来实现的，所以，要用这种方式操作文件，就必须加入头文件fstream.h。</p>
-<p>特别提出的是，fstream有两个子类：ifstream(input file stream)和ofstream(outpu file stream)，ifstream默认以输入方式打开文件，ofstream默认以输出方式打开文件。</p>
-]]></content>
-      <categories>
-        <category>c/c++</category>
-      </categories>
-      <tags>
-        <tag>c/c++</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>c++ 内存管理</title>
     <url>/2020/12/23/cpp-new-delete/</url>
     <content><![CDATA[<p>本文主要记录下c/c++中使用堆内存的注意事项。</p>
@@ -203,6 +199,19 @@
 
 <p>###应该关注new的内存是否分配成功<br>在申请内存过程中，有极小概率的情况申请分配内存失败，应该处理出现申请分配内存失败的情况。有一种简便的方法用于申请内存时，如果申请失败，那么返回一个空指针，这各方法时通过在new与类型之间加入常量<code>std::nothrow</code>实现的。</p>
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> *p = <span class="keyword">new</span> (<span class="built_in">std</span>::nothrow) <span class="keyword">int</span>;</span><br><span class="line"><span class="keyword">if</span> (!p) &#123;</span><br><span class="line">    <span class="comment">// 错误处理</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"No enough memory!"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>c/c++</category>
+      </categories>
+      <tags>
+        <tag>c/c++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>cpp_ofstream_ifstream</title>
+    <url>/2020/08/20/cpp-ofstream-ifstream/</url>
+    <content><![CDATA[<p>ofstream是从内存到硬盘，ifstream是从硬盘到内存，其实所谓的流缓冲就是内存空间。<br>在C++中，有一个stream这个类，所有的I/O都以这个“流”类为基础的，包括我们要认识的文件I/O。<br>stream这个类有两个重要的运算符：<br>1、插入器(&lt;&lt;)<br>向流输出数据。比如说系统有一个默认的标准输出流(cout)，一般情况下就是指的显示器，所以，cout&lt;&lt;”Write Stdout”&lt;&lt;’\n’;就表示把字符串”Write Stdout”和换行字符(‘\n’)输出到标准输出流。<br>2、析取器(&gt;&gt;)<br>从流中输入数据。比如说系统有一个默认的标准输入流(cin)，一般情况下就是指的键盘，所以，cin&gt;&gt;x;就表示从标准输入流中读取一个指定类型的数据。<br>在C++中，对文件的操作是通过stream的子类fstream(file stream)来实现的，所以，要用这种方式操作文件，就必须加入头文件fstream.h。</p>
+<p>特别提出的是，fstream有两个子类：ifstream(input file stream)和ofstream(outpu file stream)，ifstream默认以输入方式打开文件，ofstream默认以输出方式打开文件。</p>
+]]></content>
       <categories>
         <category>c/c++</category>
       </categories>
@@ -232,6 +241,10 @@
 <li><a href="https://stackoverflow.com/questions/25885467/cx-oracle-pip-install-fails-oci-h-no-such-file-or-directory" target="_blank" rel="noopener">https://stackoverflow.com/questions/25885467/cx-oracle-pip-install-fails-oci-h-no-such-file-or-directory</a></li>
 </ol>
 ]]></content>
+      <categories>
+        <category>python</category>
+        <category>oracle</category>
+      </categories>
       <tags>
         <tag>python</tag>
         <tag>oracle</tag>
@@ -242,6 +255,9 @@
     <url>/2020/07/24/dexfile/</url>
     <content><![CDATA[<p>Android APK中，最终java文件会被编译为classes.dex文件。如果要分析APK就得了解dex文件的格式。<br>dex文件的格式在AOSP源码的<code>dalvik/libdex/DexFile.h</code>有定义。</p>
 ]]></content>
+      <categories>
+        <category>android</category>
+      </categories>
       <tags>
         <tag>android</tag>
       </tags>
@@ -254,8 +270,100 @@
 
 <p>##安装android sdk<br>安装sdk请参考官方文档：<code>https://developer.android.com/studio/command-line/sdkmanager</code></p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sdkmanager <span class="string">"platform-tools"</span> <span class="string">"platforms;android-28"</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>android</category>
+      </categories>
       <tags>
         <tag>android</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>keepalived 安装与使用</title>
+    <url>/2021/01/12/keepalived/</url>
+    <content><![CDATA[<p>&emsp;&emsp;Keepalived 是一个基于VRRP协议来实现的LVS服务高可用方案，可以利用其来避免单点故障。一个LVS服务会有2台服务器运行Keepalived，一台为主服务器（MASTER），一台为备份服务器（BACKUP），但是对外表现为一个虚拟IP（VIP），主服务器会发送特定的消息给备份服务器，当备份服务器收不到这个消息的时候，即主服务器宕机的时候，备份服务器就会接管虚拟IP，继续提供服务，从而保证了高可用性。说白了就是如果客户端在访问服务端时，如果服务端出了问题，可以及时自动的切换到另外一个服务器，而客户端感知不到，客户端通过VIP来访问服务端。</p>
+<a id="more"></a>
+<h3 id="keepalived-工作原理"><a href="#keepalived-工作原理" class="headerlink" title="keepalived 工作原理"></a>keepalived 工作原理</h3><p>下图是keepalived的工作原理图：<br><img src="/images/keepalived-vrrp-network.png" alt="keepalived工作原理">。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1. LB1服务器：192.168.10.111 master</span><br><span class="line">2. LB2服务器：192.168.10.112 backup</span><br><span class="line">3. VIP: 192.168.10.121</span><br></pre></td></tr></table></figure>
+<ol>
+<li>keepalived在LB1与LB2上安装，一个为master一个为backup。图中LB1为master，所以刚开始的时候LB1服务器虚拟出VIP 192.168.10.121，当客户端访问192.168.10.121的时候实际访问的就是LB1服务器。</li>
+<li>keepavlied是基于VRRP协议的，关于什么是VRRP协议可以自行<a href="https://www.jianshu.com/p/7410507d57c3" target="_blank" rel="noopener">搜索</a>。根据VRRP协议可以知道，由于当前master为LB1，所以LB1会做如下工作：</li>
+</ol>
+<ul>
+<li>定时发送VRRP通告报文(时间间隔为Advertisement_Interval)</li>
+<li>使用虚拟MAC地址响应VIP的ARP请求</li>
+<li>转发目的MAC地址为虚拟MAC地址的IP报文</li>
+<li>抢占模式下，如果收到比自己优先级大的VRRP报文，或者跟自己优先级相等，且本地接口IP地址小于源端接口IP地址时，则转变为Backup状态</li>
+<li>收到Shutdown（关闭）消息后，则立即转变为Initialize状态</li>
+</ul>
+<ol start="3">
+<li>LB2当前为backup,backup机器会接受master发送的VRRP通告报文，判断master是否正常。如果一定时间间隔没有收到VRRP通告报文，即Master_Down_Interval（Master_Down_Interval = 3* Advertisement_Interval + Skew_time）超时，则判断为Master故障。backup的工作如下：</li>
+</ol>
+<ul>
+<li>接收Master发送的VRRP通告报文，判断Master是否正常</li>
+<li>对虚拟IP的ARP请求不做响应</li>
+<li>丢弃目的MAC地址为虚拟路由器MAC地址的IP报文</li>
+<li>丢弃目的IP地址为VIP地址的IP报文</li>
+<li>如果收到优先级比自己高，或与自己相等的VRRP报文，则重置Master_Down_Interval定时器（不进一步比较IP地址）</li>
+<li>如果收到优先级比自己小的VPPR报文，且优先级为0时，（表示原Master设备声明不参与该VRRP组了），定时器时间设置为Skew_time（偏移时间，Skew_time= (256 - priority)/256）</li>
+<li>如果收到优先级比自己小的VPPR报文，且优先级不为0时，丢弃该报文，立即转变为Master状态</li>
+<li>Master_Down_Interval定时器超时，立即转变为Master状态</li>
+<li>收到Shutdown（关闭）消息后，则立即转变为Initialize状态</li>
+</ul>
+<ol start="4">
+<li>当LB1上的web1服务出现问题时，此时可以降低LB1的优先级，或者停止LB1上的keepalived进程，从而将master转移到LB2上。此时客户端访问192.168.10.121即访问的LB2服务器。</li>
+</ol>
+<h3 id="keepalived-安装"><a href="#keepalived-安装" class="headerlink" title="keepalived 安装"></a>keepalived 安装</h3><p>测试环境为<code>CentOS Linux release 7.4.1708</code>,下面时安装命令。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y keepalived</span><br></pre></td></tr></table></figure>
+<p>配置文件路径为:/etc/keepalived/keepalived.conf<br>默认log就是syslog，/var/log/messages</p>
+<h3 id="keepalived配置"><a href="#keepalived配置" class="headerlink" title="keepalived配置"></a>keepalived配置</h3><ol>
+<li>master配置<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">! Configuration File for keepalived</span><br><span class="line"></span><br><span class="line">global_defs &#123;</span><br><span class="line">    router_id keep_231</span><br><span class="line">    script_user root</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_script check_sample_alive &#123;</span><br><span class="line">    script &quot;&#x2F;check_sample.sh&quot;</span><br><span class="line">    interval 2</span><br><span class="line">    weight -10</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state MASTER</span><br><span class="line">    interface eth0</span><br><span class="line">    virtual_router_id 51</span><br><span class="line">    priority 101</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    track_script &#123;</span><br><span class="line">        check_sample_alive</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    # 单播模式</span><br><span class="line">    unicast_src_ip 192.168.10.111</span><br><span class="line">    unicast_peer &#123;</span><br><span class="line">        192.168.10.112</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        192.168.10.121</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+关于配置文件的配置可以自行搜索，讲一下几个关键的。<code>script_user</code>表示执行<code>check_sample_alive</code>的用户。同时也可以在<code>global_defs</code>section定义<code>enable_script_security</code>来增加安全性，但是需要你的脚本所在位置所属为root的用户与用户组。也即是要<code>chown root:root /check_sample.sh</code><br>下面时<code>check_sample.sh</code>脚本的内容：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">active=`ps -ef | grep <span class="string">"python sample.py"</span> | grep -v <span class="string">"grep"</span> | wc -l`</span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$active</span> -eq 0 ];<span class="keyword">then</span></span><br><span class="line">  sleep 3</span><br><span class="line">  <span class="keyword">if</span> [ `ps -ef | grep <span class="string">"python sample.py"</span> | grep -v <span class="string">"grep"</span> | wc -l` -eq 0 ];<span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"sample.py died"</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line">  <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"sample.py is running..."</span></span><br></pre></td></tr></table></figure></li>
+<li>backup配置<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">! Configuration File for keepalived</span><br><span class="line"></span><br><span class="line">global_defs &#123;</span><br><span class="line">    router_id keep_232</span><br><span class="line">    script_user root</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_script check_sample_alive &#123;</span><br><span class="line">    script &quot;&#x2F;check_sample.sh&quot;</span><br><span class="line">    interval 2</span><br><span class="line">    weight 10</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface eth0</span><br><span class="line">    virtual_router_id 51</span><br><span class="line">    priority 90</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    track_script &#123;</span><br><span class="line">        check_sample_alive</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    unicast_src_ip 192.168.10.112</span><br><span class="line">    unicast_peer &#123;</span><br><span class="line">        192.168.10.111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        192.168.10.121</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h3 id="测试web服务器脚本"><a href="#测试web服务器脚本" class="headerlink" title="测试web服务器脚本"></a>测试web服务器脚本</h3><p>因为要测试master与backup是否能够正常切换，所以使用了python的wsgi脚本来简单的测试配置是否正确。下面是web服务器代码(sample.py)，它通过wsgi接口简单的返回当前主机的ip。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="keyword">from</span> wsgiref.simple_server <span class="keyword">import</span> make_server</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">simple_app</span><span class="params">(environ, start_response)</span>:</span></span><br><span class="line">    <span class="comment">#setup_testing_defaults(environ)</span></span><br><span class="line"></span><br><span class="line">    status = <span class="string">'200 OK'</span></span><br><span class="line">    headers = [(<span class="string">'Content-type'</span>, <span class="string">'text/plain'</span>)]</span><br><span class="line"></span><br><span class="line">    start_response(status, headers)</span><br><span class="line"></span><br><span class="line">    ip = socket.gethostbyname(socket.gethostname())</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ip</span><br><span class="line"></span><br><span class="line">httpd = make_server(<span class="string">''</span>, <span class="number">7000</span>, simple_app)</span><br><span class="line"></span><br><span class="line">httpd.serve_forever()</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>先在LB1与LB2服务器上启动keepalived。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">service keepalived start</span><br></pre></td></tr></table></figure>
+<p>然后在LB1与LB2服务器上以后台方式启动sample.py。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python sample.py &amp;</span><br></pre></td></tr></table></figure>
+<p>通过在浏览器中访问: <code>http://192.168.10.121:7000</code>可以看到浏览器会返回当前master的IP:<code>192.168.10.111</code>。然后将192.168.10.111上的sample.py进程杀掉，再访问<code>http://192.168.10.121:7000</code>可以看到浏览器会返回当前master的IP:<code>192.168.10.112</code>。可见切换成功。</p>
+<p>参考：</p>
+<ol>
+<li>入门：<a href="https://zhuanlan.zhihu.com/p/143295216" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/143295216</a></li>
+<li>入门：<a href="https://zhuanlan.zhihu.com/p/43971218" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/43971218</a></li>
+<li>VRRP原理：<a href="https://www.jianshu.com/p/214f89298646" target="_blank" rel="noopener">https://www.jianshu.com/p/214f89298646</a></li>
+<li>优先级设置：<a href="https://www.cnblogs.com/arjenlee/p/9258188.html" target="_blank" rel="noopener">https://www.cnblogs.com/arjenlee/p/9258188.html</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>keepalived</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>如何在kernel中获取当前进程的信息</title>
+    <url>/2020/08/18/kernel-get-process-info/</url>
+    <content><![CDATA[<p>&emsp;&emsp;在kernel中有时候可能需要根据当前进行的某些信息进行逻辑处理，本文就是介绍如果在kernel中如果获取当前进程的信息。<br>&emsp;&emsp;在kernel中关于进程信息的一个重要的结构体就是task_struct，定义如下:</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> &#123;</span></span><br><span class="line"><span class="comment">//这个是进程的运行时状态，-1代表不可运行，0代表可运行，&gt;0代表已停止。</span></span><br><span class="line"> <span class="keyword">volatile</span> <span class="keyword">long</span> state;</span><br><span class="line"> <span class="comment">/*</span></span><br><span class="line"><span class="comment">flags是进程当前的状态标志，具体的如：</span></span><br><span class="line"><span class="comment">0x00000002表示进程正在被创建；</span></span><br><span class="line"><span class="comment">0x00000004表示进程正准备退出；</span></span><br><span class="line"><span class="comment">0x00000040 表示此进程被fork出，但是并没有执行exec；</span></span><br><span class="line"><span class="comment">0x00000400表示此进程由于其他进程发送相关信号而被杀死 。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"> <span class="keyword">unsigned</span> <span class="keyword">int</span> flags;</span><br><span class="line"><span class="comment">//表示此进程的运行优先级</span></span><br><span class="line"> <span class="keyword">unsigned</span> <span class="keyword">int</span> rt_priority;</span><br><span class="line"><span class="comment">//这里出现了list_head结构体，详情请参考</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">tasks</span>;</span></span><br><span class="line"><span class="comment">//这里出现了mm_struct 结构体，该结构体记录了进程内存使用的相关情况，详情请参考</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">mm_struct</span> *<span class="title">mm</span>;</span></span><br><span class="line"><span class="comment">/* 接下来是进程的一些状态参数*/</span></span><br><span class="line"> <span class="keyword">int</span> exit_state;</span><br><span class="line"> <span class="keyword">int</span> exit_code, exit_signal;</span><br><span class="line"><span class="comment">//这个是进程号</span></span><br><span class="line"> <span class="keyword">pid_t</span> pid;</span><br><span class="line"><span class="comment">//这个是进程组号</span></span><br><span class="line"> <span class="keyword">pid_t</span> tgid;</span><br><span class="line"><span class="comment">//real_parent是该进程的”亲生父亲“，不管其是否被“寄养”。</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> *<span class="title">real_parent</span>;</span></span><br><span class="line"><span class="comment">//parent是该进程现在的父进程，有可能是”继父“</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> *<span class="title">parent</span>;</span></span><br><span class="line"><span class="comment">//这里children指的是该进程孩子的链表，可以得到所有孩子的进程描述符，但是需使用list_for_each和list_entry，list_entry其实直接使用了container_of，详情请参考</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">children</span>;</span></span><br><span class="line"><span class="comment">//同理，sibling该进程兄弟的链表，也就是其父亲的所有孩子的链表。用法与children相似。</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">sibling</span>;</span></span><br><span class="line"><span class="comment">//这个是主线程的进程描述符，也许你会奇怪，为什么线程用进程描述符表示，因为linux并没有单独实现线程的相关结构体，只是用一个进程来代替线程，然后对其做一些特殊的处理。</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> *<span class="title">group_leader</span>;</span></span><br><span class="line"><span class="comment">//这个是该进程所有线程的链表。</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">thread_group</span>;</span></span><br><span class="line"><span class="comment">//顾名思义，这个是该进程使用cpu时间的信息，utime是在用户态下执行的时间，stime是在内核态下执行的时间。</span></span><br><span class="line"> <span class="keyword">cputime_t</span> utime, stime;</span><br><span class="line"><span class="comment">//下面的是启动的时间，只是时间基准不一样。</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span> <span class="title">start_time</span>;</span> </span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span> <span class="title">real_start_time</span>;</span></span><br><span class="line"><span class="comment">//comm是保存该进程名字的字符数组，长度最长为15，因为TASK_COMM_LEN为16。</span></span><br><span class="line"> <span class="keyword">char</span> comm[TASK_COMM_LEN];</span><br><span class="line"><span class="comment">/* 文件系统信息计数*/</span></span><br><span class="line"> <span class="keyword">int</span> link_count, total_link_count;</span><br><span class="line"><span class="comment">/*该进程在特定CPU下的状态*/</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">thread_struct</span> <span class="title">thread</span>;</span></span><br><span class="line"><span class="comment">/* 文件系统相关信息结构体*/</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">fs_struct</span> *<span class="title">fs</span>;</span></span><br><span class="line"><span class="comment">/* 打开的文件相关信息结构体*/</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">files_struct</span> *<span class="title">files</span>;</span></span><br><span class="line"> <span class="comment">/* 信号相关信息的句柄*/</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">signal_struct</span> *<span class="title">signal</span>;</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">sighand_struct</span> *<span class="title">sighand</span>;</span></span><br><span class="line"> <span class="comment">/*这些是松弛时间值，用来规定select()和poll()的超时时间，单位是纳秒nanoseconds */</span></span><br><span class="line"> <span class="keyword">unsigned</span> <span class="keyword">long</span> timer_slack_ns;</span><br><span class="line"> <span class="keyword">unsigned</span> <span class="keyword">long</span> default_timer_slack_ns;</span><br><span class="line">&#125;；</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>如果需要获取其中的某些信息，获取对应的<code>task_struct</code>中的字段就可以了。在实际应用中，经常需要处理的就是获取当前进程的信息，这时候可以借助内核宏<code>current</code>，通过该宏可以获取到当前进程的<code>task_struct</code>。下面是针对<code>task_struct</code>的应用示例：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/init.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/module.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/kernel.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/sched.h&gt; //task_pid_nr</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* This function is called when the module is loaded. */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">simple_init</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">       printk(KERN_INFO <span class="string">"Loading Module\n"</span>);</span><br><span class="line">       printk(<span class="string">"The process id is %d\n"</span>, (<span class="keyword">int</span>) task_pid_nr(current));</span><br><span class="line">       printk(<span class="string">"The process vid is %d\n"</span>, (<span class="keyword">int</span>) task_pid_vnr(current));</span><br><span class="line">       printk(<span class="string">"The process name is %s\n"</span>, current-&gt;comm);</span><br><span class="line">       printk(<span class="string">"The process tty is %d\n"</span>, current-&gt;signal-&gt;tty);</span><br><span class="line">       printk(<span class="string">"The process group is %d\n"</span>, (<span class="keyword">int</span>) task_tgid_nr(current));</span><br><span class="line">       printk(<span class="string">"\n\n"</span>);</span><br><span class="line">   <span class="comment">//return -1; //debug mode of working</span></span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* This function is called when the module is removed. */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">simple_exit</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    printk(KERN_INFO <span class="string">"Removing Module\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Macros for registering module entry and exit points. */</span></span><br><span class="line">module_init( simple_init );</span><br><span class="line">module_exit( simple_exit );</span><br><span class="line"></span><br><span class="line">MODULE_LICENSE(<span class="string">"GPL"</span>);</span><br><span class="line">MODULE_DESCRIPTION(<span class="string">"Simple Module"</span>);</span><br><span class="line">MODULE_AUTHOR(<span class="string">"SGG"</span>);</span><br></pre></td></tr></table></figure>
+<p>在直接读取这些字段的时候可能引起竞争，所以可以使用<code>get_task_comm()</code>等函数来进行读取。<code>get_task_comm()</code>函数的定义如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> get_task_comm(buf, tsk) (&#123;            \</span></span><br><span class="line">   BUILD_BUG_ON(<span class="keyword">sizeof</span>(buf) != TASK_COMM_LEN); \</span><br><span class="line">   __get_task_comm(buf, <span class="keyword">sizeof</span>(buf), tsk);     \</span><br><span class="line"> &#125;)</span><br><span class="line"></span><br><span class="line"> <span class="keyword">char</span> *__get_task_comm(<span class="keyword">char</span> *buf, <span class="keyword">size_t</span> buf_size, struct task_struct *tsk)</span><br><span class="line"> &#123;</span><br><span class="line">   task_lock(tsk);</span><br><span class="line">   <span class="built_in">strncpy</span>(buf, tsk-&gt;comm, buf_size);</span><br><span class="line">   task_unlock(tsk);</span><br><span class="line">   <span class="keyword">return</span> buf;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>kernel</category>
+        <category>pid</category>
+      </categories>
+      <tags>
+        <tag>kernel</tag>
+        <tag>pid</tag>
       </tags>
   </entry>
   <entry>
@@ -337,90 +445,43 @@
 
 
 ]]></content>
+      <categories>
+        <category>博客搭建</category>
+      </categories>
       <tags>
         <tag>博客搭建</tag>
       </tags>
   </entry>
   <entry>
-    <title>keepalived 安装与使用</title>
-    <url>/2021/01/12/keepalived/</url>
-    <content><![CDATA[<p>&emsp;&emsp;Keepalived 是一个基于VRRP协议来实现的LVS服务高可用方案，可以利用其来避免单点故障。一个LVS服务会有2台服务器运行Keepalived，一台为主服务器（MASTER），一台为备份服务器（BACKUP），但是对外表现为一个虚拟IP（VIP），主服务器会发送特定的消息给备份服务器，当备份服务器收不到这个消息的时候，即主服务器宕机的时候，备份服务器就会接管虚拟IP，继续提供服务，从而保证了高可用性。说白了就是如果客户端在访问服务端时，如果服务端出了问题，可以及时自动的切换到另外一个服务器，而客户端感知不到，客户端通过VIP来访问服务端。</p>
-<a id="more"></a>
-<h3 id="keepalived-工作原理"><a href="#keepalived-工作原理" class="headerlink" title="keepalived 工作原理"></a>keepalived 工作原理</h3><p>下图是keepalived的工作原理图：<br><img src="/images/keepalived-vrrp-network.png" alt="keepalived工作原理">。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1. LB1服务器：192.168.10.111 master</span><br><span class="line">2. LB2服务器：192.168.10.112 backup</span><br><span class="line">3. VIP: 192.168.10.121</span><br></pre></td></tr></table></figure>
-<ol>
-<li>keepalived在LB1与LB2上安装，一个为master一个为backup。图中LB1为master，所以刚开始的时候LB1服务器虚拟出VIP 192.168.10.121，当客户端访问192.168.10.121的时候实际访问的就是LB1服务器。</li>
-<li>keepavlied是基于VRRP协议的，关于什么是VRRP协议可以自行<a href="https://www.jianshu.com/p/7410507d57c3" target="_blank" rel="noopener">搜索</a>。根据VRRP协议可以知道，由于当前master为LB1，所以LB1会做如下工作：</li>
-</ol>
+    <title>linux_filesystem</title>
+    <url>/2020/08/19/linux-filesystem/</url>
+    <content><![CDATA[<p>Linux中常见的文件系统是ext4文件系统，那文件系统的基本组成是什么样的呢？Linux操作系统中，文件除了实际的数据之外还有诸如权限、文件属性类的数据。文件系统通常会将实际的数据存放在<code>block</code>中，而权限及文件属性数据存放在<code>inode</code>中。</p>
+<h2 id="inode-和-block-概述"><a href="#inode-和-block-概述" class="headerlink" title="inode 和 block 概述"></a>inode 和 block 概述</h2><p>文件是存储在硬盘上的，硬盘的最小存储单位叫做扇区<code>sector</code>，每个扇区存储<code>512字节</code>。操作系统读取硬盘的时候，不会一个个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个块<code>block</code>。这种由多个扇区组成的块，是文件存取的最小单位。块的大小，最常见的是<code>4KB</code>，即连续八个sector组成一个<code>block</code>。</p>
+<p>文件数据存储在块中，那么还必须找到一个地方存储文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种存储文件元信息的区域就叫做<code>inode</code>，中文译名为<code>索引节点</code>，也叫<code>i节点</code>。因此，一个文件必须占用一个<code>inode</code>，但至少占用一个<code>block</code>。</p>
 <ul>
-<li>定时发送VRRP通告报文(时间间隔为Advertisement_Interval)</li>
-<li>使用虚拟MAC地址响应VIP的ARP请求</li>
-<li>转发目的MAC地址为虚拟MAC地址的IP报文</li>
-<li>抢占模式下，如果收到比自己优先级大的VRRP报文，或者跟自己优先级相等，且本地接口IP地址小于源端接口IP地址时，则转变为Backup状态</li>
-<li>收到Shutdown（关闭）消息后，则立即转变为Initialize状态</li>
+<li>元信息：inode</li>
+<li>数据: block</li>
 </ul>
-<ol start="3">
-<li>LB2当前为backup,backup机器会接受master发送的VRRP通告报文，判断master是否正常。如果一定时间间隔没有收到VRRP通告报文，即Master_Down_Interval（Master_Down_Interval = 3* Advertisement_Interval + Skew_time）超时，则判断为Master故障。backup的工作如下：</li>
-</ol>
-<ul>
-<li>接收Master发送的VRRP通告报文，判断Master是否正常</li>
-<li>对虚拟IP的ARP请求不做响应</li>
-<li>丢弃目的MAC地址为虚拟路由器MAC地址的IP报文</li>
-<li>丢弃目的IP地址为VIP地址的IP报文</li>
-<li>如果收到优先级比自己高，或与自己相等的VRRP报文，则重置Master_Down_Interval定时器（不进一步比较IP地址）</li>
-<li>如果收到优先级比自己小的VPPR报文，且优先级为0时，（表示原Master设备声明不参与该VRRP组了），定时器时间设置为Skew_time（偏移时间，Skew_time= (256 - priority)/256）</li>
-<li>如果收到优先级比自己小的VPPR报文，且优先级不为0时，丢弃该报文，立即转变为Master状态</li>
-<li>Master_Down_Interval定时器超时，立即转变为Master状态</li>
-<li>收到Shutdown（关闭）消息后，则立即转变为Initialize状态</li>
-</ul>
-<ol start="4">
-<li>当LB1上的web1服务出现问题时，此时可以降低LB1的优先级，或者停止LB1上的keepalived进程，从而将master转移到LB2上。此时客户端访问192.168.10.121即访问的LB2服务器。</li>
-</ol>
-<h3 id="keepalived-安装"><a href="#keepalived-安装" class="headerlink" title="keepalived 安装"></a>keepalived 安装</h3><p>测试环境为<code>CentOS Linux release 7.4.1708</code>,下面时安装命令。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum install -y keepalived</span><br></pre></td></tr></table></figure>
-<p>配置文件路径为:/etc/keepalived/keepalived.conf<br>默认log就是syslog，/var/log/messages</p>
-<h3 id="keepalived配置"><a href="#keepalived配置" class="headerlink" title="keepalived配置"></a>keepalived配置</h3><ol>
-<li>master配置<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">! Configuration File for keepalived</span><br><span class="line"></span><br><span class="line">global_defs &#123;</span><br><span class="line">    router_id keep_231</span><br><span class="line">    script_user root</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_script check_sample_alive &#123;</span><br><span class="line">    script &quot;&#x2F;check_sample.sh&quot;</span><br><span class="line">    interval 2</span><br><span class="line">    weight -10</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state MASTER</span><br><span class="line">    interface eth0</span><br><span class="line">    virtual_router_id 51</span><br><span class="line">    priority 101</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    track_script &#123;</span><br><span class="line">        check_sample_alive</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    # 单播模式</span><br><span class="line">    unicast_src_ip 192.168.10.111</span><br><span class="line">    unicast_peer &#123;</span><br><span class="line">        192.168.10.112</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        192.168.10.121</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-关于配置文件的配置可以自行搜索，讲一下几个关键的。<code>script_user</code>表示执行<code>check_sample_alive</code>的用户。同时也可以在<code>global_defs</code>section定义<code>enable_script_security</code>来增加安全性，但是需要你的脚本所在位置所属为root的用户与用户组。也即是要<code>chown root:root /check_sample.sh</code><br>下面时<code>check_sample.sh</code>脚本的内容：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">active=`ps -ef | grep <span class="string">"python sample.py"</span> | grep -v <span class="string">"grep"</span> | wc -l`</span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$active</span> -eq 0 ];<span class="keyword">then</span></span><br><span class="line">  sleep 3</span><br><span class="line">  <span class="keyword">if</span> [ `ps -ef | grep <span class="string">"python sample.py"</span> | grep -v <span class="string">"grep"</span> | wc -l` -eq 0 ];<span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">"sample.py died"</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line">  <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"sample.py is running..."</span></span><br></pre></td></tr></table></figure></li>
-<li>backup配置<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">! Configuration File for keepalived</span><br><span class="line"></span><br><span class="line">global_defs &#123;</span><br><span class="line">    router_id keep_232</span><br><span class="line">    script_user root</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_script check_sample_alive &#123;</span><br><span class="line">    script &quot;&#x2F;check_sample.sh&quot;</span><br><span class="line">    interval 2</span><br><span class="line">    weight 10</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state BACKUP</span><br><span class="line">    interface eth0</span><br><span class="line">    virtual_router_id 51</span><br><span class="line">    priority 90</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    track_script &#123;</span><br><span class="line">        check_sample_alive</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    unicast_src_ip 192.168.10.112</span><br><span class="line">    unicast_peer &#123;</span><br><span class="line">        192.168.10.111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        192.168.10.121</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h3 id="测试web服务器脚本"><a href="#测试web服务器脚本" class="headerlink" title="测试web服务器脚本"></a>测试web服务器脚本</h3><p>因为要测试master与backup是否能够正常切换，所以使用了python的wsgi脚本来简单的测试配置是否正确。下面是web服务器代码(sample.py)，它通过wsgi接口简单的返回当前主机的ip。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="keyword">from</span> wsgiref.simple_server <span class="keyword">import</span> make_server</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">simple_app</span><span class="params">(environ, start_response)</span>:</span></span><br><span class="line">    <span class="comment">#setup_testing_defaults(environ)</span></span><br><span class="line"></span><br><span class="line">    status = <span class="string">'200 OK'</span></span><br><span class="line">    headers = [(<span class="string">'Content-type'</span>, <span class="string">'text/plain'</span>)]</span><br><span class="line"></span><br><span class="line">    start_response(status, headers)</span><br><span class="line"></span><br><span class="line">    ip = socket.gethostbyname(socket.gethostname())</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ip</span><br><span class="line"></span><br><span class="line">httpd = make_server(<span class="string">''</span>, <span class="number">7000</span>, simple_app)</span><br><span class="line"></span><br><span class="line">httpd.serve_forever()</span><br></pre></td></tr></table></figure>
-
-<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>先在LB1与LB2服务器上启动keepalived。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">service keepalived start</span><br></pre></td></tr></table></figure>
-<p>然后在LB1与LB2服务器上以后台方式启动sample.py。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python sample.py &amp;</span><br></pre></td></tr></table></figure>
-<p>通过在浏览器中访问: <code>http://192.168.10.121:7000</code>可以看到浏览器会返回当前master的IP:<code>192.168.10.111</code>。然后将192.168.10.111上的sample.py进程杀掉，再访问<code>http://192.168.10.121:7000</code>可以看到浏览器会返回当前master的IP:<code>192.168.10.112</code>。可见切换成功。</p>
-<p>参考：</p>
+<h2 id="inode内容"><a href="#inode内容" class="headerlink" title="inode内容"></a>inode内容</h2><p><code>inode</code>包含很多的文件元信息，但不包含文件名，例如：字节数、属主<code>UserID</code>、属组<code>GroupID</code>、读写执行权限、时间戳等。</p>
+<p>而文件名存放在目录当中，但Linux系统内部不使用文件名，而是使用<code>inode号码</code>识别文件。对于系统来说文件名只是<code>inode号码</code>便于识别的别称。</p>
+<h2 id="inode号码"><a href="#inode号码" class="headerlink" title="inode号码"></a>inode号码</h2><p>可以通过<code>stat</code>命令或者<code>ls -i</code>命令查看文件或者目录的<code>inode号码</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">stat</span> readme.txt</span><br><span class="line">  文件：<span class="string">"readme.txt"</span></span><br><span class="line">  大小：6          块：8          IO 块：4096   普通文件</span><br><span class="line">设备：fc02h/64514d Inode：88617255    硬链接：1</span><br><span class="line">权限：(0664/-rw-rw-r--)  Uid：( 5002/xxx)   Gid：( 1003/xxx)</span><br><span class="line">最近访问：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">最近更改：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">最近改动：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">创建时间：-</span><br><span class="line"></span><br><span class="line">ls -i readme.txt</span><br><span class="line">88617255 readme.txt</span><br></pre></td></tr></table></figure>
+<p>表面上，用户通过文件名打开文件，实际上，系统内部将这个过程分为三步：</p>
 <ol>
-<li>入门：<a href="https://zhuanlan.zhihu.com/p/143295216" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/143295216</a></li>
-<li>入门：<a href="https://zhuanlan.zhihu.com/p/43971218" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/43971218</a></li>
-<li>VRRP原理：<a href="https://www.jianshu.com/p/214f89298646" target="_blank" rel="noopener">https://www.jianshu.com/p/214f89298646</a></li>
-<li>优先级设置：<a href="https://www.cnblogs.com/arjenlee/p/9258188.html" target="_blank" rel="noopener">https://www.cnblogs.com/arjenlee/p/9258188.html</a></li>
+<li>系统找到这个文件名对应的<code>inode号码</code>；</li>
+<li>通过<code>inode号码</code>，获取<code>inode信息</code>；</li>
+<li>根据<code>inode信息</code>，找到文件数据所在的<code>block</code>，并读出数据。<br>其实系统还要根据<code>inode信息</code>，看用户是否具有<code>访问权限</code>，有就指向对应的数据<code>block</code>，没有就返回权限拒绝。</li>
 </ol>
 ]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>filesystem</category>
+        <category>文件系统</category>
+      </categories>
       <tags>
         <tag>Linux</tag>
-        <tag>keepalived</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>如何在kernel中获取当前进程的信息</title>
-    <url>/2020/08/18/kernel-get-process-info/</url>
-    <content><![CDATA[<p>&emsp;&emsp;在kernel中有时候可能需要根据当前进行的某些信息进行逻辑处理，本文就是介绍如果在kernel中如果获取当前进程的信息。<br>&emsp;&emsp;在kernel中关于进程信息的一个重要的结构体就是task_struct，定义如下:</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> &#123;</span></span><br><span class="line"><span class="comment">//这个是进程的运行时状态，-1代表不可运行，0代表可运行，&gt;0代表已停止。</span></span><br><span class="line"> <span class="keyword">volatile</span> <span class="keyword">long</span> state;</span><br><span class="line"> <span class="comment">/*</span></span><br><span class="line"><span class="comment">flags是进程当前的状态标志，具体的如：</span></span><br><span class="line"><span class="comment">0x00000002表示进程正在被创建；</span></span><br><span class="line"><span class="comment">0x00000004表示进程正准备退出；</span></span><br><span class="line"><span class="comment">0x00000040 表示此进程被fork出，但是并没有执行exec；</span></span><br><span class="line"><span class="comment">0x00000400表示此进程由于其他进程发送相关信号而被杀死 。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"> <span class="keyword">unsigned</span> <span class="keyword">int</span> flags;</span><br><span class="line"><span class="comment">//表示此进程的运行优先级</span></span><br><span class="line"> <span class="keyword">unsigned</span> <span class="keyword">int</span> rt_priority;</span><br><span class="line"><span class="comment">//这里出现了list_head结构体，详情请参考</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">tasks</span>;</span></span><br><span class="line"><span class="comment">//这里出现了mm_struct 结构体，该结构体记录了进程内存使用的相关情况，详情请参考</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">mm_struct</span> *<span class="title">mm</span>;</span></span><br><span class="line"><span class="comment">/* 接下来是进程的一些状态参数*/</span></span><br><span class="line"> <span class="keyword">int</span> exit_state;</span><br><span class="line"> <span class="keyword">int</span> exit_code, exit_signal;</span><br><span class="line"><span class="comment">//这个是进程号</span></span><br><span class="line"> <span class="keyword">pid_t</span> pid;</span><br><span class="line"><span class="comment">//这个是进程组号</span></span><br><span class="line"> <span class="keyword">pid_t</span> tgid;</span><br><span class="line"><span class="comment">//real_parent是该进程的”亲生父亲“，不管其是否被“寄养”。</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> *<span class="title">real_parent</span>;</span></span><br><span class="line"><span class="comment">//parent是该进程现在的父进程，有可能是”继父“</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> *<span class="title">parent</span>;</span></span><br><span class="line"><span class="comment">//这里children指的是该进程孩子的链表，可以得到所有孩子的进程描述符，但是需使用list_for_each和list_entry，list_entry其实直接使用了container_of，详情请参考</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">children</span>;</span></span><br><span class="line"><span class="comment">//同理，sibling该进程兄弟的链表，也就是其父亲的所有孩子的链表。用法与children相似。</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">sibling</span>;</span></span><br><span class="line"><span class="comment">//这个是主线程的进程描述符，也许你会奇怪，为什么线程用进程描述符表示，因为linux并没有单独实现线程的相关结构体，只是用一个进程来代替线程，然后对其做一些特殊的处理。</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> *<span class="title">group_leader</span>;</span></span><br><span class="line"><span class="comment">//这个是该进程所有线程的链表。</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">thread_group</span>;</span></span><br><span class="line"><span class="comment">//顾名思义，这个是该进程使用cpu时间的信息，utime是在用户态下执行的时间，stime是在内核态下执行的时间。</span></span><br><span class="line"> <span class="keyword">cputime_t</span> utime, stime;</span><br><span class="line"><span class="comment">//下面的是启动的时间，只是时间基准不一样。</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span> <span class="title">start_time</span>;</span> </span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span> <span class="title">real_start_time</span>;</span></span><br><span class="line"><span class="comment">//comm是保存该进程名字的字符数组，长度最长为15，因为TASK_COMM_LEN为16。</span></span><br><span class="line"> <span class="keyword">char</span> comm[TASK_COMM_LEN];</span><br><span class="line"><span class="comment">/* 文件系统信息计数*/</span></span><br><span class="line"> <span class="keyword">int</span> link_count, total_link_count;</span><br><span class="line"><span class="comment">/*该进程在特定CPU下的状态*/</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">thread_struct</span> <span class="title">thread</span>;</span></span><br><span class="line"><span class="comment">/* 文件系统相关信息结构体*/</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">fs_struct</span> *<span class="title">fs</span>;</span></span><br><span class="line"><span class="comment">/* 打开的文件相关信息结构体*/</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">files_struct</span> *<span class="title">files</span>;</span></span><br><span class="line"> <span class="comment">/* 信号相关信息的句柄*/</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">signal_struct</span> *<span class="title">signal</span>;</span></span><br><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">sighand_struct</span> *<span class="title">sighand</span>;</span></span><br><span class="line"> <span class="comment">/*这些是松弛时间值，用来规定select()和poll()的超时时间，单位是纳秒nanoseconds */</span></span><br><span class="line"> <span class="keyword">unsigned</span> <span class="keyword">long</span> timer_slack_ns;</span><br><span class="line"> <span class="keyword">unsigned</span> <span class="keyword">long</span> default_timer_slack_ns;</span><br><span class="line">&#125;；</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-<p>如果需要获取其中的某些信息，获取对应的<code>task_struct</code>中的字段就可以了。在实际应用中，经常需要处理的就是获取当前进程的信息，这时候可以借助内核宏<code>current</code>，通过该宏可以获取到当前进程的<code>task_struct</code>。下面是针对<code>task_struct</code>的应用示例：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/init.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/module.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/kernel.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/sched.h&gt; //task_pid_nr</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* This function is called when the module is loaded. */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">simple_init</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">       printk(KERN_INFO <span class="string">"Loading Module\n"</span>);</span><br><span class="line">       printk(<span class="string">"The process id is %d\n"</span>, (<span class="keyword">int</span>) task_pid_nr(current));</span><br><span class="line">       printk(<span class="string">"The process vid is %d\n"</span>, (<span class="keyword">int</span>) task_pid_vnr(current));</span><br><span class="line">       printk(<span class="string">"The process name is %s\n"</span>, current-&gt;comm);</span><br><span class="line">       printk(<span class="string">"The process tty is %d\n"</span>, current-&gt;signal-&gt;tty);</span><br><span class="line">       printk(<span class="string">"The process group is %d\n"</span>, (<span class="keyword">int</span>) task_tgid_nr(current));</span><br><span class="line">       printk(<span class="string">"\n\n"</span>);</span><br><span class="line">   <span class="comment">//return -1; //debug mode of working</span></span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* This function is called when the module is removed. */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">simple_exit</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    printk(KERN_INFO <span class="string">"Removing Module\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Macros for registering module entry and exit points. */</span></span><br><span class="line">module_init( simple_init );</span><br><span class="line">module_exit( simple_exit );</span><br><span class="line"></span><br><span class="line">MODULE_LICENSE(<span class="string">"GPL"</span>);</span><br><span class="line">MODULE_DESCRIPTION(<span class="string">"Simple Module"</span>);</span><br><span class="line">MODULE_AUTHOR(<span class="string">"SGG"</span>);</span><br></pre></td></tr></table></figure>
-<p>在直接读取这些字段的时候可能引起竞争，所以可以使用<code>get_task_comm()</code>等函数来进行读取。<code>get_task_comm()</code>函数的定义如下：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> get_task_comm(buf, tsk) (&#123;            \</span></span><br><span class="line">   BUILD_BUG_ON(<span class="keyword">sizeof</span>(buf) != TASK_COMM_LEN); \</span><br><span class="line">   __get_task_comm(buf, <span class="keyword">sizeof</span>(buf), tsk);     \</span><br><span class="line"> &#125;)</span><br><span class="line"></span><br><span class="line"> <span class="keyword">char</span> *__get_task_comm(<span class="keyword">char</span> *buf, <span class="keyword">size_t</span> buf_size, struct task_struct *tsk)</span><br><span class="line"> &#123;</span><br><span class="line">   task_lock(tsk);</span><br><span class="line">   <span class="built_in">strncpy</span>(buf, tsk-&gt;comm, buf_size);</span><br><span class="line">   task_unlock(tsk);</span><br><span class="line">   <span class="keyword">return</span> buf;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>kernel</tag>
-        <tag>pid</tag>
+        <tag>filesystem</tag>
+        <tag>文件系统</tag>
       </tags>
   </entry>
   <entry>
@@ -456,35 +517,79 @@
 </ul>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://blog.csdn.net/qq_36357820/article/details/78488077" target="_blank" rel="noopener">https://blog.csdn.net/qq_36357820/article/details/78488077</a></p>
 ]]></content>
+      <categories>
+        <category>linux</category>
+      </categories>
       <tags>
         <tag>linux</tag>
       </tags>
   </entry>
   <entry>
-    <title>linux_filesystem</title>
-    <url>/2020/08/19/linux-filesystem/</url>
-    <content><![CDATA[<p>Linux中常见的文件系统是ext4文件系统，那文件系统的基本组成是什么样的呢？Linux操作系统中，文件除了实际的数据之外还有诸如权限、文件属性类的数据。文件系统通常会将实际的数据存放在<code>block</code>中，而权限及文件属性数据存放在<code>inode</code>中。</p>
-<h2 id="inode-和-block-概述"><a href="#inode-和-block-概述" class="headerlink" title="inode 和 block 概述"></a>inode 和 block 概述</h2><p>文件是存储在硬盘上的，硬盘的最小存储单位叫做扇区<code>sector</code>，每个扇区存储<code>512字节</code>。操作系统读取硬盘的时候，不会一个个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个块<code>block</code>。这种由多个扇区组成的块，是文件存取的最小单位。块的大小，最常见的是<code>4KB</code>，即连续八个sector组成一个<code>block</code>。</p>
-<p>文件数据存储在块中，那么还必须找到一个地方存储文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种存储文件元信息的区域就叫做<code>inode</code>，中文译名为<code>索引节点</code>，也叫<code>i节点</code>。因此，一个文件必须占用一个<code>inode</code>，但至少占用一个<code>block</code>。</p>
-<ul>
-<li>元信息：inode</li>
-<li>数据: block</li>
-</ul>
-<h2 id="inode内容"><a href="#inode内容" class="headerlink" title="inode内容"></a>inode内容</h2><p><code>inode</code>包含很多的文件元信息，但不包含文件名，例如：字节数、属主<code>UserID</code>、属组<code>GroupID</code>、读写执行权限、时间戳等。</p>
-<p>而文件名存放在目录当中，但Linux系统内部不使用文件名，而是使用<code>inode号码</code>识别文件。对于系统来说文件名只是<code>inode号码</code>便于识别的别称。</p>
-<h2 id="inode号码"><a href="#inode号码" class="headerlink" title="inode号码"></a>inode号码</h2><p>可以通过<code>stat</code>命令或者<code>ls -i</code>命令查看文件或者目录的<code>inode号码</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">stat</span> readme.txt</span><br><span class="line">  文件：<span class="string">"readme.txt"</span></span><br><span class="line">  大小：6          块：8          IO 块：4096   普通文件</span><br><span class="line">设备：fc02h/64514d Inode：88617255    硬链接：1</span><br><span class="line">权限：(0664/-rw-rw-r--)  Uid：( 5002/xxx)   Gid：( 1003/xxx)</span><br><span class="line">最近访问：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">最近更改：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">最近改动：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">创建时间：-</span><br><span class="line"></span><br><span class="line">ls -i readme.txt</span><br><span class="line">88617255 readme.txt</span><br></pre></td></tr></table></figure>
-<p>表面上，用户通过文件名打开文件，实际上，系统内部将这个过程分为三步：</p>
-<ol>
-<li>系统找到这个文件名对应的<code>inode号码</code>；</li>
-<li>通过<code>inode号码</code>，获取<code>inode信息</code>；</li>
-<li>根据<code>inode信息</code>，找到文件数据所在的<code>block</code>，并读出数据。<br>其实系统还要根据<code>inode信息</code>，看用户是否具有<code>访问权限</code>，有就指向对应的数据<code>block</code>，没有就返回权限拒绝。</li>
-</ol>
+    <title>oracle</title>
+    <url>/2020/11/20/oracle/</url>
+    <content><![CDATA[<p>Oracle数据库跟MySql数据库要复杂一些，有数据库、数据库实例等概念。</p>
+<h3 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h3><p>Oracle中的数据库指的是物理上的数据库文件或者磁盘中的数据，用户需要通过数据库实例来操作数据库。</p>
+<h3 id="数据库实例"><a href="#数据库实例" class="headerlink" title="数据库实例"></a>数据库实例</h3><p>Oracle 实例是客户端应用程序(用户)和数据库之间的接口。也就是说数据库实例就是一个Oracle数据库服务器中某个后台进程，用户通过这个进程来访问对应的数据库。所以在Oracle链接的时候，是需要指定数据库实例服务名的。</p>
+<a id="more"></a>
+
+<h3 id="第一次登录"><a href="#第一次登录" class="headerlink" title="第一次登录"></a>第一次登录</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sqlplus /nolog</span><br><span class="line">connect / as sysdba</span><br><span class="line">select username,account_status from dba_users;</span><br><span class="line"><span class="comment">### 第一次登录，为sys、system用户设置初始密码</span></span><br><span class="line">alter user sys identified by 123456;</span><br><span class="line">alter user system identified by 123456;</span><br><span class="line"><span class="built_in">exit</span></span><br><span class="line"><span class="comment">### sys 用户登录</span></span><br><span class="line">sys as sysdba</span><br><span class="line"><span class="comment">### 创建WORK用户，注意需要以C##开头</span></span><br><span class="line">CREATE USER C<span class="comment">##WORK IDENTIFIED BY 123456;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="监听器无法启动"><a href="#监听器无法启动" class="headerlink" title="监听器无法启动"></a>监听器无法启动</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">lsnrctl start LISTENER</span><br><span class="line">Starting tnslsnr:</span><br><span class="line"></span><br><span class="line">TNS-12557:TNS:protocol adapter not loadable</span><br><span class="line">TNS-12560:TNS:protocol adapter error</span><br><span class="line">TNS-00527:Protocol Adapter not loadable</span><br></pre></td></tr></table></figure>
+
+<p>listener.ora</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># listener.ora Network Configuration File: D:\WINDOWS.X64_193000_db_home\NETWORK\ADMIN\listener.ora</span><br><span class="line"># Generated by Oracle configuration tools.</span><br><span class="line"></span><br><span class="line">SID_LIST_LISTENER &#x3D;</span><br><span class="line">  (SID_LIST &#x3D;</span><br><span class="line">    (SID_DESC &#x3D;</span><br><span class="line">      (SID_NAME &#x3D; CLRExtProc)</span><br><span class="line">      (ORACLE_HOME &#x3D; D:\WINDOWS.X64_193000_db_home)</span><br><span class="line">      (PROGRAM &#x3D; extproc)</span><br><span class="line">      (ENVS &#x3D; &quot;EXTPROC_DLLS&#x3D;ONLY:D:\WINDOWS.X64_193000_db_home\bin\oraclr19.dll&quot;)</span><br><span class="line">    )</span><br><span class="line">    (SID_DESC &#x3D;</span><br><span class="line">      (SID_NAME &#x3D; ORCL)</span><br><span class="line">      (ORACLE_HOME &#x3D; D:\WINDOWS.X64_193000_db_home)</span><br><span class="line">      (SID_NAME &#x3D; ORCL)</span><br><span class="line">    )</span><br><span class="line">  )</span><br><span class="line"></span><br><span class="line">LISTENER &#x3D;</span><br><span class="line">  (DESCRIPTION_LIST &#x3D;</span><br><span class="line">    (DESCRIPTION &#x3D;</span><br><span class="line">      (ADDRESS &#x3D; (PROTOCOL &#x3D; TCP)(HOST &#x3D; 127.0.0.1)(PORT &#x3D; 1521))</span><br><span class="line">      (ADDRESS &#x3D; (PROTOCOL &#x3D; IPC)(KEY &#x3D; EXTPROC1521))</span><br><span class="line">    )</span><br><span class="line">  )</span><br><span class="line"></span><br><span class="line">ADR_BASE_LISTENER &#x3D; D:\WINDOWS.X64_193000_db_home\log</span><br></pre></td></tr></table></figure>
+
+<p>tnsnames.ora</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># tnsnames.ora Network Configuration File: D:\WINDOWS.X64_193000_db_home\NETWORK\ADMIN\tnsnames.ora</span><br><span class="line"># Generated by Oracle configuration tools.</span><br><span class="line"></span><br><span class="line">ORACLR_CONNECTION_DATA &#x3D;</span><br><span class="line">  (DESCRIPTION &#x3D;</span><br><span class="line">    (ADDRESS_LIST &#x3D;</span><br><span class="line">      (ADDRESS &#x3D; (PROTOCOL &#x3D; IPC)(Key &#x3D; EXTPROC))</span><br><span class="line">    )</span><br><span class="line">    (CONNECT_DATA &#x3D;</span><br><span class="line">      (SID &#x3D; CLRExtProc)</span><br><span class="line">      (PRESENTATION &#x3D; RO)</span><br><span class="line">    )</span><br><span class="line">  )</span><br><span class="line"></span><br><span class="line">ORCL &#x3D;</span><br><span class="line">  (DESCRIPTION &#x3D;</span><br><span class="line">    (ADDRESS_LIST &#x3D;</span><br><span class="line">      (ADDRESS &#x3D; (PROTOCOL &#x3D; TCP)(HOST &#x3D; 127.0.0.1)(PORT &#x3D; 1521))</span><br><span class="line">    )</span><br><span class="line">    (CONNECT_DATA &#x3D;</span><br><span class="line">      (SERVICE_NAME &#x3D; ORCL)</span><br><span class="line">    )</span><br><span class="line">  )</span><br></pre></td></tr></table></figure>
+
+<h3 id="oracle-windows环境"><a href="#oracle-windows环境" class="headerlink" title="oracle windows环境"></a>oracle windows环境</h3><p>如果使用vs在windows环境下进行开发，需要安装ODTwithODAC。下载地址如下：<br><a href="https://download.oracle.com/otn/other/ole-oo4o/ODTwithODAC122011.zip?AuthParam=1604376209_ac2af019fab4ad7c6eb8360fec98cd0b" target="_blank" rel="noopener">https://download.oracle.com/otn/other/ole-oo4o/ODTwithODAC122011.zip?AuthParam=1604376209_ac2af019fab4ad7c6eb8360fec98cd0b</a></p>
+<h2 id="windows编程"><a href="#windows编程" class="headerlink" title="windows编程"></a>windows编程</h2><h3 id="Windows-VS-ADO"><a href="#Windows-VS-ADO" class="headerlink" title="Windows VS ADO"></a>Windows VS ADO</h3><p>关于ADO的介绍参考：<a href="https://blog.csdn.net/i_likechard/article/details/81386694" target="_blank" rel="noopener">https://blog.csdn.net/i_likechard/article/details/81386694</a></p>
+<p><a href="https://blog.csdn.net/luke2834/article/details/47778639" target="_blank" rel="noopener">https://blog.csdn.net/luke2834/article/details/47778639</a></p>
+<p><a href="https://www.cnblogs.com/TenosDoIt/archive/2013/04/15/3022136.html" target="_blank" rel="noopener">https://www.cnblogs.com/TenosDoIt/archive/2013/04/15/3022136.html</a></p>
+<p><a href="https://blog.csdn.net/lbcab/article/details/51329207" target="_blank" rel="noopener">https://blog.csdn.net/lbcab/article/details/51329207</a></p>
+<p><a href="https://blog.csdn.net/shen_jz2012/article/details/51759858" target="_blank" rel="noopener">https://blog.csdn.net/shen_jz2012/article/details/51759858</a></p>
+<h3 id="Microsoft-官方示例"><a href="#Microsoft-官方示例" class="headerlink" title="Microsoft 官方示例"></a>Microsoft 官方示例</h3><p><a href="https://docs.microsoft.com/zh-cn/office/client-developer/access/desktop-database-reference/ado-code-examples-in-microsoft-visual-c" target="_blank" rel="noopener">https://docs.microsoft.com/zh-cn/office/client-developer/access/desktop-database-reference/ado-code-examples-in-microsoft-visual-c</a></p>
+<h3 id="SOCI使用"><a href="#SOCI使用" class="headerlink" title="SOCI使用"></a>SOCI使用</h3><p><a href="https://www.jianshu.com/p/66ac4e90c602" target="_blank" rel="noopener">https://www.jianshu.com/p/66ac4e90c602</a></p>
 ]]></content>
+      <categories>
+        <category>oracle</category>
+      </categories>
       <tags>
-        <tag>Linux</tag>
-        <tag>filesystem</tag>
-        <tag>文件系统</tag>
+        <tag>oracle</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>将modules和exponent转换为公钥</title>
+    <url>/2020/05/22/modulus-and-exponent-to-publicKey/</url>
+    <content><![CDATA[<p>&emsp;&emsp;在使用加解密时，有时候我们拿到的是公钥中的modulus和exponent字段，当需要通过使用openssl工具进行验签或者加密的时候，就需要将这些信息转换成公钥了。本文介绍如何将modules和exponent转换为公钥。</p>
+<a id="more"></a>
+<h2 id="公钥文件分析"><a href="#公钥文件分析" class="headerlink" title="公钥文件分析"></a>公钥文件分析</h2><p>使用如下命令dump出公钥的信息：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ openssl rsa -pubin -in  pub.pem -noout -text</span><br><span class="line">Public-Key: (2048 bit)</span><br><span class="line">Modulus:</span><br><span class="line">    00:a0:10:a8:32:0b:cb:75:db:7d:8e:ba:a5:df:56:</span><br><span class="line">    b2:fb:9c:e9:34:b3:ae:7b:0b:07:a6:13:40:28:13:</span><br><span class="line">    be:78:5f:69:09:c1:bb:5e:52:62:aa:a3:f5:38:5d:</span><br><span class="line">    70:c2:3c:95:05:71:e8:87:57:10:a0:5d:7b:8a:f7:</span><br><span class="line">    dd:a3:e4:85:f5:e1:e7:ba:e2:34:4c:18:9f:46:55:</span><br><span class="line">    15:49:b5:48:92:22:ed:84:24:17:86:bf:69:10:55:</span><br><span class="line">    42:76:4b:55:bf:d3:ce:a4:2a:bd:5e:a2:e5:29:84:</span><br><span class="line">    4f:77:08:3a:22:04:5c:00:de:8b:9b:ee:7f:68:b0:</span><br><span class="line">    b0:9b:e8:bb:b1:99:e6:8a:cf:9e:b9:85:d2:86:d3:</span><br><span class="line">    5e:c2:a4:56:8d:f8:87:1d:6c:b3:73:83:3e:7b:bc:</span><br><span class="line">    5d:c6:e2:63:fd:e1:4d:18:df:53:0f:4e:13:6f:fd:</span><br><span class="line">    a6:b7:8c:e9:26:a3:4e:2b:fd:61:3d:d1:b5:f4:2f:</span><br><span class="line">    ad:55:12:57:2a:20:ed:30:e7:64:3c:87:26:47:ef:</span><br><span class="line">    97:48:30:df:44:f2:ed:c6:54:ed:5e:4f:dd:d9:3d:</span><br><span class="line">    64:51:02:f9:7b:56:77:44:63:b0:95:1a:5e:83:4b:</span><br><span class="line">    82:ce:59:f2:9e:e1:fc:16:1c:fc:f6:9c:55:37:73:</span><br><span class="line">    ae:6a:e9:76:0c:9e:3a:b1:fc:cf:76:20:6b:17:d4:</span><br><span class="line">    87:c3</span><br><span class="line">Exponent: 65537 (0x10001)</span><br></pre></td></tr></table></figure>
+<p>从上面的信息可以看到<code>exponent</code>的值为<code>65537</code>。上面的信息中发现我们的public key的长度是2048位的，但是modulus有257个字节，合计2056（257*8）位,经过验证发现<code>modulus</code>中的第一位<code>00</code>是不需要的。后面根据<a href="https://stackoverflow.com/questions/5403808/private-key-length-bytes" target="_blank" rel="noopener">网上资料</a>发现rsa格式的密钥，它的密钥长度跟<code>modulus</code>的长度是一致的，第一位<code>00</code>不影响<code>modulus</code>的大小，也就不会影响公钥的长度了。  </p>
+<h3 id="导出hex格式的modulus"><a href="#导出hex格式的modulus" class="headerlink" title="导出hex格式的modulus"></a>导出hex格式的modulus</h3><p>通过openssl asn1parse可以查看密钥的格式,关于pem格式的密钥的介绍请看<a href="https://www.cnblogs.com/adylee/p/9366518.html" target="_blank" rel="noopener">这里</a>。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ openssl asn1parse -in pub.pem  -i</span><br><span class="line">    0:d&#x3D;0  hl&#x3D;4 l&#x3D; 290 cons: SEQUENCE          </span><br><span class="line">    4:d&#x3D;1  hl&#x3D;2 l&#x3D;  13 cons:  SEQUENCE          </span><br><span class="line">    6:d&#x3D;2  hl&#x3D;2 l&#x3D;   9 prim:   OBJECT            :rsaEncryption</span><br><span class="line">   17:d&#x3D;2  hl&#x3D;2 l&#x3D;   0 prim:   NULL              </span><br><span class="line">   19:d&#x3D;1  hl&#x3D;4 l&#x3D; 271 prim:  BIT STRING</span><br></pre></td></tr></table></figure>
+<p>其中<code>BIT STRING</code>就是modulus，可以看到它的<code>offset</code>为19,通过如下命令导出hex格式的modulus：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ openssl asn1parse -in pub.pem  -i -dump -strparse 19</span><br><span class="line">    0:d&#x3D;0  hl&#x3D;4 l&#x3D; 266 cons: SEQUENCE          </span><br><span class="line">    4:d&#x3D;1  hl&#x3D;4 l&#x3D; 257 prim: INTEGER           :A010A8320BCB75DB7D8EBAA5DF56B2FB9CE934B3AE7B0B07A613402813BE785F6909C1BB5E5262AAA3F5385D70C23C950571E8875710A05D7B8AF7DDA3E485F5E1E7BAE2344C189F46551549B5489222ED84241786BF69105542764B55BFD3CEA42ABD5EA2E529844F77083A22045C00DE8B9BEE7F68B0B09BE8BBB199E68ACF9EB985D286D35EC2A4568DF8871D6CB373833E7BBC5DC6E263FDE14D18DF530F4E136FFDA6B78CE926A34E2BFD613DD1B5F42FAD5512572A20ED30E7643C872647EF974830DF44F2EDC654ED5E4FDDD93D645102F97B56774463B0951A5E834B82CE59F29EE1FC161CFCF69C553773AE6AE9760C9E3AB1FCCF76206B17D487C3</span><br><span class="line">  265:d&#x3D;1  hl&#x3D;2 l&#x3D;   3 prim: INTEGER           :010001</span><br></pre></td></tr></table></figure>
+<p>可以看到其中的modulus跟上小节中使用<code>openssl rsa</code>命令导出的一样，但是去掉了开头的<code>00</code>。</p>
+<h2 id="提取公钥"><a href="#提取公钥" class="headerlink" title="提取公钥"></a>提取公钥</h2><p>这里对公钥的提取需要使用到Python的<a href="https://github.com/dlitz/pycrypto" target="_blank" rel="noopener">pycrypto</a>库。代码如下:</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.PublicKey.RSA <span class="keyword">import</span> construct</span><br><span class="line">e = long(<span class="number">65537</span>) <span class="comment">## Exponent</span></span><br><span class="line">n = int(<span class="string">'A010A8320BCB75DB7D8EBAA5DF56B2FB9CE934B3AE7B0B07A613402813BE785F6909C1BB5E5262AAA3F5385D70C23C950571E8875710A05D7B8AF7DDA3E485F5E1E7BAE2344C189F46551549B5489222ED84241786BF69105542764B55BFD3CEA42ABD5EA2E529844F77083A22045C00DE8B9BEE7F68B0B09BE8BBB199E68ACF9EB985D286D35EC2A4568DF8871D6CB373833E7BBC5DC6E263FDE14D18DF530F4E136FFDA6B78CE926A34E2BFD613DD1B5F42FAD5512572A20ED30E7643C872647EF974830DF44F2EDC654ED5E4FDDD93D645102F97B56774463B0951A5E834B82CE59F29EE1FC161CFCF69C553773AE6AE9760C9E3AB1FCCF76206B17D487C3'</span>, <span class="number">16</span>) <span class="comment">## modulus</span></span><br><span class="line">pubkey = construct((n, e))</span><br><span class="line">strkey = pubkey.exportKey()</span><br><span class="line"><span class="keyword">print</span> strkey</span><br></pre></td></tr></table></figure>
+<p>需要注意的是e、n都需要是long类型的，不然会报错，最终获取到如下的key。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-----BEGIN PUBLIC KEY-----</span><br><span class="line">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoBCoMgvLddt9jrql31ay</span><br><span class="line">+5zpNLOuewsHphNAKBO+eF9pCcG7XlJiqqP1OF1wwjyVBXHoh1cQoF17ivfdo+SF</span><br><span class="line">9eHnuuI0TBifRlUVSbVIkiLthCQXhr9pEFVCdktVv9POpCq9XqLlKYRPdwg6IgRc</span><br><span class="line">AN6Lm+5&#x2F;aLCwm+i7sZnmis+euYXShtNewqRWjfiHHWyzc4M+e7xdxuJj&#x2F;eFNGN9T</span><br><span class="line">D04Tb&#x2F;2mt4zpJqNOK&#x2F;1hPdG19C+tVRJXKiDtMOdkPIcmR++XSDDfRPLtxlTtXk&#x2F;d</span><br><span class="line">2T1kUQL5e1Z3RGOwlRpeg0uCzlnynuH8Fhz89pxVN3Ouaul2DJ46sfzPdiBrF9SH</span><br><span class="line">wwIDAQAB</span><br><span class="line">-----END PUBLIC KEY-----</span><br></pre></td></tr></table></figure>
+
+<h3 id="关于Crypto-PublicKey-RSA-construct"><a href="#关于Crypto-PublicKey-RSA-construct" class="headerlink" title="关于Crypto.PublicKey.RSA.construct"></a>关于Crypto.PublicKey.RSA.construct</h3><p>下面是Crypto.PublicKey.RSA.construct方法的介绍:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&quot;&quot;&quot;Construct an RSA key from a tuple of valid RSA components.</span><br><span class="line">The modulus **n** must be the product of two primes.</span><br><span class="line">The public exponent **e** must be odd and larger than 1.</span><br><span class="line">In case of a private key, the following equations must apply:</span><br><span class="line">- e !&#x3D; 1</span><br><span class="line">- p*q &#x3D; n</span><br><span class="line">- e*d &#x3D; 1 mod (p-1)(q-1)</span><br><span class="line">- p*u &#x3D; 1 mod q</span><br><span class="line">:Parameters:</span><br><span class="line"> tup : tuple</span><br><span class="line">            A tuple of long integers, with at least 2 and no</span><br><span class="line">            more than 6 items. The items come in the following order:</span><br><span class="line">            1. RSA modulus (n).</span><br><span class="line">            2. Public exponent (e).</span><br><span class="line">            3. Private exponent (d). Only required if the key is private.</span><br><span class="line">            4. First factor of n (p). Optional.</span><br><span class="line">            5. Second factor of n (q). Optional.</span><br><span class="line">            6. CRT coefficient, (1&#x2F;p) mod q (u). Optional.</span><br><span class="line"></span><br><span class="line">:Return: An RSA key object (&#96;_RSAobj&#96;).</span><br><span class="line">&quot;&quot;&quot;</span><br></pre></td></tr></table></figure>
+<p>想要了解这堆说明，需要先了解下<a href="https://zhuanlan.zhihu.com/p/44185847" target="_blank" rel="noopener"><code>RSA</code>算法的原理</a>。根据这篇文章我们可以知道如下几点：<br>1、 模数n = p<em>q,其中q与q互质<br>2、 e是一个随机数，它不等于1，并且与(q-1)</em>(p-1)互质。（算法上m = (q-1)<em>(p-1)）。<br>3、 d是一个整数，(e</em>d)%m = 1, 这里得到的d是私钥的一部分。<br>公钥：(n, e)<br>私钥：(n, d)</p>
+<h4 id="加密过程"><a href="#加密过程" class="headerlink" title="加密过程"></a>加密过程</h4><p>假设明文为a，那么密文b = a^e % n，可以看到我们用到了<code>(n, e)</code>，所以加密的时候是使用公钥进行加密的。其中需要注意的是，要想使用公钥（n，e) 加密，要求被加密的数字必须小于n。</p>
+<h4 id="解密过程"><a href="#解密过程" class="headerlink" title="解密过程"></a>解密过程</h4><p>解密的时候用到私钥<code>(n, d)</code>，假设接收到的密文b,那么想要得到明文a,则需要通过如下计算：<br>a = b^d %n。</p>
+<h3 id="关于验证过程中的注意事项"><a href="#关于验证过程中的注意事项" class="headerlink" title="关于验证过程中的注意事项"></a>关于验证过程中的注意事项</h3><p>验证的时候保证明文的一致性，如明文存在文件中，由于windows 、linux文件格式不一样，可能看上去字符串一样，但是文件的hash是不一样的。</p>
+]]></content>
+      <categories>
+        <category>加解密</category>
+        <category>openssl</category>
+      </categories>
+      <tags>
+        <tag>加解密</tag>
+        <tag>openssl</tag>
       </tags>
   </entry>
   <entry>
@@ -571,38 +676,11 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">xxx@cmos:~&#x2F;test$ openssl dgst -</span><br><span class="line">unknown option &#39;-&#39;</span><br><span class="line">options are</span><br><span class="line">-c              to output the digest with separating colons        &#x2F;&#x2F;输出的摘要信息以分号隔离，和-hex同时使用</span><br><span class="line">-r              to output the digest in coreutils format           &#x2F;&#x2F;指定输出的格式</span><br><span class="line">-d              to output debug info                               &#x2F;&#x2F;输出BIO调试信息</span><br><span class="line">-hex            output as hex dump                                 &#x2F;&#x2F;以16进制打印输出结果</span><br><span class="line">-binary         output in binary form                              &#x2F;&#x2F;输出二进制结果</span><br><span class="line">-hmac arg       set the HMAC key to arg                            &#x2F;&#x2F;指定hmac的key</span><br><span class="line">-non-fips-allow allow use of non FIPS digest                       &#x2F;&#x2F;允许使用不符合fips标准的摘要算法</span><br><span class="line">-sign   file    sign digest using private key in file              &#x2F;&#x2F;执行签名操作，后面指定私钥文件</span><br><span class="line">-verify file    verify a signature using public key in file        &#x2F;&#x2F;执行验证操作，后面指定公钥文件，与prverfify不能同时使用</span><br><span class="line">-prverify file  verify a signature using private key in file       &#x2F;&#x2F;执行验证操作，后面指定密钥文件，与verfify不能同时使用</span><br><span class="line">-keyform arg    key file format (PEM or ENGINE)                    &#x2F;&#x2F;指定密钥文件格式，pem或者engine</span><br><span class="line">-out filename   output to filename rather than stdout              &#x2F;&#x2F;指定输出文件，默认标准输出</span><br><span class="line">-signature file signature to verify                                &#x2F;&#x2F;指定签名文件，在验证签名时使用</span><br><span class="line">-sigopt nm:v    signature parameter                                &#x2F;&#x2F;签名参数</span><br><span class="line">-hmac key       create hashed MAC with key                         &#x2F;&#x2F;制作一个hmac 使用key</span><br><span class="line">-mac algorithm  create MAC (not neccessarily HMAC)                 &#x2F;&#x2F;制作一个mac</span><br><span class="line">-macopt nm:v    MAC algorithm parameters or key                    &#x2F;&#x2F;mac算法参数或者key</span><br><span class="line">-engine e       use engine e, possibly a hardware device.          &#x2F;&#x2F;使用硬件或者三方加密库</span><br><span class="line">-md4            to use the md4 message digest algorithm            &#x2F;&#x2F;摘要算法使用md4</span><br><span class="line">-md5            to use the md5 message digest algorithm            &#x2F;&#x2F;摘要算法使用md5</span><br><span class="line">-ripemd160      to use the ripemd160 message digest algorithm      &#x2F;&#x2F;摘要算法使用ripemd160</span><br><span class="line">-sha            to use the sha message digest algorithm            &#x2F;&#x2F;摘要算法使用sha</span><br><span class="line">-sha1           to use the sha1 message digest algorithm           &#x2F;&#x2F;摘要算法使用sha1</span><br><span class="line">-sha224         to use the sha224 message digest algorithm         &#x2F;&#x2F;摘要算法使用sha223</span><br><span class="line">-sha256         to use the sha256 message digest algorithm         &#x2F;&#x2F;摘要算法使用sha256</span><br><span class="line">-sha384         to use the sha384 message digest algorithm         &#x2F;&#x2F;摘要算法使用sha384</span><br><span class="line">-sha512         to use the sha512 message digest algorithm         &#x2F;&#x2F;摘要算法使用sha512</span><br><span class="line">-whirlpool      to use the whirlpool message digest algorithm      &#x2F;&#x2F;摘要算法使用whirlpool</span><br></pre></td></tr></table></figure>
 <p>使用RSA密钥进行签名验证操作:</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl dgst -sha256 -sign rsa_2048.pem -out stroptr.c.sign stroptr.c  <span class="comment"># 生成摘要签名</span></span><br><span class="line">openssl  dgst  -verify pub.pem -sha256 -signature stroptr.c.sign  stroptr.c <span class="comment"># 验证签名</span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>openssl</category>
+      </categories>
       <tags>
         <tag>openssl</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>将modules和exponent转换为公钥</title>
-    <url>/2020/05/22/modulus-and-exponent-to-publicKey/</url>
-    <content><![CDATA[<p>&emsp;&emsp;在使用加解密时，有时候我们拿到的是公钥中的modulus和exponent字段，当需要通过使用openssl工具进行验签或者加密的时候，就需要将这些信息转换成公钥了。本文介绍如何将modules和exponent转换为公钥。</p>
-<a id="more"></a>
-<h2 id="公钥文件分析"><a href="#公钥文件分析" class="headerlink" title="公钥文件分析"></a>公钥文件分析</h2><p>使用如下命令dump出公钥的信息：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ openssl rsa -pubin -in  pub.pem -noout -text</span><br><span class="line">Public-Key: (2048 bit)</span><br><span class="line">Modulus:</span><br><span class="line">    00:a0:10:a8:32:0b:cb:75:db:7d:8e:ba:a5:df:56:</span><br><span class="line">    b2:fb:9c:e9:34:b3:ae:7b:0b:07:a6:13:40:28:13:</span><br><span class="line">    be:78:5f:69:09:c1:bb:5e:52:62:aa:a3:f5:38:5d:</span><br><span class="line">    70:c2:3c:95:05:71:e8:87:57:10:a0:5d:7b:8a:f7:</span><br><span class="line">    dd:a3:e4:85:f5:e1:e7:ba:e2:34:4c:18:9f:46:55:</span><br><span class="line">    15:49:b5:48:92:22:ed:84:24:17:86:bf:69:10:55:</span><br><span class="line">    42:76:4b:55:bf:d3:ce:a4:2a:bd:5e:a2:e5:29:84:</span><br><span class="line">    4f:77:08:3a:22:04:5c:00:de:8b:9b:ee:7f:68:b0:</span><br><span class="line">    b0:9b:e8:bb:b1:99:e6:8a:cf:9e:b9:85:d2:86:d3:</span><br><span class="line">    5e:c2:a4:56:8d:f8:87:1d:6c:b3:73:83:3e:7b:bc:</span><br><span class="line">    5d:c6:e2:63:fd:e1:4d:18:df:53:0f:4e:13:6f:fd:</span><br><span class="line">    a6:b7:8c:e9:26:a3:4e:2b:fd:61:3d:d1:b5:f4:2f:</span><br><span class="line">    ad:55:12:57:2a:20:ed:30:e7:64:3c:87:26:47:ef:</span><br><span class="line">    97:48:30:df:44:f2:ed:c6:54:ed:5e:4f:dd:d9:3d:</span><br><span class="line">    64:51:02:f9:7b:56:77:44:63:b0:95:1a:5e:83:4b:</span><br><span class="line">    82:ce:59:f2:9e:e1:fc:16:1c:fc:f6:9c:55:37:73:</span><br><span class="line">    ae:6a:e9:76:0c:9e:3a:b1:fc:cf:76:20:6b:17:d4:</span><br><span class="line">    87:c3</span><br><span class="line">Exponent: 65537 (0x10001)</span><br></pre></td></tr></table></figure>
-<p>从上面的信息可以看到<code>exponent</code>的值为<code>65537</code>。上面的信息中发现我们的public key的长度是2048位的，但是modulus有257个字节，合计2056（257*8）位,经过验证发现<code>modulus</code>中的第一位<code>00</code>是不需要的。后面根据<a href="https://stackoverflow.com/questions/5403808/private-key-length-bytes" target="_blank" rel="noopener">网上资料</a>发现rsa格式的密钥，它的密钥长度跟<code>modulus</code>的长度是一致的，第一位<code>00</code>不影响<code>modulus</code>的大小，也就不会影响公钥的长度了。  </p>
-<h3 id="导出hex格式的modulus"><a href="#导出hex格式的modulus" class="headerlink" title="导出hex格式的modulus"></a>导出hex格式的modulus</h3><p>通过openssl asn1parse可以查看密钥的格式,关于pem格式的密钥的介绍请看<a href="https://www.cnblogs.com/adylee/p/9366518.html" target="_blank" rel="noopener">这里</a>。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ openssl asn1parse -in pub.pem  -i</span><br><span class="line">    0:d&#x3D;0  hl&#x3D;4 l&#x3D; 290 cons: SEQUENCE          </span><br><span class="line">    4:d&#x3D;1  hl&#x3D;2 l&#x3D;  13 cons:  SEQUENCE          </span><br><span class="line">    6:d&#x3D;2  hl&#x3D;2 l&#x3D;   9 prim:   OBJECT            :rsaEncryption</span><br><span class="line">   17:d&#x3D;2  hl&#x3D;2 l&#x3D;   0 prim:   NULL              </span><br><span class="line">   19:d&#x3D;1  hl&#x3D;4 l&#x3D; 271 prim:  BIT STRING</span><br></pre></td></tr></table></figure>
-<p>其中<code>BIT STRING</code>就是modulus，可以看到它的<code>offset</code>为19,通过如下命令导出hex格式的modulus：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ openssl asn1parse -in pub.pem  -i -dump -strparse 19</span><br><span class="line">    0:d&#x3D;0  hl&#x3D;4 l&#x3D; 266 cons: SEQUENCE          </span><br><span class="line">    4:d&#x3D;1  hl&#x3D;4 l&#x3D; 257 prim: INTEGER           :A010A8320BCB75DB7D8EBAA5DF56B2FB9CE934B3AE7B0B07A613402813BE785F6909C1BB5E5262AAA3F5385D70C23C950571E8875710A05D7B8AF7DDA3E485F5E1E7BAE2344C189F46551549B5489222ED84241786BF69105542764B55BFD3CEA42ABD5EA2E529844F77083A22045C00DE8B9BEE7F68B0B09BE8BBB199E68ACF9EB985D286D35EC2A4568DF8871D6CB373833E7BBC5DC6E263FDE14D18DF530F4E136FFDA6B78CE926A34E2BFD613DD1B5F42FAD5512572A20ED30E7643C872647EF974830DF44F2EDC654ED5E4FDDD93D645102F97B56774463B0951A5E834B82CE59F29EE1FC161CFCF69C553773AE6AE9760C9E3AB1FCCF76206B17D487C3</span><br><span class="line">  265:d&#x3D;1  hl&#x3D;2 l&#x3D;   3 prim: INTEGER           :010001</span><br></pre></td></tr></table></figure>
-<p>可以看到其中的modulus跟上小节中使用<code>openssl rsa</code>命令导出的一样，但是去掉了开头的<code>00</code>。</p>
-<h2 id="提取公钥"><a href="#提取公钥" class="headerlink" title="提取公钥"></a>提取公钥</h2><p>这里对公钥的提取需要使用到Python的<a href="https://github.com/dlitz/pycrypto" target="_blank" rel="noopener">pycrypto</a>库。代码如下:</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.PublicKey.RSA <span class="keyword">import</span> construct</span><br><span class="line">e = long(<span class="number">65537</span>) <span class="comment">## Exponent</span></span><br><span class="line">n = int(<span class="string">'A010A8320BCB75DB7D8EBAA5DF56B2FB9CE934B3AE7B0B07A613402813BE785F6909C1BB5E5262AAA3F5385D70C23C950571E8875710A05D7B8AF7DDA3E485F5E1E7BAE2344C189F46551549B5489222ED84241786BF69105542764B55BFD3CEA42ABD5EA2E529844F77083A22045C00DE8B9BEE7F68B0B09BE8BBB199E68ACF9EB985D286D35EC2A4568DF8871D6CB373833E7BBC5DC6E263FDE14D18DF530F4E136FFDA6B78CE926A34E2BFD613DD1B5F42FAD5512572A20ED30E7643C872647EF974830DF44F2EDC654ED5E4FDDD93D645102F97B56774463B0951A5E834B82CE59F29EE1FC161CFCF69C553773AE6AE9760C9E3AB1FCCF76206B17D487C3'</span>, <span class="number">16</span>) <span class="comment">## modulus</span></span><br><span class="line">pubkey = construct((n, e))</span><br><span class="line">strkey = pubkey.exportKey()</span><br><span class="line"><span class="keyword">print</span> strkey</span><br></pre></td></tr></table></figure>
-<p>需要注意的是e、n都需要是long类型的，不然会报错，最终获取到如下的key。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-----BEGIN PUBLIC KEY-----</span><br><span class="line">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoBCoMgvLddt9jrql31ay</span><br><span class="line">+5zpNLOuewsHphNAKBO+eF9pCcG7XlJiqqP1OF1wwjyVBXHoh1cQoF17ivfdo+SF</span><br><span class="line">9eHnuuI0TBifRlUVSbVIkiLthCQXhr9pEFVCdktVv9POpCq9XqLlKYRPdwg6IgRc</span><br><span class="line">AN6Lm+5&#x2F;aLCwm+i7sZnmis+euYXShtNewqRWjfiHHWyzc4M+e7xdxuJj&#x2F;eFNGN9T</span><br><span class="line">D04Tb&#x2F;2mt4zpJqNOK&#x2F;1hPdG19C+tVRJXKiDtMOdkPIcmR++XSDDfRPLtxlTtXk&#x2F;d</span><br><span class="line">2T1kUQL5e1Z3RGOwlRpeg0uCzlnynuH8Fhz89pxVN3Ouaul2DJ46sfzPdiBrF9SH</span><br><span class="line">wwIDAQAB</span><br><span class="line">-----END PUBLIC KEY-----</span><br></pre></td></tr></table></figure>
-
-<h3 id="关于Crypto-PublicKey-RSA-construct"><a href="#关于Crypto-PublicKey-RSA-construct" class="headerlink" title="关于Crypto.PublicKey.RSA.construct"></a>关于Crypto.PublicKey.RSA.construct</h3><p>下面是Crypto.PublicKey.RSA.construct方法的介绍:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&quot;&quot;&quot;Construct an RSA key from a tuple of valid RSA components.</span><br><span class="line">The modulus **n** must be the product of two primes.</span><br><span class="line">The public exponent **e** must be odd and larger than 1.</span><br><span class="line">In case of a private key, the following equations must apply:</span><br><span class="line">- e !&#x3D; 1</span><br><span class="line">- p*q &#x3D; n</span><br><span class="line">- e*d &#x3D; 1 mod (p-1)(q-1)</span><br><span class="line">- p*u &#x3D; 1 mod q</span><br><span class="line">:Parameters:</span><br><span class="line"> tup : tuple</span><br><span class="line">            A tuple of long integers, with at least 2 and no</span><br><span class="line">            more than 6 items. The items come in the following order:</span><br><span class="line">            1. RSA modulus (n).</span><br><span class="line">            2. Public exponent (e).</span><br><span class="line">            3. Private exponent (d). Only required if the key is private.</span><br><span class="line">            4. First factor of n (p). Optional.</span><br><span class="line">            5. Second factor of n (q). Optional.</span><br><span class="line">            6. CRT coefficient, (1&#x2F;p) mod q (u). Optional.</span><br><span class="line"></span><br><span class="line">:Return: An RSA key object (&#96;_RSAobj&#96;).</span><br><span class="line">&quot;&quot;&quot;</span><br></pre></td></tr></table></figure>
-<p>想要了解这堆说明，需要先了解下<a href="https://zhuanlan.zhihu.com/p/44185847" target="_blank" rel="noopener"><code>RSA</code>算法的原理</a>。根据这篇文章我们可以知道如下几点：<br>1、 模数n = p<em>q,其中q与q互质<br>2、 e是一个随机数，它不等于1，并且与(q-1)</em>(p-1)互质。（算法上m = (q-1)<em>(p-1)）。<br>3、 d是一个整数，(e</em>d)%m = 1, 这里得到的d是私钥的一部分。<br>公钥：(n, e)<br>私钥：(n, d)</p>
-<h4 id="加密过程"><a href="#加密过程" class="headerlink" title="加密过程"></a>加密过程</h4><p>假设明文为a，那么密文b = a^e % n，可以看到我们用到了<code>(n, e)</code>，所以加密的时候是使用公钥进行加密的。其中需要注意的是，要想使用公钥（n，e) 加密，要求被加密的数字必须小于n。</p>
-<h4 id="解密过程"><a href="#解密过程" class="headerlink" title="解密过程"></a>解密过程</h4><p>解密的时候用到私钥<code>(n, d)</code>，假设接收到的密文b,那么想要得到明文a,则需要通过如下计算：<br>a = b^d %n。</p>
-<h3 id="关于验证过程中的注意事项"><a href="#关于验证过程中的注意事项" class="headerlink" title="关于验证过程中的注意事项"></a>关于验证过程中的注意事项</h3><p>验证的时候保证明文的一致性，如明文存在文件中，由于windows 、linux文件格式不一样，可能看上去字符串一样，但是文件的hash是不一样的。</p>
-]]></content>
-      <tags>
-        <tag>openssl</tag>
-        <tag>加解密</tag>
       </tags>
   </entry>
   <entry>
@@ -612,41 +690,13 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[   48.471014] printk: init: 46 output lines suppressed due to ratelimiting</span><br><span class="line">[   48.617226] init: [libfs_mgr]dt_fstab: Skip disabled entry for partition vendor</span><br><span class="line">[   48.631023] init: [libfs_mgr]Warning: unknown flag: wrappedkey</span><br><span class="line">[   48.639762] init: DM_DEV_STATUS failed for system_ext: No such device or address</span><br><span class="line">[   48.647430] init: Could not update logical partition</span><br><span class="line">[   48.653314] init: DM_DEV_STATUS failed for product: No such device or address</span><br><span class="line">[   48.660748] init: Could not update logical partition</span><br></pre></td></tr></table></figure>
 <p>也就是说<code>printk: init: 46 output lines suppressed due to ratelimiting</code>有部分log没有打印出来，解决办法就是修改kernel源码。修改文件位于<code>include/linux/ratelimit.h</code>。</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 下面表示5秒内最多打印10条记录，可以将DEFAULT_RATELIMIT_BURST修改成50，那么5秒内就可以打印50条了。当然也不是越大越好，因为需要考虑考log对系统服务器的影响，不要引起阻塞。</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEFAULT_RATELIMIT_INTERVAL      (5 * HZ)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEFAULT_RATELIMIT_BURST         10  <span class="comment">// 可以修改成50</span></span></span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>kernel</category>
+      </categories>
       <tags>
         <tag>kernel</tag>
         <tag>printk</tag>
         <tag>调试</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>oracle</title>
-    <url>/2020/11/20/oracle/</url>
-    <content><![CDATA[<p>Oracle数据库跟MySql数据库要复杂一些，有数据库、数据库实例等概念。</p>
-<h3 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h3><p>Oracle中的数据库指的是物理上的数据库文件或者磁盘中的数据，用户需要通过数据库实例来操作数据库。</p>
-<h3 id="数据库实例"><a href="#数据库实例" class="headerlink" title="数据库实例"></a>数据库实例</h3><p>Oracle 实例是客户端应用程序(用户)和数据库之间的接口。也就是说数据库实例就是一个Oracle数据库服务器中某个后台进程，用户通过这个进程来访问对应的数据库。所以在Oracle链接的时候，是需要指定数据库实例服务名的。</p>
-<a id="more"></a>
-
-<h3 id="第一次登录"><a href="#第一次登录" class="headerlink" title="第一次登录"></a>第一次登录</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sqlplus /nolog</span><br><span class="line">connect / as sysdba</span><br><span class="line">select username,account_status from dba_users;</span><br><span class="line"><span class="comment">### 第一次登录，为sys、system用户设置初始密码</span></span><br><span class="line">alter user sys identified by 123456;</span><br><span class="line">alter user system identified by 123456;</span><br><span class="line"><span class="built_in">exit</span></span><br><span class="line"><span class="comment">### sys 用户登录</span></span><br><span class="line">sys as sysdba</span><br><span class="line"><span class="comment">### 创建WORK用户，注意需要以C##开头</span></span><br><span class="line">CREATE USER C<span class="comment">##WORK IDENTIFIED BY 123456;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="监听器无法启动"><a href="#监听器无法启动" class="headerlink" title="监听器无法启动"></a>监听器无法启动</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">lsnrctl start LISTENER</span><br><span class="line">Starting tnslsnr:</span><br><span class="line"></span><br><span class="line">TNS-12557:TNS:protocol adapter not loadable</span><br><span class="line">TNS-12560:TNS:protocol adapter error</span><br><span class="line">TNS-00527:Protocol Adapter not loadable</span><br></pre></td></tr></table></figure>
-
-<p>listener.ora</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># listener.ora Network Configuration File: D:\WINDOWS.X64_193000_db_home\NETWORK\ADMIN\listener.ora</span><br><span class="line"># Generated by Oracle configuration tools.</span><br><span class="line"></span><br><span class="line">SID_LIST_LISTENER &#x3D;</span><br><span class="line">  (SID_LIST &#x3D;</span><br><span class="line">    (SID_DESC &#x3D;</span><br><span class="line">      (SID_NAME &#x3D; CLRExtProc)</span><br><span class="line">      (ORACLE_HOME &#x3D; D:\WINDOWS.X64_193000_db_home)</span><br><span class="line">      (PROGRAM &#x3D; extproc)</span><br><span class="line">      (ENVS &#x3D; &quot;EXTPROC_DLLS&#x3D;ONLY:D:\WINDOWS.X64_193000_db_home\bin\oraclr19.dll&quot;)</span><br><span class="line">    )</span><br><span class="line">    (SID_DESC &#x3D;</span><br><span class="line">      (SID_NAME &#x3D; ORCL)</span><br><span class="line">      (ORACLE_HOME &#x3D; D:\WINDOWS.X64_193000_db_home)</span><br><span class="line">      (SID_NAME &#x3D; ORCL)</span><br><span class="line">    )</span><br><span class="line">  )</span><br><span class="line"></span><br><span class="line">LISTENER &#x3D;</span><br><span class="line">  (DESCRIPTION_LIST &#x3D;</span><br><span class="line">    (DESCRIPTION &#x3D;</span><br><span class="line">      (ADDRESS &#x3D; (PROTOCOL &#x3D; TCP)(HOST &#x3D; 127.0.0.1)(PORT &#x3D; 1521))</span><br><span class="line">      (ADDRESS &#x3D; (PROTOCOL &#x3D; IPC)(KEY &#x3D; EXTPROC1521))</span><br><span class="line">    )</span><br><span class="line">  )</span><br><span class="line"></span><br><span class="line">ADR_BASE_LISTENER &#x3D; D:\WINDOWS.X64_193000_db_home\log</span><br></pre></td></tr></table></figure>
-
-<p>tnsnames.ora</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># tnsnames.ora Network Configuration File: D:\WINDOWS.X64_193000_db_home\NETWORK\ADMIN\tnsnames.ora</span><br><span class="line"># Generated by Oracle configuration tools.</span><br><span class="line"></span><br><span class="line">ORACLR_CONNECTION_DATA &#x3D;</span><br><span class="line">  (DESCRIPTION &#x3D;</span><br><span class="line">    (ADDRESS_LIST &#x3D;</span><br><span class="line">      (ADDRESS &#x3D; (PROTOCOL &#x3D; IPC)(Key &#x3D; EXTPROC))</span><br><span class="line">    )</span><br><span class="line">    (CONNECT_DATA &#x3D;</span><br><span class="line">      (SID &#x3D; CLRExtProc)</span><br><span class="line">      (PRESENTATION &#x3D; RO)</span><br><span class="line">    )</span><br><span class="line">  )</span><br><span class="line"></span><br><span class="line">ORCL &#x3D;</span><br><span class="line">  (DESCRIPTION &#x3D;</span><br><span class="line">    (ADDRESS_LIST &#x3D;</span><br><span class="line">      (ADDRESS &#x3D; (PROTOCOL &#x3D; TCP)(HOST &#x3D; 127.0.0.1)(PORT &#x3D; 1521))</span><br><span class="line">    )</span><br><span class="line">    (CONNECT_DATA &#x3D;</span><br><span class="line">      (SERVICE_NAME &#x3D; ORCL)</span><br><span class="line">    )</span><br><span class="line">  )</span><br></pre></td></tr></table></figure>
-
-<h3 id="oracle-windows环境"><a href="#oracle-windows环境" class="headerlink" title="oracle windows环境"></a>oracle windows环境</h3><p>如果使用vs在windows环境下进行开发，需要安装ODTwithODAC。下载地址如下：<br><a href="https://download.oracle.com/otn/other/ole-oo4o/ODTwithODAC122011.zip?AuthParam=1604376209_ac2af019fab4ad7c6eb8360fec98cd0b" target="_blank" rel="noopener">https://download.oracle.com/otn/other/ole-oo4o/ODTwithODAC122011.zip?AuthParam=1604376209_ac2af019fab4ad7c6eb8360fec98cd0b</a></p>
-<h2 id="windows编程"><a href="#windows编程" class="headerlink" title="windows编程"></a>windows编程</h2><h3 id="Windows-VS-ADO"><a href="#Windows-VS-ADO" class="headerlink" title="Windows VS ADO"></a>Windows VS ADO</h3><p>关于ADO的介绍参考：<a href="https://blog.csdn.net/i_likechard/article/details/81386694" target="_blank" rel="noopener">https://blog.csdn.net/i_likechard/article/details/81386694</a></p>
-<p><a href="https://blog.csdn.net/luke2834/article/details/47778639" target="_blank" rel="noopener">https://blog.csdn.net/luke2834/article/details/47778639</a></p>
-<p><a href="https://www.cnblogs.com/TenosDoIt/archive/2013/04/15/3022136.html" target="_blank" rel="noopener">https://www.cnblogs.com/TenosDoIt/archive/2013/04/15/3022136.html</a></p>
-<p><a href="https://blog.csdn.net/lbcab/article/details/51329207" target="_blank" rel="noopener">https://blog.csdn.net/lbcab/article/details/51329207</a></p>
-<p><a href="https://blog.csdn.net/shen_jz2012/article/details/51759858" target="_blank" rel="noopener">https://blog.csdn.net/shen_jz2012/article/details/51759858</a></p>
-<h3 id="Microsoft-官方示例"><a href="#Microsoft-官方示例" class="headerlink" title="Microsoft 官方示例"></a>Microsoft 官方示例</h3><p><a href="https://docs.microsoft.com/zh-cn/office/client-developer/access/desktop-database-reference/ado-code-examples-in-microsoft-visual-c" target="_blank" rel="noopener">https://docs.microsoft.com/zh-cn/office/client-developer/access/desktop-database-reference/ado-code-examples-in-microsoft-visual-c</a></p>
-<h3 id="SOCI使用"><a href="#SOCI使用" class="headerlink" title="SOCI使用"></a>SOCI使用</h3><p><a href="https://www.jianshu.com/p/66ac4e90c602" target="_blank" rel="noopener">https://www.jianshu.com/p/66ac4e90c602</a></p>
-]]></content>
-      <tags>
-        <tag>oracle</tag>
       </tags>
   </entry>
   <entry>
@@ -661,6 +711,9 @@
 <figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">inline</span> <span class="keyword">namespace</span> v1 &#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">doSomething</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        std::cout &lt;&lt; 'v1\n';</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> v2 &#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">doSomething</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"v2\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    v1::doSomething(); <span class="comment">// 调用v1命名空间的doSomething()函数</span></span><br><span class="line">    v2::doSomething(); <span class="comment">// 调用v2命名空间的doSomething()函数</span></span><br><span class="line">    doSomething(); <span class="comment">// 调用inline命名空间中的函数v1::doSomething()</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>从上面的例子中可以看到，同一文件中，不加命名空间默认调用<code>inline 命名空间</code>中的内容，如果新的版本的函数定义的普通命名空间中，加上命名空间名字调用即可。</p>
 ]]></content>
+      <categories>
+        <category>c/c++</category>
+      </categories>
       <tags>
         <tag>c/c++</tag>
       </tags>
@@ -709,6 +762,10 @@
 </li>
 </ol>
 ]]></content>
+      <categories>
+        <category>android</category>
+        <category>filesystem</category>
+      </categories>
       <tags>
         <tag>android</tag>
         <tag>filesystem</tag>
