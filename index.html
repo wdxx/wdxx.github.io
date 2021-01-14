@@ -188,6 +188,122 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/13/reference-varaibles/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wdxx">
+      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wdxxliu">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/01/13/reference-varaibles/" class="post-title-link" itemprop="url">引用变量</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-13 20:23:36" itemprop="dateCreated datePublished" datetime="2021-01-13T20:23:36+08:00">2021-01-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-14 11:47:06" itemprop="dateModified" datetime="2021-01-14T11:47:06+08:00">2021-01-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/c-c/" itemprop="url" rel="index"><span itemprop="name">c/c++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>引用变量是c++的基本变量。用于给其它变量或对象定义别名。c++支持三种类型的引用变量：</p>
+<ol>
+<li>非const变量的引用</li>
+<li>const变量的引用</li>
+<li>在c++11中引入的右值(r-value)的引用</li>
+</ol>
+<h4 id="非const变量的引用"><a href="#非const变量的引用" class="headerlink" title="非const变量的引用"></a>非const变量的引用</h4><p>一个非const变量的引用通过<code>&amp;</code>符号来进行申明。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> value&#123;<span class="number">5</span>&#125;;</span><br><span class="line"><span class="keyword">int</span> &amp;ref&#123;value&#125;;</span><br></pre></td></tr></table></figure>
+<p>上面的语法中，<code>&amp;</code>不表示取地址，而是表示<code>引用</code>。非常量值的引用通常简称为<code>引用</code>。跟指针语法中的<code>*</code>符号使用一样，<code>&amp;</code>不论是靠近类型名还是引用变量名都是可以的。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这两个语法是一样的</span></span><br><span class="line"><span class="keyword">int</span> &amp;ref1&#123;value&#125;;</span><br><span class="line"><span class="keyword">int</span>&amp; ref2&#123;value&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="引用变量作为别名"><a href="#引用变量作为别名" class="headerlink" title="引用变量作为别名"></a>引用变量作为别名</h4><p>引用变量通常表示它所引用的变量的值。在这种情况下，引用变量就是一个别名。例如：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> x&#123;<span class="number">5</span>&#125;; <span class="comment">// 普通变量</span></span><br><span class="line"><span class="keyword">int</span> &amp;y&#123;x&#125;; <span class="comment">// y是x的引用</span></span><br><span class="line"><span class="keyword">int</span> &amp;z&#123;y&#125;; <span class="comment">// z是y的引用</span></span><br></pre></td></tr></table></figure>
+<p>在上面的代码片段中，对x、y、z三个变量的赋值或者取值都是一样的。下面是引用变量的使用的例子：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> value&#123;<span class="number">5</span>&#125;;</span><br><span class="line">    <span class="keyword">int</span> &amp;ref&#123;vaule&#125;;</span><br><span class="line"></span><br><span class="line">    value = <span class="number">6</span>; <span class="comment">// value=ref=6</span></span><br><span class="line">    ref = <span class="number">7</span>; <span class="comment">// vaule=refs=7</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; value &lt;&lt; <span class="string">'\n'</span>; <span class="comment">// prints 7</span></span><br><span class="line">    ref++;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; value &lt;&lt; <span class="string">'\n'</span>; <span class="comment">// prints 8</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过上面的代码运行过程可以知道，<code>ref</code>就是<code>value</code>的别名。可以通过如下代码知道他们其实是指向相同的地址的：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; &amp;erf;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; &amp;value;</span><br></pre></td></tr></table></figure>
+<h4 id="左值与右值"><a href="#左值与右值" class="headerlink" title="左值与右值"></a>左值与右值</h4><p>在c++中，变量是左值类型。一个左值，它的值在内存中拥有一个地址。因为所有变量都有地址，所以所有变量都是左值。左值之所以叫做左值，是因为它是唯一一个能够存在于赋值语句左侧的值。所以在赋值语句中，<code>=</code>号左侧需要时一个左值。<code>5 = 6;</code>会报错，因为<code>5</code>不是左值（5没有内存地址）。当一个左值被赋值的时候，左值对应地址的值会被修改。<br>于左值相对应的就是右值。右值是一个非左值表达式，例如数字<code>5</code>与非右值表达式<code>2 + x</code>。下面是一些赋值语句的例子，展示了右值是如果evaluate(估值)的。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> y;</span><br><span class="line">y = <span class="number">4</span>;      <span class="comment">// 4是右值，它被估值为4 然后赋值给左值y</span></span><br><span class="line">y = <span class="number">2</span> + <span class="number">5</span>;  <span class="comment">// 2 + 5 是右值，它被赋值为7， 然后赋值给左值y</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> x;</span><br><span class="line">x = y;  <span class="comment">// 这种情况下，y是右值，他被估值为7，然后赋值给左值x</span></span><br><span class="line">x = x;  <span class="comment">// 右边的x是右值，它被估值为7，然后赋值给左值x</span></span><br><span class="line">x = x + <span class="number">1</span>; <span class="comment">// 同上</span></span><br></pre></td></tr></table></figure>
+<p>从上面的代码片段可以知道，一个变量在不同的语境的既可能作为右值也可能作为左值。</p>
+<h4 id="引用变量必须初始化"><a href="#引用变量必须初始化" class="headerlink" title="引用变量必须初始化"></a>引用变量必须初始化</h4><p>引用变量必须在创建时初始化：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> value&#123;<span class="number">5</span>&#125;;</span><br><span class="line"><span class="keyword">int</span> &amp;ref&#123;value&#125;; <span class="comment">// 正确</span></span><br><span class="line"><span class="keyword">int</span> &amp;invalidRef; <span class="comment">// 错误</span></span><br></pre></td></tr></table></figure>
+<p>跟指针不一样，指针可以保存一个空指针，但是没有一个引用是空引用。非const变量的引用不能被初始化为对const变量的引用，同时也不能被初始化为对一个右值的引用。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> x&#123;<span class="number">5</span>&#125;;</span><br><span class="line"><span class="keyword">int</span> &amp;ref1&#123;x&#125;; <span class="comment">// 正确</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> y&#123;<span class="number">7</span>&#125;;</span><br><span class="line"><span class="keyword">int</span> &amp;ref2&#123;y&#125;; <span class="comment">// 错误</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> &amp;ref3&#123;<span class="number">7</span>&#125;; <span class="comment">// 错误</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="引用变量不能被重新赋值"><a href="#引用变量不能被重新赋值" class="headerlink" title="引用变量不能被重新赋值"></a>引用变量不能被重新赋值</h4><p>引用变量已经初始化，就不能被再次赋值。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> value1&#123;<span class="number">5</span>&#125;;</span><br><span class="line"><span class="keyword">int</span> value2&#123;<span class="number">6</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> &amp;ref&#123;vaule1&#125;;</span><br><span class="line">ref = value2;  <span class="comment">// 这里不是将ref重新赋值为对value2的引用，而是将value2的值赋值给ref，所以ref = value1 = 6</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="引用作为函数参数"><a href="#引用作为函数参数" class="headerlink" title="引用作为函数参数"></a>引用作为函数参数</h4><p>引用作为函数参数是相对于c来说的一个重要应用了。在引用作为函数参数的情况下，引用就是参数的别名，所以在调用的时候形参名其实就是实参的别名，不存在将实参的值拷贝到形参中。所以这种使用方法提高了程序的性能。使用引用作为函数参数，跟使用指针作为函数参数类似，不过使用引用作为函数参数更易于理解。<br>在引用作为函数参数的情况下，形参是实参的别名，所以修改形参的值就修改了实参的值。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">changN</span><span class="params">(<span class="keyword">int</span> &amp;value)</span> </span>&#123;</span><br><span class="line">    value = <span class="number">6</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = <span class="number">9</span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; n &lt;&lt; <span class="string">'\n'</span>;  <span class="comment">// prints 9</span></span><br><span class="line"></span><br><span class="line">    changN(n);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; n &lt;&lt; <span class="string">'\n'</span>;  <span class="comment">// prints 6</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所以，当函数需要修改实参的值的时候，可以使用非const引用变量作为函数的参数。</p>
+<h4 id="数组引用作为函数参数"><a href="#数组引用作为函数参数" class="headerlink" title="数组引用作为函数参数"></a>数组引用作为函数参数</h4><p>在c语言中，一般传入数组名或者指针作为函数的参数，这样形参就变成了指针了，对数组长度是无法获取的，c中的做法一般是在传入指针的同时将长度也传入函数。但是如果使用数组的引用作为函数参数，就不会有这个问题。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="comment">/* 注意使用数组引用作为函数参数时，需要指定数组长度 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">printElements</span><span class="params">(<span class="keyword">int</span> &amp;<span class="built_in">array</span>[<span class="number">5</span>])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> length&#123;<span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(<span class="built_in">std</span>::<span class="built_in">size</span>(<span class="built_in">array</span>))&#125;; <span class="comment">// 注意std::size需要c++17的支持</span></span><br><span class="line">    <span class="comment">// int length&#123;sizeof(array)/sizeof(array[0])&#125;;  // 不支持c++17时用这个</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i&#123;<span class="number">0</span>&#125;; i&lt;length; i++) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="built_in">array</span>[i] &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> arr[]&#123;<span class="number">2</span>,<span class="number">4</span>,<span class="number">6</span>,<span class="number">8</span>,<span class="number">10</span>&#125;;</span><br><span class="line">    printElements(arr);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="使用引用快捷访问内部成员"><a href="#使用引用快捷访问内部成员" class="headerlink" title="使用引用快捷访问内部成员"></a>使用引用快捷访问内部成员</h4><p>引用还有一个应用的比较少的场景是对对象内部成员的引用。看下面的代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Something</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> value1;</span><br><span class="line">    <span class="keyword">float</span> value2;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span>  <span class="title">Other</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    Something something;</span><br><span class="line">    <span class="keyword">int</span> othervalue;</span><br><span class="line">&#125;;</span><br><span class="line">Other other;</span><br></pre></td></tr></table></figure>
+<p>当在<code>other</code>中，需要访问<code>something</code>成员的<code>value1</code>时，需要通过<code>other.something.value1</code>来访问，如果成员嵌套的足够深，那么代码就显得冗余了。引用使得在这种情况下，访问内嵌成员更简单：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> &amp;ref&#123;other.something.value1&#125;;</span><br><span class="line">ref = <span class="number">5</span>; <span class="comment">// 跟 other.something.value1 = 5; 效果一样</span></span><br></pre></td></tr></table></figure>
+<p>不过，这种情况下使用引用可能使得程序可读性变差，具体应用根据场景决定。</p>
+<h4 id="引用-vs-指针"><a href="#引用-vs-指针" class="headerlink" title="引用 vs 指针"></a>引用 vs 指针</h4><p>引用其实是在编译器内部通过指针来实现的，一般就是一个常量指针。使用引用的情况程序可读性要好一些。因为引用在申明的时候就必须显示初始化（不能初始化为null），并且只能初始化一次，所以安全性要比指针高。<code>如果给定任务可以通过引用或指针解决，则通常应首选引用。 指针仅应在引用不足以应付的情况下使用（例如，动态分配内存）。</code></p>
+<h4 id="常量引用"><a href="#常量引用" class="headerlink" title="常量引用"></a>常量引用</h4><p>常量引用通常用于函数参数，因为传入后不能修改实参，所以更安全。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">printIt</span><span class="params">(<span class="keyword">const</span> <span class="keyword">int</span>&amp; x)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; x;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a&#123; <span class="number">1</span> &#125;;</span><br><span class="line">    printIt(a); <span class="comment">// non-const l-value</span></span><br><span class="line"> </span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> b&#123; <span class="number">2</span> &#125;;</span><br><span class="line">    printIt(b); <span class="comment">// const l-value</span></span><br><span class="line"> </span><br><span class="line">    printIt(<span class="number">3</span>); <span class="comment">// literal r-value</span></span><br><span class="line"> </span><br><span class="line">    printIt(<span class="number">2</span>+b); <span class="comment">// expression r-value</span></span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>总结：当使用引用作为函数参数时，如果参数是非指针类型或者非基本数据类型(int,float…)时，使用常量引用。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/12/keepalived/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -918,104 +1034,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/19/linux-filesystem/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wdxx">
-      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wdxxliu">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/08/19/linux-filesystem/" class="post-title-link" itemprop="url">linux_filesystem</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-08-19 10:02:20" itemprop="dateCreated datePublished" datetime="2020-08-19T10:02:20+08:00">2020-08-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-13 18:11:27" itemprop="dateModified" datetime="2021-01-13T18:11:27+08:00">2021-01-13</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/filesystem/" itemprop="url" rel="index"><span itemprop="name">filesystem</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/filesystem/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">文件系统</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Linux中常见的文件系统是ext4文件系统，那文件系统的基本组成是什么样的呢？Linux操作系统中，文件除了实际的数据之外还有诸如权限、文件属性类的数据。文件系统通常会将实际的数据存放在<code>block</code>中，而权限及文件属性数据存放在<code>inode</code>中。</p>
-<h2 id="inode-和-block-概述"><a href="#inode-和-block-概述" class="headerlink" title="inode 和 block 概述"></a>inode 和 block 概述</h2><p>文件是存储在硬盘上的，硬盘的最小存储单位叫做扇区<code>sector</code>，每个扇区存储<code>512字节</code>。操作系统读取硬盘的时候，不会一个个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个块<code>block</code>。这种由多个扇区组成的块，是文件存取的最小单位。块的大小，最常见的是<code>4KB</code>，即连续八个sector组成一个<code>block</code>。</p>
-<p>文件数据存储在块中，那么还必须找到一个地方存储文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种存储文件元信息的区域就叫做<code>inode</code>，中文译名为<code>索引节点</code>，也叫<code>i节点</code>。因此，一个文件必须占用一个<code>inode</code>，但至少占用一个<code>block</code>。</p>
-<ul>
-<li>元信息：inode</li>
-<li>数据: block</li>
-</ul>
-<h2 id="inode内容"><a href="#inode内容" class="headerlink" title="inode内容"></a>inode内容</h2><p><code>inode</code>包含很多的文件元信息，但不包含文件名，例如：字节数、属主<code>UserID</code>、属组<code>GroupID</code>、读写执行权限、时间戳等。</p>
-<p>而文件名存放在目录当中，但Linux系统内部不使用文件名，而是使用<code>inode号码</code>识别文件。对于系统来说文件名只是<code>inode号码</code>便于识别的别称。</p>
-<h2 id="inode号码"><a href="#inode号码" class="headerlink" title="inode号码"></a>inode号码</h2><p>可以通过<code>stat</code>命令或者<code>ls -i</code>命令查看文件或者目录的<code>inode号码</code>。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">stat</span> readme.txt</span><br><span class="line">  文件：<span class="string">"readme.txt"</span></span><br><span class="line">  大小：6          块：8          IO 块：4096   普通文件</span><br><span class="line">设备：fc02h/64514d Inode：88617255    硬链接：1</span><br><span class="line">权限：(0664/-rw-rw-r--)  Uid：( 5002/xxx)   Gid：( 1003/xxx)</span><br><span class="line">最近访问：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">最近更改：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">最近改动：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">创建时间：-</span><br><span class="line"></span><br><span class="line">ls -i readme.txt</span><br><span class="line">88617255 readme.txt</span><br></pre></td></tr></table></figure>
-<p>表面上，用户通过文件名打开文件，实际上，系统内部将这个过程分为三步：</p>
-<ol>
-<li>系统找到这个文件名对应的<code>inode号码</code>；</li>
-<li>通过<code>inode号码</code>，获取<code>inode信息</code>；</li>
-<li>根据<code>inode信息</code>，找到文件数据所在的<code>block</code>，并读出数据。<br>其实系统还要根据<code>inode信息</code>，看用户是否具有<code>访问权限</code>，有就指向对应的数据<code>block</code>，没有就返回权限拒绝。</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1085,7 +1103,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-count">22</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
