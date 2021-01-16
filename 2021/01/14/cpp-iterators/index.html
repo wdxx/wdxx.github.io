@@ -20,22 +20,20 @@
     var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="Linux中常见的文件系统是ext4文件系统，那文件系统的基本组成是什么样的呢？Linux操作系统中，文件除了实际的数据之外还有诸如权限、文件属性类的数据。文件系统通常会将实际的数据存放在block中，而权限及文件属性数据存放在inode中。 inode 和 block 概述文件是存储在硬盘上的，硬盘的最小存储单位叫做扇区sector，每个扇区存储512字节。操作系统读取硬盘的时候，不会一个个扇区">
+  <meta name="description" content="c++迭代器是一个对象，用于遍历容器中的每个元素。一个容器可能提供多种迭代器。例如，一个array 容器可能提供一个正向的迭代器，用于正向顺序遍历，另外提供一个反向的迭代器，用于反向遍历。一旦创建了合适类型的迭代器，程序员就可以使用迭代器提供的接口来遍历或者访问元素，而不用关注当前使用的是哪种遍历方式，也不用关注容器中存储的是哪种类型的数据。而且由于c++迭代器通常使用相同的接口进行遍历(使用++">
 <meta property="og:type" content="article">
-<meta property="og:title" content="linux_filesystem">
-<meta property="og:url" content="http://yoursite.com/2020/08/19/linux-filesystem/index.html">
+<meta property="og:title" content="c++ iterators">
+<meta property="og:url" content="http://yoursite.com/2021/01/14/cpp-iterators/index.html">
 <meta property="og:site_name" content="wdxxliu">
-<meta property="og:description" content="Linux中常见的文件系统是ext4文件系统，那文件系统的基本组成是什么样的呢？Linux操作系统中，文件除了实际的数据之外还有诸如权限、文件属性类的数据。文件系统通常会将实际的数据存放在block中，而权限及文件属性数据存放在inode中。 inode 和 block 概述文件是存储在硬盘上的，硬盘的最小存储单位叫做扇区sector，每个扇区存储512字节。操作系统读取硬盘的时候，不会一个个扇区">
+<meta property="og:description" content="c++迭代器是一个对象，用于遍历容器中的每个元素。一个容器可能提供多种迭代器。例如，一个array 容器可能提供一个正向的迭代器，用于正向顺序遍历，另外提供一个反向的迭代器，用于反向遍历。一旦创建了合适类型的迭代器，程序员就可以使用迭代器提供的接口来遍历或者访问元素，而不用关注当前使用的是哪种遍历方式，也不用关注容器中存储的是哪种类型的数据。而且由于c++迭代器通常使用相同的接口进行遍历(使用++">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-08-19T02:02:20.000Z">
-<meta property="article:modified_time" content="2021-01-13T10:11:27.059Z">
+<meta property="article:published_time" content="2021-01-14T09:55:32.000Z">
+<meta property="article:modified_time" content="2021-01-15T01:51:16.556Z">
 <meta property="article:author" content="wdxx">
-<meta property="article:tag" content="Linux">
-<meta property="article:tag" content="filesystem">
-<meta property="article:tag" content="文件系统">
+<meta property="article:tag" content="c&#x2F;c++">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://yoursite.com/2020/08/19/linux-filesystem/">
+<link rel="canonical" href="http://yoursite.com/2021/01/14/cpp-iterators/">
 
 
 <script id="page-configurations">
@@ -48,7 +46,7 @@
   };
 </script>
 
-  <title>linux_filesystem | wdxxliu</title>
+  <title>c++ iterators | wdxxliu</title>
   
 
 
@@ -193,7 +191,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/19/linux-filesystem/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/14/cpp-iterators/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -206,7 +204,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          linux_filesystem
+          c++ iterators
         </h1>
 
         <div class="post-meta">
@@ -216,14 +214,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-08-19 10:02:20" itemprop="dateCreated datePublished" datetime="2020-08-19T10:02:20+08:00">2020-08-19</time>
+              <time title="创建时间：2021-01-14 17:55:32" itemprop="dateCreated datePublished" datetime="2021-01-14T17:55:32+08:00">2021-01-14</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-13 18:11:27" itemprop="dateModified" datetime="2021-01-13T18:11:27+08:00">2021-01-13</time>
+                <time title="修改时间：2021-01-15 09:51:16" itemprop="dateModified" datetime="2021-01-15T09:51:16+08:00">2021-01-15</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -231,15 +229,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/filesystem/" itemprop="url" rel="index"><span itemprop="name">filesystem</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/filesystem/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">文件系统</span></a>
+                  <a href="/categories/c-c/" itemprop="url" rel="index"><span itemprop="name">c/c++</span></a>
                 </span>
             </span>
 
@@ -254,24 +244,17 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>Linux中常见的文件系统是ext4文件系统，那文件系统的基本组成是什么样的呢？Linux操作系统中，文件除了实际的数据之外还有诸如权限、文件属性类的数据。文件系统通常会将实际的数据存放在<code>block</code>中，而权限及文件属性数据存放在<code>inode</code>中。</p>
-<h2 id="inode-和-block-概述"><a href="#inode-和-block-概述" class="headerlink" title="inode 和 block 概述"></a>inode 和 block 概述</h2><p>文件是存储在硬盘上的，硬盘的最小存储单位叫做扇区<code>sector</code>，每个扇区存储<code>512字节</code>。操作系统读取硬盘的时候，不会一个个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个块<code>block</code>。这种由多个扇区组成的块，是文件存取的最小单位。块的大小，最常见的是<code>4KB</code>，即连续八个sector组成一个<code>block</code>。</p>
-<p>文件数据存储在块中，那么还必须找到一个地方存储文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种存储文件元信息的区域就叫做<code>inode</code>，中文译名为<code>索引节点</code>，也叫<code>i节点</code>。因此，一个文件必须占用一个<code>inode</code>，但至少占用一个<code>block</code>。</p>
-<ul>
-<li>元信息：inode</li>
-<li>数据: block</li>
-</ul>
-<h2 id="inode内容"><a href="#inode内容" class="headerlink" title="inode内容"></a>inode内容</h2><p><code>inode</code>包含很多的文件元信息，但不包含文件名，例如：字节数、属主<code>UserID</code>、属组<code>GroupID</code>、读写执行权限、时间戳等。</p>
-<p>而文件名存放在目录当中，但Linux系统内部不使用文件名，而是使用<code>inode号码</code>识别文件。对于系统来说文件名只是<code>inode号码</code>便于识别的别称。</p>
-<h2 id="inode号码"><a href="#inode号码" class="headerlink" title="inode号码"></a>inode号码</h2><p>可以通过<code>stat</code>命令或者<code>ls -i</code>命令查看文件或者目录的<code>inode号码</code>。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">stat</span> readme.txt</span><br><span class="line">  文件：<span class="string">"readme.txt"</span></span><br><span class="line">  大小：6          块：8          IO 块：4096   普通文件</span><br><span class="line">设备：fc02h/64514d Inode：88617255    硬链接：1</span><br><span class="line">权限：(0664/-rw-rw-r--)  Uid：( 5002/xxx)   Gid：( 1003/xxx)</span><br><span class="line">最近访问：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">最近更改：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">最近改动：2020-08-19 10:19:33.431665414 +0800</span><br><span class="line">创建时间：-</span><br><span class="line"></span><br><span class="line">ls -i readme.txt</span><br><span class="line">88617255 readme.txt</span><br></pre></td></tr></table></figure>
-<p>表面上，用户通过文件名打开文件，实际上，系统内部将这个过程分为三步：</p>
+        <p>c++迭代器是一个对象，用于遍历容器中的每个元素。一个容器可能提供多种迭代器。例如，一个array 容器可能提供一个正向的迭代器，用于正向顺序遍历，另外提供一个反向的迭代器，用于反向遍历。一旦创建了合适类型的迭代器，程序员就可以使用迭代器提供的接口来遍历或者访问元素，而不用关注当前使用的是哪种遍历方式，也不用关注容器中存储的是哪种类型的数据。而且由于c++迭代器通常使用相同的接口进行遍历(使用++操作符访问下一个元素)和访问(使用*操作符访问当前元素)，所以可以使用一致的方法编译不同类型的容器。</p>
+<h4 id="指针与迭代器"><a href="#指针与迭代器" class="headerlink" title="指针与迭代器"></a>指针与迭代器</h4><p>最简单的迭代器是指针，该指针（使用指针运算）适用于顺序存储在内存中的数据。 下面是一个简单数组遍历的例子：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;array&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">array</span> data&#123;<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> <span class="built_in">begin</span>&#123;&amp;data[<span class="number">0</span>]&#125;;</span><br><span class="line">    <span class="keyword">auto</span> <span class="built_in">end</span>&#123;<span class="built_in">begin</span> + <span class="built_in">std</span>::<span class="built_in">size</span>(data)&#125;;</span><br><span class="line">    <span class="comment">// auto end&#123;begin + sizeof(data)/sizeof(data[0])&#125;;</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> ptr&#123;<span class="built_in">begin</span>&#125;; ptr != <span class="built_in">end</span>; ptr++) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; *ptr &lt;&lt; <span class="string">' '</span>;</span><br><span class="line">    &#125; </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面的例子可以总结出，如果需要遍历那么需要四个要素：</p>
 <ol>
-<li>系统找到这个文件名对应的<code>inode号码</code>；</li>
-<li>通过<code>inode号码</code>，获取<code>inode信息</code>；</li>
-<li>根据<code>inode信息</code>，找到文件数据所在的<code>block</code>，并读出数据。<br>其实系统还要根据<code>inode信息</code>，看用户是否具有<code>访问权限</code>，有就指向对应的数据<code>block</code>，没有就返回权限拒绝。</li>
+<li>开始位置<code>begin</code></li>
+<li>结束位置<code>end</code></li>
+<li>如果移动到一个位置<code>++操作符</code></li>
+<li>获取当前元素的值<code>*操作符</code><br>迭代器在c++标准库算法中应用非常广泛，后续章节将介绍几个常用的算法作用在迭代器上的情况。</li>
 </ol>
-
+<h4 id="TODO-标准库算法与迭代器"><a href="#TODO-标准库算法与迭代器" class="headerlink" title="TODO:: 标准库算法与迭代器"></a>TODO:: 标准库算法与迭代器</h4>
     </div>
 
     
@@ -280,9 +263,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Linux/" rel="tag"># Linux</a>
-              <a href="/tags/filesystem/" rel="tag"># filesystem</a>
-              <a href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" rel="tag"># 文件系统</a>
+              <a href="/tags/c-c/" rel="tag"># c/c++</a>
           </div>
 
         
@@ -291,12 +272,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/08/18/kernel-get-process-info/" rel="prev" title="如何在kernel中获取当前进程的信息">
-      <i class="fa fa-chevron-left"></i> 如何在kernel中获取当前进程的信息
+    <a href="/2021/01/13/reference-varaibles/" rel="prev" title="引用变量">
+      <i class="fa fa-chevron-left"></i> 引用变量
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/08/20/cpp-ofstream-ifstream/" rel="next" title="cpp_ofstream_ifstream">
-      cpp_ofstream_ifstream <i class="fa fa-chevron-right"></i>
+    <a href="/2021/01/16/cpp-return-value/" rel="next" title="c++函数返回值">
+      c++函数返回值 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -357,7 +338,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#inode-和-block-概述"><span class="nav-number">1.</span> <span class="nav-text">inode 和 block 概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#inode内容"><span class="nav-number">2.</span> <span class="nav-text">inode内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#inode号码"><span class="nav-number">3.</span> <span class="nav-text">inode号码</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#指针与迭代器"><span class="nav-number">1.</span> <span class="nav-text">指针与迭代器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TODO-标准库算法与迭代器"><span class="nav-number">2.</span> <span class="nav-text">TODO:: 标准库算法与迭代器</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -484,7 +465,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'wdxx.github.io',
       owner       : 'wdxx',
       admin       : ['wdxx'],
-      id          : '335d92262e71600d2419eab5ec513237',
+      id          : 'dfc3379b68992a99a473479adb96dfe2',
         language: 'zh-CN',
       distractionFreeMode: true
     });

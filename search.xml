@@ -827,4 +827,71 @@
         <tag>c/c++</tag>
       </tags>
   </entry>
+  <entry>
+    <title>c++函数返回值</title>
+    <url>/2021/01/16/cpp-return-value/</url>
+    <content><![CDATA[<p>在c++函数中可以返回value、指针、引用等类型的值，本问介绍下返回三种类型的值的区别。</p>
+<h4 id="返回值-value"><a href="#返回值-value" class="headerlink" title="返回值(value)"></a>返回值(value)</h4><p>函数返回值(value)是最简单，并且是最安全的。当函数返回一个value的时候，会拷贝这个value的内容给调用方，所以它是安全的。<br>另一个使用value作为返回类型的好处是，如果返回的是在函数内部定义的局部变量，也不会有作用域的问题，因为是返回的值的拷贝。</p>
+<a id="more"></a>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">doubleValue</span><span class="params">(<span class="keyword">int</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> value&#123;x*<span class="number">2</span>&#125;;</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当返回值是在函数内部定义，或者返回通过值传递的函数参数时，按值返回最合适。 但是，就像函数参数按值传递，对于结构和大型类，按值返回很慢，影响程序性能。<br>应该按值返回的情况:</p>
+<ul>
+<li>返回函数内部定义的局部变量时</li>
+<li>返回按值传递的函数参数时<br>不应该按值返回的情况:</li>
+<li>返回内置数组或指针时（应该使用按地址返回）</li>
+<li>返回大型结构或类时（应该使用按引用返回）</li>
+</ul>
+<h3 id="返回地址-指针"><a href="#返回地址-指针" class="headerlink" title="返回地址(指针)"></a>返回地址(指针)</h3><p>按地址返回意味着将变量的地址返回给调用方。 与按地址传递类似，按地址返回只能返回变量的地址，而不能返回数字或表达式（没有地址）。 由于按地址返回只是将地址从函数复制到调用方，因此按地址返回速度很快。<br>但是，按地址返回有一个按值返回没有的缺点:如果尝试返回函数本地变量的地址，则程序将表现出未定义的行为。 考虑以下示例：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> *<span class="title">doubleValue</span><span class="params">(<span class="keyword">int</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> value&#123;<span class="number">2</span>*x&#125;;</span><br><span class="line">    <span class="keyword">return</span> &amp;value;</span><br><span class="line">&#125;<span class="comment">// value在函数结束的时候被销毁，&amp;value的值就是一个无效值了</span></span><br></pre></td></tr></table></figure>
+<p>在上面的例子可以看到，值在返回给调用方之后就被销毁。 最终结果是，调用者最终以未分配的内存（野指针）的地址作为结果，如果使用该地址将引起问题。 这是新程序员经常犯的错误。 如果程序员尝试按地址返回局部变量，许多较新的编译器都会发出警告（不是错误）。但是，有很多方法可以屏蔽编译器的该特性，使得在不生成警告的情况下进行非法操作，因此 确保程序返回的指针将在函数返回后指向有效变量成了程序员的负担。<br>但是，按地址返回通常用于将动态分配的内存返回给调用者：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">allocateArray</span><span class="params">(<span class="keyword">int</span> <span class="built_in">size</span>)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="keyword">int</span>[<span class="built_in">size</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> *<span class="built_in">array</span>&#123;allocateArray(<span class="number">10</span>)&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">delete</span>[] <span class="built_in">array</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的代码是可以正常运行的，因为动态分配的内存在声明它的程序块的末尾不会超出其作用域，因此当地址返回给调用者时，内存仍将存在。 跟踪手动分配的内存可能很困难。 将分配和释放内存分成不同的功能，这使得了解谁负责释放资源或根本是否需要释放资源变得更加困难。 应该使用智能指针和能够自动释放资源的类型，而不是手动分配内存。<br>应该按地址返回的情况:</p>
+<ul>
+<li>返回动态分配的内存时</li>
+<li>返回通过地址传递的函数参数时<br>不应该按地址返回的情况:</li>
+<li>返回在函数内部声明的变量或按值传递的参数时（使用按值返回）</li>
+<li>返回通过引用传递的大型结构或类时（使用按引用返回）<br>注意： 上面提到关于<code>传递</code>,是指形参的传递方式。</li>
+</ul>
+<h4 id="返回引用"><a href="#返回引用" class="headerlink" title="返回引用"></a>返回引用</h4><p>类似于按地址返回，按引用返回的值必须是变量（不应返回对字面值或解析为临时值的表达式的引用，因为它们将超出函数作用域，从而最终返回一个空的引用）。 通过引用返回变量时，对该变量的引用将传递回调用方。 然后，调用者可以使用该引用来继续修改变量，这有时会很有用。 按引用返回在运行上也很快，这在返回结构和类时很有用。<br>但是，就像按地址返回一样，不应通过引用返回局部变量。 考虑下面的例子：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span>&amp; <span class="title">doubleValue</span><span class="params">(<span class="keyword">int</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> value&#123;x*<span class="number">2</span>&#125;;</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在上述程序中，程序将返回对值的引用，该值将在函数返回时销毁。 这将意味着调用方接收到的返回是一个无效的引用。 辛运的是，如果尝试这样做，编译器可能会给警告或错误。<br>按引用返回经常用在，使用引用传递参数的函数中，函数返回参数的引用。看下面的例子:</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;array&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span>&amp; <span class="title">getElement</span><span class="params">(<span class="built_in">std</span>::<span class="built_in">array</span>&lt;<span class="keyword">int</span>, <span class="number">15</span>&gt; &amp;<span class="built_in">array</span>, <span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">array</span>[index];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">array</span>&lt;<span class="keyword">int</span>, 15&gt; arr;</span><br><span class="line">    getElement(arr, <span class="number">4</span>) = <span class="number">99</span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; arr[<span class="number">4</span>] &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>应该按引用返回的情况:</p>
+<ul>
+<li>返回一个引用参数(传入的参数是引用类型的)</li>
+<li>返回通过引用或地址传递到函数中的对象的成员时</li>
+<li>当返回一个大型结构或类，该结构或类在函数结束时不会被破坏（例如，通过引用传入的结构或类）<br>不应该按引用返回的情况:</li>
+<li>返回在函数内部声明的变量或按值传递的参数时（应该使用按值返回）</li>
+<li>返回函数内部定义的数组或指针值时（使用按地址返回）</li>
+</ul>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>总之，在确认函数返回值类型时，使用值返回是最方便也是最安全的，但是会有性能问题。如果需要使用返回引用或者返回指针，那么需要确认最终返回的对象的作用域不会被超出。</p>
+]]></content>
+      <categories>
+        <category>c++</category>
+      </categories>
+      <tags>
+        <tag>c++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>c++ iterators</title>
+    <url>/2021/01/14/cpp-iterators/</url>
+    <content><![CDATA[<p>c++迭代器是一个对象，用于遍历容器中的每个元素。一个容器可能提供多种迭代器。例如，一个array 容器可能提供一个正向的迭代器，用于正向顺序遍历，另外提供一个反向的迭代器，用于反向遍历。一旦创建了合适类型的迭代器，程序员就可以使用迭代器提供的接口来遍历或者访问元素，而不用关注当前使用的是哪种遍历方式，也不用关注容器中存储的是哪种类型的数据。而且由于c++迭代器通常使用相同的接口进行遍历(使用++操作符访问下一个元素)和访问(使用*操作符访问当前元素)，所以可以使用一致的方法编译不同类型的容器。</p>
+<h4 id="指针与迭代器"><a href="#指针与迭代器" class="headerlink" title="指针与迭代器"></a>指针与迭代器</h4><p>最简单的迭代器是指针，该指针（使用指针运算）适用于顺序存储在内存中的数据。 下面是一个简单数组遍历的例子：</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;array&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">array</span> data&#123;<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> <span class="built_in">begin</span>&#123;&amp;data[<span class="number">0</span>]&#125;;</span><br><span class="line">    <span class="keyword">auto</span> <span class="built_in">end</span>&#123;<span class="built_in">begin</span> + <span class="built_in">std</span>::<span class="built_in">size</span>(data)&#125;;</span><br><span class="line">    <span class="comment">// auto end&#123;begin + sizeof(data)/sizeof(data[0])&#125;;</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> ptr&#123;<span class="built_in">begin</span>&#125;; ptr != <span class="built_in">end</span>; ptr++) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; *ptr &lt;&lt; <span class="string">' '</span>;</span><br><span class="line">    &#125; </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面的例子可以总结出，如果需要遍历那么需要四个要素：</p>
+<ol>
+<li>开始位置<code>begin</code></li>
+<li>结束位置<code>end</code></li>
+<li>如果移动到一个位置<code>++操作符</code></li>
+<li>获取当前元素的值<code>*操作符</code><br>迭代器在c++标准库算法中应用非常广泛，后续章节将介绍几个常用的算法作用在迭代器上的情况。</li>
+</ol>
+<h4 id="TODO-标准库算法与迭代器"><a href="#TODO-标准库算法与迭代器" class="headerlink" title="TODO:: 标准库算法与迭代器"></a>TODO:: 标准库算法与迭代器</h4>]]></content>
+      <categories>
+        <category>c/c++</category>
+      </categories>
+      <tags>
+        <tag>c/c++</tag>
+      </tags>
+  </entry>
 </search>
