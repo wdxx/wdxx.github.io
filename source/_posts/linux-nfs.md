@@ -1,7 +1,8 @@
 ---
 title: linux nfs 挂载
 date: 2020-09-03 09:46:36
-tags:
+tags: linux
+categories: linux
 ---
 在Linux服务器上使用nfs挂载需要先安装nfs server。下面是Ubuntu上安装nfs server的命令。
 ```bash

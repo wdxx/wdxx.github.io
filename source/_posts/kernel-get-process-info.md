@@ -1,7 +1,8 @@
 ---
 title: 如何在kernel中获取当前进程的信息
 date: 2020-08-18 16:37:06
-tags:  kernel pid
+tags:  [kernel,pid]
+categories: [kernel,pid]
 ---
 &emsp;&emsp;在kernel中有时候可能需要根据当前进行的某些信息进行逻辑处理，本文就是介绍如果在kernel中如果获取当前进程的信息。
 &emsp;&emsp;在kernel中关于进程信息的一个重要的结构体就是task_struct，定义如下:

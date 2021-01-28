@@ -2,6 +2,7 @@
 title: android simpleperf工具使用入门
 date: 2020-05-15 16:12:06
 tags: android
+categories: android
 ---
 &emsp;&emsp;Simpleperf 是一个通用的命令行 CPU 性能剖析工具，在Android NDK中已经自带了。需要注意的是，如果自带的simpleperf不能使用，就需要在适配当前Android设备的源码中编译了。simpleperf的源码在AOSP的system/extras/simpleperf下，其中doc目录详细介绍了如何使用该工具。
 <!--more-->

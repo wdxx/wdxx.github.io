@@ -1,7 +1,8 @@
 ---
 title: cpp_ofstream_ifstream
 date: 2020-08-20 16:23:36
-tags: c++ ofstream ifstream
+tags: c/c++
+categories: c/c++
 ---
 ofstream是从内存到硬盘，ifstream是从硬盘到内存，其实所谓的流缓冲就是内存空间。
 在C++中，有一个stream这个类，所有的I/O都以这个“流”类为基础的，包括我们要认识的文件I/O。

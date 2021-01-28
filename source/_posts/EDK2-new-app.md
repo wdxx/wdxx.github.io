@@ -1,7 +1,8 @@
 ---
 title: 如何在EDK II中编写应用程序
 date: 2020-05-25 14:48:17
-tags: EDK2 EDKii EDK II
+tags: [EDK2,EDKii,EDK II]
+categories: [EDK2]
 ---
 EDK2的开发一般分为驱动与应用的开发，本文介绍如何在EDK2中开发应用程序。官方的教程请参考：[Getting Started Writing Simple Application](https://github.com/tianocore/tianocore.github.io/wiki/Getting-Started-Writing-Simple-Application)。
 

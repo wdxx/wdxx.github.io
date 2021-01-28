@@ -1,7 +1,8 @@
 ---
 title: c/c++ 变量
 date: 2020-12-04 14:29:08
-tags:
+tags: c/c++
+categories: c/c++
 ---
 ### 关于c/c++变量溢出问题
 1. 无符号变量溢出

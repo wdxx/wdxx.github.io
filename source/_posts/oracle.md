@@ -1,7 +1,8 @@
 ---
 title: oracle
 date: 2020-11-20 16:11:23
-tags:
+tags: oracle
+categories: oracle
 ---
 Oracle数据库跟MySql数据库要复杂一些，有数据库、数据库实例等概念。
 

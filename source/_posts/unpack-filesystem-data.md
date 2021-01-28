@@ -1,7 +1,8 @@
 ---
 title: 如何解压android系统镜像
 date: 2020-05-18 16:35:01
-tags: android filesystem
+tags: [android,filesystem]
+categories: [android,filesystem]
 ---
 &emsp;&emsp;在android的开发过程中，经常需要用到将andorid system.img 或者 vendor.img等ext文件系统格式的镜像给解压出来分析，如果当前Linux系统有root权限，那么可以直接mount 镜像来进行提取，但是一般开发服务器是不提供root权限的，所以本文讨论如何在没有root权限的情况下对文件系统镜像进行提取。以AndroidQ super.img为例进行说明。
 <!--more-->

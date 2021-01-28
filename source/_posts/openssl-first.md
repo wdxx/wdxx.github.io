@@ -2,6 +2,7 @@
 title: openssl初探
 date: 2020-05-21 14:57:26
 tags: openssl
+categories: openssl
 ---
 ## 非对称加密算法概述
 &emsp;&emsp;非对称加密算法也称公开密钥算法，其解决了对称加密算法密钥分配的问题，非对称加密算法基本特点如下：

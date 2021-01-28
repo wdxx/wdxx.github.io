@@ -1,7 +1,8 @@
 ---
 title: 将modules和exponent转换为公钥
 date: 2020-05-22 15:01:29
-tags: 加解密 openssl
+tags: [加解密,openssl]
+categories: [加解密,openssl]
 ---
 &emsp;&emsp;在使用加解密时，有时候我们拿到的是公钥中的modulus和exponent字段，当需要通过使用openssl工具进行验签或者加密的时候，就需要将这些信息转换成公钥了。本文介绍如何将modules和exponent转换为公钥。
 <!-- more -->

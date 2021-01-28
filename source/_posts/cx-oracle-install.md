@@ -1,7 +1,8 @@
 ---
 title: 脱机安装cx_oracle
 date: 2020-12-15 22:10:38
-tags: python oracle
+tags: [python,oracle]
+categories: [python,oracle]
 ---
 当服务器没有root权限的时候，安装某些Python模块就不方便了，该文章记录下，当没有root权限时，本地安装Python第三方模块的临时办法，以`cx_Oracle`模块进行说明。
 ###准备工作

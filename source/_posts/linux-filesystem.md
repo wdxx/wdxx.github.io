@@ -1,7 +1,8 @@
 ---
 title: linux_filesystem
 date: 2020-08-19 10:02:20
-tags: Linux filesystem 文件系统
+tags: [Linux,filesystem,文件系统]
+categories: [Linux,filesystem,文件系统]
 ---
 Linux中常见的文件系统是ext4文件系统，那文件系统的基本组成是什么样的呢？Linux操作系统中，文件除了实际的数据之外还有诸如权限、文件属性类的数据。文件系统通常会将实际的数据存放在`block`中，而权限及文件属性数据存放在`inode`中。
 

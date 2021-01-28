@@ -2,6 +2,7 @@
 title: android逆向学习计划
 date: 2020-07-22 16:14:41
 tags: android逆向
+categories: android逆向
 ---
 参考[如何系统的学习安卓逆向](https://zhuanlan.zhihu.com/p/101396731),制定如下学习计划。
 

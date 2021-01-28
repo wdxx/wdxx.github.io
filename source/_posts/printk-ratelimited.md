@@ -1,7 +1,8 @@
 ---
 title: printk_ratelimited 导致log打印不全
 date: 2020-06-30 20:48:19
-tags: kernel printk 调试
+tags: [kernel,printk,调试]
+categories: kernel
 ---
 在Android调试过程中，发现启动log中出现如下log：
 ```

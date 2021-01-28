@@ -1,5 +1,7 @@
 ---
 title: Hexo+github博客搭建
+tags: [博客搭建]
+categories: 博客搭建
 ---
 &emsp;&emsp;hexo是一个博客框架，可以将markdown文本编译成静态网页。github提供了github pages,这是一个静态网站托管服务。所以前者生成的静态网页可以托管在github pages上。通过在网上搜索，发现[这篇文章](https://cuiqingcai.com/7625.html)写的很详细，根据这篇文章部署了该[博客网站](https://wdxx.github.io/)。
 <!--more-->

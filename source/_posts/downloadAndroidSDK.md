@@ -1,7 +1,8 @@
 ---
 title: Andorid SDK 下载
 date: 2020-07-29 21:56:54
-tags:
+tags: android
+categories: android
 ---
 ## 下载commandlinetools
 下载地址：https://developer.android.com/studio 点击进去可以查看`Command line tools only`小节
