@@ -936,4 +936,42 @@
         <tag>c/c++</tag>
       </tags>
   </entry>
+  <entry>
+    <title>编译kernel外部模块</title>
+    <url>/2021/01/25/build-external-modules-kernel/</url>
+    <content><![CDATA[<p>本文翻译自kernel<a href="https://www.kernel.org/doc/html/v5.4/kbuild/modules.html" target="_blank" rel="noopener">官方文档</a>,介绍怎么编译kernel源码目录之外的代码模块。  </p>
+<h4 id="1-介绍"><a href="#1-介绍" class="headerlink" title="1 介绍"></a>1 介绍</h4><p>Linux kernel使用<code>kbuild编译系统</code>来编译。kernel模块编译需要保持kbuild架构兼容，并且选择正确的gcc编译flag。kernel编译系统提供了在源码目录内编译以及在源码目录外编译的功能。这两种编译方式是类似的，所有的模块在最初开发阶段都是在源码外编译的。<br>本文所涵盖内容的目标是那些对在kernel源码目录之外编译模块感兴趣的开发者。源码目录外的模块的开发者应该提供一个makefile,该makefile隐藏了很多复杂细节，编译时只需要执行make命令就可以编译该模块。这个很容易实现，在第3小节会有一个详细的示例。</p>
+<a id="more"></a>
+
+<h4 id="2-怎么编译外部模块"><a href="#2-怎么编译外部模块" class="headerlink" title="2 怎么编译外部模块"></a>2 怎么编译外部模块</h4><p>为了编译外部模块，必要条件是需要有一个已经编译过的kernel代码。同时kernel config中需要使能模块加载（CONFIG_MODULE）。如果你使用的是发行版内核，发行版将提供内核的软件包。<br>另外一种方法是使用<code>make modules_prepare</code>命令。这个命令能够保证编译外部模块所需要的依赖都已经被编译出来。<code>modules_prepare</code>这个目标就是抓门用于为编译外部模块而准备的。<br>注意：即使设置了CONFIG_MODVERSIONS，“ modules_prepare”也不会构建Module.symvers。 因此，需要执行完整的内核编译以使模块版本控制工作。  </p>
+<h5 id="2-1-编译命令"><a href="#2-1-编译命令" class="headerlink" title="2.1 编译命令"></a>2.1 编译命令</h5><p>下面的编译命令用于编译外部模块:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ make -C &lt;path_to_kernel_src&gt; M=<span class="variable">$PWD</span></span><br></pre></td></tr></table></figure>
+<p><code>Kbuild编译系统</code>通过编译命令中的<code>M=&lt;dir&gt;</code>来确定当前需要编译哪个模块。<br>如果要针对当前正在运行的内核进行编译使用如下命令：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ make -C /lib/modules/`uname -r`/build M=<span class="variable">$PWD</span></span><br></pre></td></tr></table></figure>
+<p>要安装刚刚构建的模块，请将目标“ modules_install”添加到命令中：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ make -C /lib/modules/`uname -r`/build M=<span class="variable">$PWD</span> modules_install</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-2-编译选项"><a href="#2-2-编译选项" class="headerlink" title="2.2 编译选项"></a>2.2 编译选项</h5><p>($KDIR表示内核源码路径。)<br>make -C $KDIR M=$PWD  </p>
+<h6 id="C-KDIR"><a href="#C-KDIR" class="headerlink" title="-C $KDIR"></a>-C $KDIR</h6><p>kernel源码所在目录。make -C执行时，实际上会先到$KDIR目录执行，然后再返回。</p>
+<h6 id="M-PWD"><a href="#M-PWD" class="headerlink" title="M=$PWD"></a>M=$PWD</h6><p>通知kbuild一个外部模块即将编译。“M”的值是外部模块（kbuild文件）所在目录的绝对路径。</p>
+<h5 id="2-3-编译目标"><a href="#2-3-编译目标" class="headerlink" title="2.3 编译目标"></a>2.3 编译目标</h5><p>在构建外部模块时，仅“make”目标的子集可用。也就是说不是所有的kernel编译命令都可以在外部模块目录下执行。<br>make -C $KDIR M=$PWD [target]<br>默认情况下会编译当前目录的模块，所以不需要指定任何目标。所有的编译输出都将输出在$PWD目录。但是执行时，内核源码不能被更新，这是外部模块成功编译的前提。  </p>
+<h6 id="modules"><a href="#modules" class="headerlink" title="modules"></a>modules</h6><p><code>modules</code>是编译外部模块时的默认目标。即使没有指定任何目标，也会执行这个目标的编译动作。  </p>
+<h6 id="modules-install"><a href="#modules-install" class="headerlink" title="modules_install"></a>modules_install</h6><p>该目标用于安装外部模块。模块默认安装路径为/lib/modules/<kernel_release>/extra/,但是也可以通过INSTALL_MOD_PATH来指定。</p>
+<h6 id="clean"><a href="#clean" class="headerlink" title="clean"></a>clean</h6><p>清除模块目录中生成的所有文件。</p>
+<h6 id="help"><a href="#help" class="headerlink" title="help"></a>help</h6><p>列举所有支持的目标。 </p>
+<h5 id="2-4-编译单独的文件"><a href="#2-4-编译单独的文件" class="headerlink" title="2.4 编译单独的文件"></a>2.4 编译单独的文件</h5><p>内核中可以通过命令单独编译组成一个模块的单独文件。这个对整个kernel源码还是外部模块都是生效的。看下面的例子：（foo.ko由bar.o、baz.o组成）:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">make -C $KDIR M&#x3D;$PWD bar.lst</span><br><span class="line">make -C $KDIR M&#x3D;$PWD baz.o</span><br><span class="line">make -C $KDIR M&#x3D;$PWD foo.ko</span><br><span class="line">make -C $KDIR M&#x3D;$PWD .&#x2F;</span><br></pre></td></tr></table></figure>
+
+
+
+]]></content>
+      <categories>
+        <category>编译</category>
+        <category>kernel</category>
+      </categories>
+      <tags>
+        <tag>kernel</tag>
+        <tag>编译</tag>
+      </tags>
+  </entry>
 </search>

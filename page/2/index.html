@@ -188,6 +188,90 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/12/04/c-cpp-variable/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wdxx">
+      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wdxxliu">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/04/c-cpp-variable/" class="post-title-link" itemprop="url">c/c++ 变量</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-04 14:29:08" itemprop="dateCreated datePublished" datetime="2020-12-04T14:29:08+08:00">2020-12-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-13 17:15:41" itemprop="dateModified" datetime="2021-01-13T17:15:41+08:00">2021-01-13</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/c-c/" itemprop="url" rel="index"><span itemprop="name">c/c++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="关于c-c-变量溢出问题"><a href="#关于c-c-变量溢出问题" class="headerlink" title="关于c/c++变量溢出问题"></a>关于c/c++变量溢出问题</h3><ol>
+<li><p>无符号变量溢出<br>无符号变量没有负数，只有正数。例如：unsigned char var = 280;其实际值为280%256=24。</p>
+</li>
+<li><p>有符号变量溢出<br>有符号数最高位表示符号位，1为负数，0为正数。例如：unsigned char var = 128,溢出了，最高为1，所以为负数，根据负数为反码+1，可以知道实际值为-128。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/12/04/c-cpp-variable/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/11/20/oracle/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -922,82 +1006,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/25/EDK2-new-app/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wdxx">
-      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wdxxliu">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/25/EDK2-new-app/" class="post-title-link" itemprop="url">如何在EDK II中编写应用程序</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-25 14:48:17" itemprop="dateCreated datePublished" datetime="2020-05-25T14:48:17+08:00">2020-05-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-13 18:12:50" itemprop="dateModified" datetime="2021-01-13T18:12:50+08:00">2021-01-13</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/EDK2/" itemprop="url" rel="index"><span itemprop="name">EDK2</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>EDK2的开发一般分为驱动与应用的开发，本文介绍如何在EDK2中开发应用程序。官方的教程请参考：<a href="https://github.com/tianocore/tianocore.github.io/wiki/Getting-Started-Writing-Simple-Application" target="_blank" rel="noopener">Getting Started Writing Simple Application</a>。</p>
-<h3 id="如何编写C文件"><a href="#如何编写C文件" class="headerlink" title="如何编写C文件"></a>如何编写C文件</h3><p><code>https://github.com/tianocore/tianocore.github.io/wiki/Getting-Started-Writing-MyHelloWorld.c</code></p>
-<h3 id="如何编写inf文件"><a href="#如何编写inf文件" class="headerlink" title="如何编写inf文件"></a>如何编写inf文件</h3><h4 id="如何生成GUID"><a href="#如何生成GUID" class="headerlink" title="如何生成GUID"></a>如何生成GUID</h4><p>通过<a href="https://www.guidgen.com/" target="_blank" rel="noopener">guidgen网站</a>生成GUID。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1067,20 +1075,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-count">26</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-count">21</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

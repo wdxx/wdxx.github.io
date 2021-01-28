@@ -20,22 +20,21 @@
     var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":false,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="在Android调试过程中，发现启动log中出现如下log： 1234567[   48.471014] printk: init: 46 output lines suppressed due to ratelimiting[   48.617226] init: [libfs_mgr]dt_fstab: Skip disabled entry for partition vendor[   4">
+  <meta name="description" content="本文翻译自kernel官方文档,介绍怎么编译kernel源码目录之外的代码模块。   1 介绍Linux kernel使用kbuild编译系统来编译。kernel模块编译需要保持kbuild架构兼容，并且选择正确的gcc编译flag。kernel编译系统提供了在源码目录内编译以及在源码目录外编译的功能。这两种编译方式是类似的，所有的模块在最初开发阶段都是在源码外编译的。本文所涵盖内容的目标是那些对">
 <meta property="og:type" content="article">
-<meta property="og:title" content="printk_ratelimited 导致log打印不全">
-<meta property="og:url" content="http://yoursite.com/2020/06/30/printk-ratelimited/index.html">
+<meta property="og:title" content="编译kernel外部模块">
+<meta property="og:url" content="http://yoursite.com/2021/01/25/build-external-modules-kernel/index.html">
 <meta property="og:site_name" content="wdxxliu">
-<meta property="og:description" content="在Android调试过程中，发现启动log中出现如下log： 1234567[   48.471014] printk: init: 46 output lines suppressed due to ratelimiting[   48.617226] init: [libfs_mgr]dt_fstab: Skip disabled entry for partition vendor[   4">
+<meta property="og:description" content="本文翻译自kernel官方文档,介绍怎么编译kernel源码目录之外的代码模块。   1 介绍Linux kernel使用kbuild编译系统来编译。kernel模块编译需要保持kbuild架构兼容，并且选择正确的gcc编译flag。kernel编译系统提供了在源码目录内编译以及在源码目录外编译的功能。这两种编译方式是类似的，所有的模块在最初开发阶段都是在源码外编译的。本文所涵盖内容的目标是那些对">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-06-30T12:48:19.000Z">
-<meta property="article:modified_time" content="2021-01-13T10:10:04.918Z">
+<meta property="article:published_time" content="2021-01-25T07:08:06.000Z">
+<meta property="article:modified_time" content="2021-01-28T12:19:14.835Z">
 <meta property="article:author" content="wdxx">
 <meta property="article:tag" content="kernel">
-<meta property="article:tag" content="printk">
-<meta property="article:tag" content="调试">
+<meta property="article:tag" content="编译">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://yoursite.com/2020/06/30/printk-ratelimited/">
+<link rel="canonical" href="http://yoursite.com/2021/01/25/build-external-modules-kernel/">
 
 
 <script id="page-configurations">
@@ -48,7 +47,7 @@
   };
 </script>
 
-  <title>printk_ratelimited 导致log打印不全 | wdxxliu</title>
+  <title>编译kernel外部模块 | wdxxliu</title>
   
 
 
@@ -193,7 +192,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/30/printk-ratelimited/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/25/build-external-modules-kernel/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -206,7 +205,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          printk_ratelimited 导致log打印不全
+          编译kernel外部模块
         </h1>
 
         <div class="post-meta">
@@ -216,14 +215,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-06-30 20:48:19" itemprop="dateCreated datePublished" datetime="2020-06-30T20:48:19+08:00">2020-06-30</time>
+              <time title="创建时间：2021-01-25 15:08:06" itemprop="dateCreated datePublished" datetime="2021-01-25T15:08:06+08:00">2021-01-25</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-13 18:10:04" itemprop="dateModified" datetime="2021-01-13T18:10:04+08:00">2021-01-13</time>
+                <time title="修改时间：2021-01-28 20:19:14" itemprop="dateModified" datetime="2021-01-28T20:19:14+08:00">2021-01-28</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -231,7 +230,11 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kernel/" itemprop="url" rel="index"><span itemprop="name">kernel</span></a>
+                  <a href="/categories/%E7%BC%96%E8%AF%91/" itemprop="url" rel="index"><span itemprop="name">编译</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E8%AF%91/kernel/" itemprop="url" rel="index"><span itemprop="name">kernel</span></a>
                 </span>
             </span>
 
@@ -246,10 +249,32 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>在Android调试过程中，发现启动log中出现如下log：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[   48.471014] printk: init: 46 output lines suppressed due to ratelimiting</span><br><span class="line">[   48.617226] init: [libfs_mgr]dt_fstab: Skip disabled entry for partition vendor</span><br><span class="line">[   48.631023] init: [libfs_mgr]Warning: unknown flag: wrappedkey</span><br><span class="line">[   48.639762] init: DM_DEV_STATUS failed for system_ext: No such device or address</span><br><span class="line">[   48.647430] init: Could not update logical partition</span><br><span class="line">[   48.653314] init: DM_DEV_STATUS failed for product: No such device or address</span><br><span class="line">[   48.660748] init: Could not update logical partition</span><br></pre></td></tr></table></figure>
-<p>也就是说<code>printk: init: 46 output lines suppressed due to ratelimiting</code>有部分log没有打印出来，解决办法就是修改kernel源码。修改文件位于<code>include/linux/ratelimit.h</code>。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 下面表示5秒内最多打印10条记录，可以将DEFAULT_RATELIMIT_BURST修改成50，那么5秒内就可以打印50条了。当然也不是越大越好，因为需要考虑考log对系统服务器的影响，不要引起阻塞。</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEFAULT_RATELIMIT_INTERVAL      (5 * HZ)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEFAULT_RATELIMIT_BURST         10  <span class="comment">// 可以修改成50</span></span></span><br></pre></td></tr></table></figure>
+        <p>本文翻译自kernel<a href="https://www.kernel.org/doc/html/v5.4/kbuild/modules.html" target="_blank" rel="noopener">官方文档</a>,介绍怎么编译kernel源码目录之外的代码模块。  </p>
+<h4 id="1-介绍"><a href="#1-介绍" class="headerlink" title="1 介绍"></a>1 介绍</h4><p>Linux kernel使用<code>kbuild编译系统</code>来编译。kernel模块编译需要保持kbuild架构兼容，并且选择正确的gcc编译flag。kernel编译系统提供了在源码目录内编译以及在源码目录外编译的功能。这两种编译方式是类似的，所有的模块在最初开发阶段都是在源码外编译的。<br>本文所涵盖内容的目标是那些对在kernel源码目录之外编译模块感兴趣的开发者。源码目录外的模块的开发者应该提供一个makefile,该makefile隐藏了很多复杂细节，编译时只需要执行make命令就可以编译该模块。这个很容易实现，在第3小节会有一个详细的示例。</p>
+<a id="more"></a>
+
+<h4 id="2-怎么编译外部模块"><a href="#2-怎么编译外部模块" class="headerlink" title="2 怎么编译外部模块"></a>2 怎么编译外部模块</h4><p>为了编译外部模块，必要条件是需要有一个已经编译过的kernel代码。同时kernel config中需要使能模块加载（CONFIG_MODULE）。如果你使用的是发行版内核，发行版将提供内核的软件包。<br>另外一种方法是使用<code>make modules_prepare</code>命令。这个命令能够保证编译外部模块所需要的依赖都已经被编译出来。<code>modules_prepare</code>这个目标就是抓门用于为编译外部模块而准备的。<br>注意：即使设置了CONFIG_MODVERSIONS，“ modules_prepare”也不会构建Module.symvers。 因此，需要执行完整的内核编译以使模块版本控制工作。  </p>
+<h5 id="2-1-编译命令"><a href="#2-1-编译命令" class="headerlink" title="2.1 编译命令"></a>2.1 编译命令</h5><p>下面的编译命令用于编译外部模块:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ make -C &lt;path_to_kernel_src&gt; M=<span class="variable">$PWD</span></span><br></pre></td></tr></table></figure>
+<p><code>Kbuild编译系统</code>通过编译命令中的<code>M=&lt;dir&gt;</code>来确定当前需要编译哪个模块。<br>如果要针对当前正在运行的内核进行编译使用如下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ make -C /lib/modules/`uname -r`/build M=<span class="variable">$PWD</span></span><br></pre></td></tr></table></figure>
+<p>要安装刚刚构建的模块，请将目标“ modules_install”添加到命令中：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ make -C /lib/modules/`uname -r`/build M=<span class="variable">$PWD</span> modules_install</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-2-编译选项"><a href="#2-2-编译选项" class="headerlink" title="2.2 编译选项"></a>2.2 编译选项</h5><p>($KDIR表示内核源码路径。)<br>make -C $KDIR M=$PWD  </p>
+<h6 id="C-KDIR"><a href="#C-KDIR" class="headerlink" title="-C $KDIR"></a>-C $KDIR</h6><p>kernel源码所在目录。make -C执行时，实际上会先到$KDIR目录执行，然后再返回。</p>
+<h6 id="M-PWD"><a href="#M-PWD" class="headerlink" title="M=$PWD"></a>M=$PWD</h6><p>通知kbuild一个外部模块即将编译。“M”的值是外部模块（kbuild文件）所在目录的绝对路径。</p>
+<h5 id="2-3-编译目标"><a href="#2-3-编译目标" class="headerlink" title="2.3 编译目标"></a>2.3 编译目标</h5><p>在构建外部模块时，仅“make”目标的子集可用。也就是说不是所有的kernel编译命令都可以在外部模块目录下执行。<br>make -C $KDIR M=$PWD [target]<br>默认情况下会编译当前目录的模块，所以不需要指定任何目标。所有的编译输出都将输出在$PWD目录。但是执行时，内核源码不能被更新，这是外部模块成功编译的前提。  </p>
+<h6 id="modules"><a href="#modules" class="headerlink" title="modules"></a>modules</h6><p><code>modules</code>是编译外部模块时的默认目标。即使没有指定任何目标，也会执行这个目标的编译动作。  </p>
+<h6 id="modules-install"><a href="#modules-install" class="headerlink" title="modules_install"></a>modules_install</h6><p>该目标用于安装外部模块。模块默认安装路径为/lib/modules/<kernel_release>/extra/,但是也可以通过INSTALL_MOD_PATH来指定。</p>
+<h6 id="clean"><a href="#clean" class="headerlink" title="clean"></a>clean</h6><p>清除模块目录中生成的所有文件。</p>
+<h6 id="help"><a href="#help" class="headerlink" title="help"></a>help</h6><p>列举所有支持的目标。 </p>
+<h5 id="2-4-编译单独的文件"><a href="#2-4-编译单独的文件" class="headerlink" title="2.4 编译单独的文件"></a>2.4 编译单独的文件</h5><p>内核中可以通过命令单独编译组成一个模块的单独文件。这个对整个kernel源码还是外部模块都是生效的。看下面的例子：（foo.ko由bar.o、baz.o组成）:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">make -C $KDIR M&#x3D;$PWD bar.lst</span><br><span class="line">make -C $KDIR M&#x3D;$PWD baz.o</span><br><span class="line">make -C $KDIR M&#x3D;$PWD foo.ko</span><br><span class="line">make -C $KDIR M&#x3D;$PWD .&#x2F;</span><br></pre></td></tr></table></figure>
+
+
+
+
     </div>
 
     
@@ -259,8 +284,7 @@
       <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/kernel/" rel="tag"># kernel</a>
-              <a href="/tags/printk/" rel="tag"># printk</a>
-              <a href="/tags/%E8%B0%83%E8%AF%95/" rel="tag"># 调试</a>
+              <a href="/tags/%E7%BC%96%E8%AF%91/" rel="tag"># 编译</a>
           </div>
 
         
@@ -269,13 +293,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/05/25/EDK2-new-app/" rel="prev" title="如何在EDK II中编写应用程序">
-      <i class="fa fa-chevron-left"></i> 如何在EDK II中编写应用程序
+    <a href="/2021/01/20/cpp-Recursion/" rel="prev" title="c/c++ 递归">
+      <i class="fa fa-chevron-left"></i> c/c++ 递归
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/07/22/android-reverse-engineering-plan/" rel="next" title="android逆向学习计划">
-      android逆向学习计划 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -335,6 +356,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-介绍"><span class="nav-number">1.</span> <span class="nav-text">1 介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-怎么编译外部模块"><span class="nav-number">2.</span> <span class="nav-text">2 怎么编译外部模块</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-1-编译命令"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 编译命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-2-编译选项"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 编译选项</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#C-KDIR"><span class="nav-number">2.2.1.</span> <span class="nav-text">-C $KDIR</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#M-PWD"><span class="nav-number">2.2.2.</span> <span class="nav-text">M&#x3D;$PWD</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-3-编译目标"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 编译目标</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#modules"><span class="nav-number">2.3.1.</span> <span class="nav-text">modules</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#modules-install"><span class="nav-number">2.3.2.</span> <span class="nav-text">modules_install</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#clean"><span class="nav-number">2.3.3.</span> <span class="nav-text">clean</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#help"><span class="nav-number">2.3.4.</span> <span class="nav-text">help</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-4-编译单独的文件"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 编译单独的文件</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -461,7 +483,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'wdxx.github.io',
       owner       : 'wdxx',
       admin       : ['wdxx'],
-      id          : '06e5e48ff0266d61fa29691b009c223e',
+      id          : '4747369a17cfeffdb6742932b1e454b2',
         language: 'zh-CN',
       distractionFreeMode: true
     });
