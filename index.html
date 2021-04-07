@@ -188,6 +188,96 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/03/cpp-operator-overloading/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wdxx">
+      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wdxxliu">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/03/03/cpp-operator-overloading/" class="post-title-link" itemprop="url">c++运算符重载</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-03-03 10:34:06 / 修改时间：11:53:58" itemprop="dateCreated datePublished" datetime="2021-03-03T10:34:06+08:00">2021-03-03</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/c/" itemprop="url" rel="index"><span itemprop="name">c++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>c++的运算符是通过函数来实现的(每个运算符都有一个运算符函数)。通过在运算符上使用函数重载，可以自定义运算符的实现，以用于不同的类型（比如自定义的类）。这就是运算符重载。</p>
+<p>#####运算符如同函数<br>看下面的例子：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> x = <span class="number">2</span>;</span><br><span class="line"><span class="keyword">int</span> y = <span class="number">3</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; x+y &lt;&lt; <span class="string">'\n'</span>;</span><br></pre></td></tr></table></figure>
+<p>编译器内部附带了一个<code>+</code>号运算符函数来处理整数的求和运算(这个函数对x和y求和，然后返回求和的结果)。类似于编译器在看到<code>x+y</code>表达式的时候，就会调用<code>operator+(int,int)</code>运算符函数。</p>
+<p>#####C++如何实现运算符重载<br>当编译器在计算已给包含运算符的表达式的值的时候，编译器使用如下规则处理：</p>
+<ul>
+<li>如果所有的操作数都是基本数据类型，编译器将调用内部附带的运算符函数（如果有的话）。如果这个运算符函数不存在，那么编译器将产生一个编译错误。</li>
+<li>如果表达式中有一个或多个操作数是程序员自定义的类型(例如自定义的类、枚举等)，编译器将查看该类型是否具有可调用的匹配重载运算符函数。如果找不到，它将尝试将一个或多个用户定义的类型操作数转换为基本数据类型，以便它可以使用匹配的内置运算符函数。如果失败，则将产生编译错误。</li>
+</ul>
+<p>#####C++运算符重载的限制</p>
+<ul>
+<li>基本所有的c++运算符都可以重载。除了：条件运算符(?:),sizeof,作用域运算符(::),成员选择运算符(.),成员指针选择运算符(.*),typeid运算符,还有casting运算符(类型转换运算符)。</li>
+<li>只允许重载c++语法中存在的运算符。不能够创建新的运算符、或者重命名已经存在的运算符(例如不能创建一个新的<code>@</code>运算符来实现新功能)。</li>
+<li>运算符重载中，至少需要有一个操作符类型是自定义的。</li>
+<li>在运算符重载中，操作数的个数不能超过运算符所支持的个数。</li>
+<li>所有的运算符在重载后，优先级跟c++原生支持的优先级保持一致，不能更改。</li>
+</ul>
+<p>考虑一个情况：如果想通过重载异或运算符<code>^</code>实现幂运算，例如4+3^2，按照意图结果应该是4+9=13,但是由于在c++中，<code>+</code>的优先级比<code>^</code>优先级高，所以结果是(4+3)^2=49。当然这里这个例子有点问题，对基本数据类型是不能重载运算符的，不过可以将基本数据类型封装在自定义类中。</p>
+<p>#####使用c++运算符重载应该遵循的规则</p>
+<ol>
+<li>在重载运算符的时候，重载的功能最好能够跟运算符本来的意义相似。比如重载<code>+</code>算符符，那么重载后的能够应该就是对两个对象求和。</li>
+<li>如果对运算符重载的功能意图不是很明确，也就是运算符不能够清晰的表明重载的意图，应该是用成员函数代替运算符重载。</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/01/cpp-friend/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -211,10 +301,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-03-01 20:08:12 / 修改时间：20:41:28" itemprop="dateCreated datePublished" datetime="2021-03-01T20:08:12+08:00">2021-03-01</time>
+              <time title="创建时间：2021-03-01 20:08:12" itemprop="dateCreated datePublished" datetime="2021-03-01T20:08:12+08:00">2021-03-01</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-03-02 19:42:53" itemprop="dateModified" datetime="2021-03-02T19:42:53+08:00">2021-03-02</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -290,10 +386,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-02-27 14:42:29 / 修改时间：14:48:06" itemprop="dateCreated datePublished" datetime="2021-02-27T14:42:29+08:00">2021-02-27</time>
+              <time title="创建时间：2021-02-27 14:42:29" itemprop="dateCreated datePublished" datetime="2021-02-27T14:42:29+08:00">2021-02-27</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-03-02 19:42:53" itemprop="dateModified" datetime="2021-03-02T19:42:53+08:00">2021-03-02</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -366,7 +468,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-02-27 14:42:33" itemprop="dateModified" datetime="2021-02-27T14:42:33+08:00">2021-02-27</time>
+                <time title="修改时间：2021-03-02 19:42:53" itemprop="dateModified" datetime="2021-03-02T19:42:53+08:00">2021-03-02</time>
               </span>
 
           
@@ -432,10 +534,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-02-26 11:28:01 / 修改时间：15:54:32" itemprop="dateCreated datePublished" datetime="2021-02-26T11:28:01+08:00">2021-02-26</time>
+              <time title="创建时间：2021-02-26 11:28:01" itemprop="dateCreated datePublished" datetime="2021-02-26T11:28:01+08:00">2021-02-26</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-03-02 19:42:53" itemprop="dateModified" datetime="2021-03-02T19:42:53+08:00">2021-03-02</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -514,7 +622,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-02-26 11:22:41" itemprop="dateModified" datetime="2021-02-26T11:22:41+08:00">2021-02-26</time>
+                <time title="修改时间：2021-03-02 19:42:53" itemprop="dateModified" datetime="2021-03-02T19:42:53+08:00">2021-03-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -588,10 +696,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-01-29 16:12:42 / 修改时间：16:21:56" itemprop="dateCreated datePublished" datetime="2021-01-29T16:12:42+08:00">2021-01-29</time>
+              <time title="创建时间：2021-01-29 16:12:42" itemprop="dateCreated datePublished" datetime="2021-01-29T16:12:42+08:00">2021-01-29</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-03-02 19:42:53" itemprop="dateModified" datetime="2021-03-02T19:42:53+08:00">2021-03-02</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -669,7 +783,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-02-25 19:43:35" itemprop="dateModified" datetime="2021-02-25T19:43:35+08:00">2021-02-25</time>
+                <time title="修改时间：2021-03-02 19:42:53" itemprop="dateModified" datetime="2021-03-02T19:42:53+08:00">2021-03-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -770,7 +884,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-29 10:30:45" itemprop="dateModified" datetime="2021-01-29T10:30:45+08:00">2021-01-29</time>
+                <time title="修改时间：2021-03-02 19:42:53" itemprop="dateModified" datetime="2021-03-02T19:42:53+08:00">2021-03-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -853,7 +967,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-28 20:19:14" itemprop="dateModified" datetime="2021-01-28T20:19:14+08:00">2021-01-28</time>
+                <time title="修改时间：2021-02-03 17:50:53" itemprop="dateModified" datetime="2021-02-03T17:50:53+08:00">2021-02-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -904,93 +1018,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/20/cpp-Recursion/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wdxx">
-      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wdxxliu">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/01/20/cpp-Recursion/" class="post-title-link" itemprop="url">c/c++ 递归</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-01-20 11:44:22" itemprop="dateCreated datePublished" datetime="2021-01-20T11:44:22+08:00">2021-01-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-21 09:38:45" itemprop="dateModified" datetime="2021-01-21T09:38:45+08:00">2021-01-21</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/c-c/" itemprop="url" rel="index"><span itemprop="name">c/c++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>c/c++中，递归函数就是一个调用自身的函数。由于递归函数需要调用自身，所以如果函数没有退出或者终止调用的条件的话，那么将会导致不断的调用自身，栈内存将会被耗尽。看下面的例子：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">countDown</span><span class="params">(<span class="keyword">int</span> count)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"push "</span> &lt;&lt; <span class="built_in">cout</span> &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">    countDown(count<span class="number">-1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    countDown(<span class="number">10</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这个例子中，<code>countDown</code>函数没有终止调用条件，会无限制调用下去，最终导致栈溢出。要编写一个正常的递归函数，那么该函数必须要有终止调用的条件。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/01/20/cpp-Recursion/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1056,17 +1087,21 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">35</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">6</span>
-        <span class="site-state-item-name">分类</span>
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">17</span>
-        <span class="site-state-item-name">标签</span>
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
 </div>
