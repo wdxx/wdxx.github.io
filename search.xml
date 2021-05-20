@@ -1260,4 +1260,43 @@
         <tag>Linux</tag>
       </tags>
   </entry>
+  <entry>
+    <title>clang_llvm</title>
+    <url>/2021/05/20/clang-llvm/</url>
+    <content><![CDATA[<h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>​        对于刚开始接触clang编译器的时候，对于clang、llvm这个两个工具是分不清楚的。根据官方资料，刚开始<code>llvm</code>是用来实现虚拟机的工具，所以<code>llvm</code>相当于有自己的机器码，这就是<code>IR</code>。<code>llvm</code>包含了一系列的工具与库，方便开发者用来构建编译器和just-in-time编译器。<code>llvm</code>只能编译符合自己标准的<code>IR</code>语言，所以如果需要编译编程语言的化，需要工具将编程语言转化为<code>IR</code>，这个工具被称作为<code>编译器前端</code>。</p>
+<p>​        <code>clang</code>是一个完整的<code>c/c++/object-c</code>编译器，它包含了<code>clang 前端</code>（将<code>c/c++/object-c源码转换为llvm IR</code>）,<code>llvm 后端</code>。同时，<code>clang</code>还是一个编译器驱动，当给<code>clang</code>工具指定不同参数的时候，它会内部调用<code>llvm</code>的工具，直接生成最终的目标。</p>
+<h4 id="llvm-设计思想"><a href="#llvm-设计思想" class="headerlink" title="llvm 设计思想"></a>llvm 设计思想</h4><p><code>llvm</code>的设计思想有如下几个方面：</p>
+<ul>
+<li><code>llvm</code>最经典的设计就是使用分层设计思想来支持不同的编程语言的编译</li>
+<li>有用自己的<code>IR</code></li>
+<li>使用<code>Pass</code></li>
+</ul>
+<p>现在通过如上所讲的三个特点来分析<code>llvm</code>的优势。</p>
+<h5 id="分层设计思想"><a href="#分层设计思想" class="headerlink" title="分层设计思想"></a>分层设计思想</h5><p><code>llvm</code>设计为<code>前端</code>、<code>优化器</code>、<code>后端</code>。其中后面两个部分是包含在<code>llvm</code>代码中的。由于后面两个部分基本固定，所以对于开发新的编程语言的编译器来说，只要设计出<code>前端</code>就可以了。下面结合下面的图来说明：</p>
+<p><img src="D:%5Csystem%5Chexo%5Cmyblog%5Cwdxx%5Csource%5Cimages%5Cimage-20210520193236796.png" alt="image-20210520193236796"></p>
+<p>不同语言的编译器，可以共用<code>优化器</code>与<code>后端</code>。下面分别介绍这个三个层次的作用。</p>
+<ol>
+<li>前端</li>
+</ol>
+<p>前端是用于生成<code>llvm IR</code>的一个工具，例如<code>clang</code>，能够将<code>c/c++/object-c</code>语言转换成<code>llvm IR</code>，其中包括检查程序文件语法、检测语法错误、生成AST、最终生成<code>llvm IR</code>。例如<code>llgo</code>用于将<code>go</code>语言转换成<code>llvm IR</code>。</p>
+<ol start="2">
+<li>llvm优化器</li>
+</ol>
+<p>llvm优化器用于优化<code>LLVM IR</code>。经过优化后的<code>llvm IR</code>执行性能更高。</p>
+<ol start="3">
+<li>后端</li>
+</ol>
+<p><code>llvm 优化器</code>的输出还是<code>llvm IR</code>，所以如果需要编译成对应的目标平台机器代码需要后端的参与。后端有两种情况，生成对应的目标平台的机器码(.o)或者汇编码。所以如果选择生成汇编码，用户还可以使用gcc之类的工具来进行编译。(ps: 即使最终生成的是目标平台二进制文件，但是如果需要经过链接，那么还是需要借助<code>binutils</code>中的<code>ld</code>工具进行连接，不过现在llvm自带的<code>llvm-ld</code>工具也比较好用了)。</p>
+<h4 id="llvm-IR"><a href="#llvm-IR" class="headerlink" title="llvm IR"></a>llvm IR</h4><p><code>llvm IR</code>是llvm唯一能够识别的语言(还记得前面介绍的llvm 最初设计为虚拟机吧，跟jvm一样，llvm也有自己的字节码<code>bitcode</code>)。因为llvm框架最终处理的都是<code>llvm IR</code>，所以如果需要使用llvm框架，只需要实现对应语言的前端，将对应语言转换为<code>llvm IR</code>即可，大大减少了编译器开发的难度。llvm可以运行<code>llvm IR</code>，前提是需要将<code>llvm IR</code>转换为<code>bitcode</code>，这个可以通过<code>llvm-as</code>工具实现，编译生成的<code>bitcode</code>就可以在llvm中运行了。由于<code>llvm IR</code>具有简单，可读性强等特点，所以也减轻了开发前端与优化器的难度。</p>
+<h5 id="llvm-Pass"><a href="#llvm-Pass" class="headerlink" title="llvm Pass"></a>llvm Pass</h5><p><code>llvm pass</code>也体现了llvm的设计思想，llvm将不同的功能设计成独立的模块，可以单独编译成库文件，方便在使用的时候进行加载，这样的模块就叫做<code>Pass</code>，它可以是一个优化算法，也可以是一个埋点功能等等。多个<code>Pass</code>之间应该是不耦合的，如果一个<code>Pass</code>的输出是另一个<code>Pass</code>的输入，这种有依赖的<code>Pass</code>在加载的时候，会将两个<code>Pass</code>都加载进来。<code>Pass</code>的引入也是为了开发的简单，更进一步降低了使用llvm框架开发的难度。</p>
+]]></content>
+      <categories>
+        <category>clang</category>
+        <category>llvm</category>
+      </categories>
+      <tags>
+        <tag>clang</tag>
+        <tag>llvm</tag>
+      </tags>
+  </entry>
 </search>
