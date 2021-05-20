@@ -802,14 +802,14 @@
 </ol>
 ]]></content>
       <categories>
-        <category>Linux</category>
+        <category>linux</category>
         <category>filesystem</category>
         <category>文件系统</category>
       </categories>
       <tags>
-        <tag>Linux</tag>
         <tag>filesystem</tag>
         <tag>文件系统</tag>
+        <tag>linux</tag>
       </tags>
   </entry>
   <entry>
@@ -1185,6 +1185,79 @@
       <tags>
         <tag>android</tag>
         <tag>filesystem</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>docker-install</title>
+    <url>/2021/04/29/docker-install/</url>
+    <content><![CDATA[<p> <code>docker</code>在ubuntu 18.04 上的安装。</p>
+<h5 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h5><p><a href="https://docs.docker.com/engine/install/" target="_blank" rel="noopener">下载地址</a>。</p>
+]]></content>
+      <categories>
+        <category>linux</category>
+        <category>docker</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>zip 文件详解</title>
+    <url>/2021/04/14/zip/</url>
+    <content><![CDATA[<h5 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h5><p>.zip文件是存储多个文件的归档文件。ZIP允许使用多种压缩算法压缩包含的文件，同时也支持简单地存储文件而不进行压缩(只进行归档)。.zip中的每个文件是单独存储的，所以是允许使用不同是压缩算法对同一zip包中的不同文件进行压缩(支持不同文件使用不同的压缩算法)。由于ZIP归档文件中的文件是单独压缩的，因此可以提取文件或添加新文件，而无需对整个归档文件进行压缩或解压缩。这与压缩成的tar格式文件形成对比，压缩后的tar文件不容易进行这种随机访问处理。<br>在zip文件的末尾，存放了一个目录结构。这个目录结构标识了zip中包含的文件，并标识了这些文件在zip归档文件中的位置。这样，ZIP阅读器就可以加载文件列表，而无需读取整个ZIP归档文件。ZIP归档文件还可以包含与ZIP归档文件无关的额外数据。通过将程序代码添加到ZIP归档文件，并将文件标记为可执行文件，可以将ZIP归档文件制作成自解压归档文件（用于解压缩其包含的数据的应用程序）。将目录存储在最后还可以通过将压缩文件附加到无害文件（例如GIF图像文件）中来隐藏压缩文件。<br>.ZIP格式使用32位CRC算法，并包括归档目录结构的两个副本，以提供更大的保护，防止数据丢失。<br><a href="https://en.wikipedia.org/wiki/ZIP_(file_format)" target="_blank" rel="noopener">参考</a></p>
+<h5 id="文件结构"><a href="#文件结构" class="headerlink" title="文件结构"></a>文件结构</h5><p>zip文件很容易标识，因为在zip文件的结尾是一个<code>central directory record</code>的结构，因为这个结构在文件结尾,所以往zip中添加新文件很方便。如果在zip文件结尾的<code>central directory record</code>结构标识该文件是一个非空归档文件，那么该zip中被压缩的每个文件、目录都应该存在一个<code>central directory entry</code>结构，这个结构包含了该文件或目录的其它元数据（文件名、目录名<br>、实际被压缩文件偏移量等）。有了这个<code>central directory entry</code>，就可以轻松的定位到被压缩的文件，因为不必阅读整个档案即可查看文件列表。<code>central directory entry</code>中还包含了<code>local file header</code>的信息。因为zip中可以附加文件，所以只有在<code>central directory record</code>中有记录的文件才是有效文件。扫描整个zip文件中的<code>local file header</code>来确认文件数是无效的（除非归档文件已损坏），因为<code>central directory record</code>可能会声明某些文件已被删除而其他文件已被更新。<br>下图是整个zip文件结构图：<br><img src="/images/zip-fileformat.png" alt="zip-file-format"></p>
+<h5 id="Local-file-header"><a href="#Local-file-header" class="headerlink" title="Local file header"></a>Local file header</h5><p><code>Local file header</code>用于描述文件的元数据。格式如下：<br><img src="/images/Local-file-header.png" alt="local file header"></p>
+<h5 id="Data-descriptor"><a href="#Data-descriptor" class="headerlink" title="Data descriptor"></a>Data descriptor</h5><p>在<code>local file header</code>后面紧接的就是<code>data descriptor</code>了，这里存放的就是压缩的数据了。<br><img src="/images/Data-descriptor.png" alt="data descriptot"></p>
+<h5 id="Central-directory-file-header"><a href="#Central-directory-file-header" class="headerlink" title="Central directory file header"></a>Central directory file header</h5><p>经过<code>local file header</code>与<code>data descriptor</code>以及数据的交替存放后，紧接着的就是<code>central directory file header</code>，它描述了zip包中每个文件的文件名、压缩方法、<code>local file header</code>的相对偏移等信息。<br><img src="/images/Central-directory-file-header.png" alt="Central directory file header"></p>
+<h5 id="End-of-central-directory-record-EOCD"><a href="#End-of-central-directory-record-EOCD" class="headerlink" title="End of central directory record(EOCD)"></a>End of central directory record(EOCD)</h5><p><img src="/images/EOCD.png" alt="End of central directory record"></p>
+<h4 id="ZIP64"><a href="#ZIP64" class="headerlink" title="ZIP64"></a>ZIP64</h4><p><img src="/images/zip64.png" alt="zip64"></p>
+]]></content>
+      <categories>
+        <category>zip</category>
+        <category>tools</category>
+      </categories>
+      <tags>
+        <tag>zip</tag>
+        <tag>tools</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>golang-orm</title>
+    <url>/2021/04/08/golang-orm/</url>
+    <content><![CDATA[<p>在使用数据库过程中，如果想要做到代码中的实例与数据库中的数据关联，那么使用ORM是最简便的方法。这样可以跳过使用SQL语句进行查询，然后将结果对程序中的实例进行赋值。这里以go语言中支持Oracle数据库的ORM框架<code>gorose</code>进行说明。顺便提一下，如果是对mysql进行操作，建议使用<code>gorm</code>框架，由于<code>gorm</code>不支持Oracle，所以这里使用<code>gorose</code>。</p>
+<ul>
+<li><a href="https://github.com/gohouse/gorose" target="_blank" rel="noopener">github</a></li>
+<li><a href="https://gohouse.github.io/gorose/dist/zh-cn/index.html" target="_blank" rel="noopener">document</a></li>
+</ul>
+<p>尝试了这个orm，也不好使，看来只能自己写了。<br>关于怎么将数据库查出的数据，方便的取出来参考下面的链接：<br><a href="https://stackoverflow.com/questions/21821550/sql-scan-rows-with-unknown-number-of-columns-select-from" target="_blank" rel="noopener">https://stackoverflow.com/questions/21821550/sql-scan-rows-with-unknown-number-of-columns-select-from</a><br><a href="https://stackoverflow.com/questions/29102725/go-sql-driver-get-interface-column-values" target="_blank" rel="noopener">https://stackoverflow.com/questions/29102725/go-sql-driver-get-interface-column-values</a><br><a href="https://stackoverflow.com/questions/43898259/scanning-large-rows-into-structs-in-go" target="_blank" rel="noopener">https://stackoverflow.com/questions/43898259/scanning-large-rows-into-structs-in-go</a></p>
+]]></content>
+      <categories>
+        <category>oracle</category>
+        <category>数据库</category>
+        <category>go</category>
+      </categories>
+      <tags>
+        <tag>oracle</tag>
+        <tag>go</tag>
+        <tag>数据库</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>memory-test</title>
+    <url>/2021/05/12/memory-test/</url>
+    <content><![CDATA[<p>关于Linux中对内存耗用测试时，VSS/RSS/PSS/USS 的介绍</p>
+<h5 id="VSS-Virtual-Set-Size-（用处不大）"><a href="#VSS-Virtual-Set-Size-（用处不大）" class="headerlink" title="VSS - Virtual Set Size （用处不大）"></a>VSS - Virtual Set Size （用处不大）</h5><p>虚拟耗用内存（包含共享库占用的全部内存，以及分配但未使用的内存）。其大小还包括了可能不在物理RAM中的内存（比如malloc分配了内存空间，但是还未被使用）。VSS很少被用于判断一个进程的真实内存使用量。</p>
+<h5 id="RSS-Resident-Set-Size-（用处不大）"><a href="#RSS-Resident-Set-Size-（用处不大）" class="headerlink" title="RSS - Resident Set Size （用处不大）"></a>RSS - Resident Set Size （用处不大）</h5><p>实际使用物理内存（包含共享库占用的全部内存）。但是RSS还是可能会造成误导和干扰，因为他仅仅表示该进程所使用的所有共享库的大小，它不管有多少个进程使用该共享库，该共享库仅被加载到内存一次。所以RSS并不能准确反映单进程的内存占用情况。</p>
+<h5 id="PSS-Proportional-Set-Size-（用处不大）"><a href="#PSS-Proportional-Set-Size-（用处不大）" class="headerlink" title="PSS - Proportional Set Size （用处不大）"></a><strong>PSS</strong> - Proportional Set Size （用处不大）</h5><p>实际使用的物理内存（比例分配共享库占用的内存，按照进程数等比例划分）。例如，如果有三个进程都使用了同一个共享库，共占用了30页的内存。那么PSS将认为每个进程分别占用该共享库10页的大小。PSS 是非常有用的数据，因为系统中的所有的进程的PSS都相加的话，就刚好反映了系统中的总共占用的内存。而当一个进程被销毁之后，其占用的共享库那部分比例的PSS，将会再次按比例分配给余下使用该库的进程。这样PSS可能会造成一些误导，因为当一个进程被销毁之后，PSS不能准确的表示返回给全局系统的内存。</p>
+<h5 id="USS-Unique-Set-Size-非常有用"><a href="#USS-Unique-Set-Size-非常有用" class="headerlink" title="USS - Unique Set Size (非常有用)"></a>USS - Unique Set Size (非常有用)</h5><p>进程独自占用的物理内存（不包含共享库占用的内存）。USS是非常有用的数据，因为他反映了运行一个特定进程真实的边际成本（增量成本）。当一个进程被销毁后，USS是真是返回给系统的内存。当进程中存在一个可疑的内存泄露时，USS是最佳观察数据。</p>
+<p>Android的<code>procrank</code>工具可以用来查看VSS、RSS、PSS、USS。</p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
       </tags>
   </entry>
 </search>

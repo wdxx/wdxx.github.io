@@ -188,6 +188,317 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/05/12/memory-test/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wdxx">
+      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wdxxliu">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/05/12/memory-test/" class="post-title-link" itemprop="url">memory-test</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-12 11:24:32" itemprop="dateCreated datePublished" datetime="2021-05-12T11:24:32+08:00">2021-05-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-13 21:24:49" itemprop="dateModified" datetime="2021-05-13T21:24:49+08:00">2021-05-13</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>关于Linux中对内存耗用测试时，VSS/RSS/PSS/USS 的介绍</p>
+<h5 id="VSS-Virtual-Set-Size-（用处不大）"><a href="#VSS-Virtual-Set-Size-（用处不大）" class="headerlink" title="VSS - Virtual Set Size （用处不大）"></a>VSS - Virtual Set Size （用处不大）</h5><p>虚拟耗用内存（包含共享库占用的全部内存，以及分配但未使用的内存）。其大小还包括了可能不在物理RAM中的内存（比如malloc分配了内存空间，但是还未被使用）。VSS很少被用于判断一个进程的真实内存使用量。</p>
+<h5 id="RSS-Resident-Set-Size-（用处不大）"><a href="#RSS-Resident-Set-Size-（用处不大）" class="headerlink" title="RSS - Resident Set Size （用处不大）"></a>RSS - Resident Set Size （用处不大）</h5><p>实际使用物理内存（包含共享库占用的全部内存）。但是RSS还是可能会造成误导和干扰，因为他仅仅表示该进程所使用的所有共享库的大小，它不管有多少个进程使用该共享库，该共享库仅被加载到内存一次。所以RSS并不能准确反映单进程的内存占用情况。</p>
+<h5 id="PSS-Proportional-Set-Size-（用处不大）"><a href="#PSS-Proportional-Set-Size-（用处不大）" class="headerlink" title="PSS - Proportional Set Size （用处不大）"></a><strong>PSS</strong> - Proportional Set Size （用处不大）</h5><p>实际使用的物理内存（比例分配共享库占用的内存，按照进程数等比例划分）。例如，如果有三个进程都使用了同一个共享库，共占用了30页的内存。那么PSS将认为每个进程分别占用该共享库10页的大小。PSS 是非常有用的数据，因为系统中的所有的进程的PSS都相加的话，就刚好反映了系统中的总共占用的内存。而当一个进程被销毁之后，其占用的共享库那部分比例的PSS，将会再次按比例分配给余下使用该库的进程。这样PSS可能会造成一些误导，因为当一个进程被销毁之后，PSS不能准确的表示返回给全局系统的内存。</p>
+<h5 id="USS-Unique-Set-Size-非常有用"><a href="#USS-Unique-Set-Size-非常有用" class="headerlink" title="USS - Unique Set Size (非常有用)"></a>USS - Unique Set Size (非常有用)</h5><p>进程独自占用的物理内存（不包含共享库占用的内存）。USS是非常有用的数据，因为他反映了运行一个特定进程真实的边际成本（增量成本）。当一个进程被销毁后，USS是真是返回给系统的内存。当进程中存在一个可疑的内存泄露时，USS是最佳观察数据。</p>
+<p>Android的<code>procrank</code>工具可以用来查看VSS、RSS、PSS、USS。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/04/29/docker-install/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wdxx">
+      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wdxxliu">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/29/docker-install/" class="post-title-link" itemprop="url">docker-install</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-29 10:35:38 / 修改时间：10:40:47" itemprop="dateCreated datePublished" datetime="2021-04-29T10:35:38+08:00">2021-04-29</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/docker/" itemprop="url" rel="index"><span itemprop="name">docker</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p> <code>docker</code>在ubuntu 18.04 上的安装。</p>
+<h5 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h5><p><a href="https://docs.docker.com/engine/install/" target="_blank" rel="noopener">下载地址</a>。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/04/14/zip/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wdxx">
+      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wdxxliu">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/14/zip/" class="post-title-link" itemprop="url">zip 文件详解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-14 10:38:34 / 修改时间：21:06:45" itemprop="dateCreated datePublished" datetime="2021-04-14T10:38:34+08:00">2021-04-14</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/zip/" itemprop="url" rel="index"><span itemprop="name">zip</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/zip/tools/" itemprop="url" rel="index"><span itemprop="name">tools</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h5 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h5><p>.zip文件是存储多个文件的归档文件。ZIP允许使用多种压缩算法压缩包含的文件，同时也支持简单地存储文件而不进行压缩(只进行归档)。.zip中的每个文件是单独存储的，所以是允许使用不同是压缩算法对同一zip包中的不同文件进行压缩(支持不同文件使用不同的压缩算法)。由于ZIP归档文件中的文件是单独压缩的，因此可以提取文件或添加新文件，而无需对整个归档文件进行压缩或解压缩。这与压缩成的tar格式文件形成对比，压缩后的tar文件不容易进行这种随机访问处理。<br>在zip文件的末尾，存放了一个目录结构。这个目录结构标识了zip中包含的文件，并标识了这些文件在zip归档文件中的位置。这样，ZIP阅读器就可以加载文件列表，而无需读取整个ZIP归档文件。ZIP归档文件还可以包含与ZIP归档文件无关的额外数据。通过将程序代码添加到ZIP归档文件，并将文件标记为可执行文件，可以将ZIP归档文件制作成自解压归档文件（用于解压缩其包含的数据的应用程序）。将目录存储在最后还可以通过将压缩文件附加到无害文件（例如GIF图像文件）中来隐藏压缩文件。<br>.ZIP格式使用32位CRC算法，并包括归档目录结构的两个副本，以提供更大的保护，防止数据丢失。<br><a href="https://en.wikipedia.org/wiki/ZIP_(file_format)" target="_blank" rel="noopener">参考</a></p>
+<h5 id="文件结构"><a href="#文件结构" class="headerlink" title="文件结构"></a>文件结构</h5><p>zip文件很容易标识，因为在zip文件的结尾是一个<code>central directory record</code>的结构，因为这个结构在文件结尾,所以往zip中添加新文件很方便。如果在zip文件结尾的<code>central directory record</code>结构标识该文件是一个非空归档文件，那么该zip中被压缩的每个文件、目录都应该存在一个<code>central directory entry</code>结构，这个结构包含了该文件或目录的其它元数据（文件名、目录名<br>、实际被压缩文件偏移量等）。有了这个<code>central directory entry</code>，就可以轻松的定位到被压缩的文件，因为不必阅读整个档案即可查看文件列表。<code>central directory entry</code>中还包含了<code>local file header</code>的信息。因为zip中可以附加文件，所以只有在<code>central directory record</code>中有记录的文件才是有效文件。扫描整个zip文件中的<code>local file header</code>来确认文件数是无效的（除非归档文件已损坏），因为<code>central directory record</code>可能会声明某些文件已被删除而其他文件已被更新。<br>下图是整个zip文件结构图：<br><img src="/images/zip-fileformat.png" alt="zip-file-format"></p>
+<h5 id="Local-file-header"><a href="#Local-file-header" class="headerlink" title="Local file header"></a>Local file header</h5><p><code>Local file header</code>用于描述文件的元数据。格式如下：<br><img src="/images/Local-file-header.png" alt="local file header"></p>
+<h5 id="Data-descriptor"><a href="#Data-descriptor" class="headerlink" title="Data descriptor"></a>Data descriptor</h5><p>在<code>local file header</code>后面紧接的就是<code>data descriptor</code>了，这里存放的就是压缩的数据了。<br><img src="/images/Data-descriptor.png" alt="data descriptot"></p>
+<h5 id="Central-directory-file-header"><a href="#Central-directory-file-header" class="headerlink" title="Central directory file header"></a>Central directory file header</h5><p>经过<code>local file header</code>与<code>data descriptor</code>以及数据的交替存放后，紧接着的就是<code>central directory file header</code>，它描述了zip包中每个文件的文件名、压缩方法、<code>local file header</code>的相对偏移等信息。<br><img src="/images/Central-directory-file-header.png" alt="Central directory file header"></p>
+<h5 id="End-of-central-directory-record-EOCD"><a href="#End-of-central-directory-record-EOCD" class="headerlink" title="End of central directory record(EOCD)"></a>End of central directory record(EOCD)</h5><p><img src="/images/EOCD.png" alt="End of central directory record"></p>
+<h4 id="ZIP64"><a href="#ZIP64" class="headerlink" title="ZIP64"></a>ZIP64</h4><p><img src="/images/zip64.png" alt="zip64"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/04/08/golang-orm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="wdxx">
+      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="wdxxliu">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/08/golang-orm/" class="post-title-link" itemprop="url">golang-orm</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-08 09:56:08 / 修改时间：21:21:24" itemprop="dateCreated datePublished" datetime="2021-04-08T09:56:08+08:00">2021-04-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/oracle/" itemprop="url" rel="index"><span itemprop="name">oracle</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/oracle/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/oracle/%E6%95%B0%E6%8D%AE%E5%BA%93/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在使用数据库过程中，如果想要做到代码中的实例与数据库中的数据关联，那么使用ORM是最简便的方法。这样可以跳过使用SQL语句进行查询，然后将结果对程序中的实例进行赋值。这里以go语言中支持Oracle数据库的ORM框架<code>gorose</code>进行说明。顺便提一下，如果是对mysql进行操作，建议使用<code>gorm</code>框架，由于<code>gorm</code>不支持Oracle，所以这里使用<code>gorose</code>。</p>
+<ul>
+<li><a href="https://github.com/gohouse/gorose" target="_blank" rel="noopener">github</a></li>
+<li><a href="https://gohouse.github.io/gorose/dist/zh-cn/index.html" target="_blank" rel="noopener">document</a></li>
+</ul>
+<p>尝试了这个orm，也不好使，看来只能自己写了。<br>关于怎么将数据库查出的数据，方便的取出来参考下面的链接：<br><a href="https://stackoverflow.com/questions/21821550/sql-scan-rows-with-unknown-number-of-columns-select-from" target="_blank" rel="noopener">https://stackoverflow.com/questions/21821550/sql-scan-rows-with-unknown-number-of-columns-select-from</a><br><a href="https://stackoverflow.com/questions/29102725/go-sql-driver-get-interface-column-values" target="_blank" rel="noopener">https://stackoverflow.com/questions/29102725/go-sql-driver-get-interface-column-values</a><br><a href="https://stackoverflow.com/questions/43898259/scanning-large-rows-into-structs-in-go" target="_blank" rel="noopener">https://stackoverflow.com/questions/43898259/scanning-large-rows-into-structs-in-go</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/03/cpp-operator-overloading/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -669,355 +980,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/29/go-environment/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wdxx">
-      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wdxxliu">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/01/29/go-environment/" class="post-title-link" itemprop="url">go语言中的环境变量</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-01-29 16:12:42" itemprop="dateCreated datePublished" datetime="2021-01-29T16:12:42+08:00">2021-01-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-02 19:42:53" itemprop="dateModified" datetime="2021-03-02T19:42:53+08:00">2021-03-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>GO语言开发环境搭建过程中，有三个环境变量是需要设置的。下面描述下三个环境变量代表的含义。</p>
-<ul>
-<li>GOROOR: Go语言环境的安装目录，也就是从官网下载开发环境时，安装到的本地路径。例如<code>C:\Go\</code>。</li>
-<li>GOPATH: Go开发时的工作区目录的路径。这是开发每个Go项目时定义的变量。</li>
-<li>GOBIN: Go程序执行路径。</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/29/cpp-constructors/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wdxx">
-      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wdxxliu">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/01/29/cpp-constructors/" class="post-title-link" itemprop="url">c++构造函数</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-01-29 11:03:06" itemprop="dateCreated datePublished" datetime="2021-01-29T11:03:06+08:00">2021-01-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-02 19:42:53" itemprop="dateModified" datetime="2021-03-02T19:42:53+08:00">2021-03-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/c-c/" itemprop="url" rel="index"><span itemprop="name">c/c++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>c++构造函数是类中的一个特殊的成员函数，它在类实例化的时候被自动调用。构造函数经常用于初始化成员变量，或者做一些初始化步骤(如打开文件，打开数据库等)。区别于普通成员函数，构造函数有如下特点:</p>
-<ul>
-<li>构造函数名字跟类名相同</li>
-<li>构造函数没有返回值</li>
-</ul>
-<h5 id="关于对象初始化"><a href="#关于对象初始化" class="headerlink" title="关于对象初始化"></a>关于对象初始化</h5><p>关于对象初始化，有几种方式，看下面的例子：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">int</span> m_x;</span><br><span class="line">    <span class="keyword">int</span> m_y;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    Foo foo1 = &#123;<span class="number">4</span>, <span class="number">5</span>&#125;; <span class="comment">//  initialization list</span></span><br><span class="line">    Foo foo2 &#123;<span class="number">6</span>, <span class="number">7</span>&#125;; <span class="comment">//  uniform initialization</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在没有显示定义构造函数的情况下，可以使用上面的初始化方式初始化<code>public</code>类型的成员变量。如果成员变量是<code>private</code>的，那么就需要自定义构造函数了。  </p>
-<p>看下的关于构造函数的定义方法:</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cassert&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Fraction</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int</span> m_numerator;</span><br><span class="line">    <span class="keyword">int</span> m_denominator;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Fraction() <span class="comment">// default constructor</span></span><br><span class="line">    &#123;</span><br><span class="line">         m_numerator = <span class="number">0</span>;</span><br><span class="line">         m_denominator = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// Constructor with two parameters, one parameter having a default value</span></span><br><span class="line">    Fraction(<span class="keyword">int</span> numerator, <span class="keyword">int</span> denominator=<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        assert(denominator != <span class="number">0</span>);</span><br><span class="line">        m_numerator = numerator;</span><br><span class="line">        m_denominator = denominator;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">getNumerator</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> m_numerator; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">getDenominator</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> m_denominator; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">double</span> <span class="title">getValue</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> <span class="keyword">static_cast</span>&lt;<span class="keyword">double</span>&gt;(m_numerator) / m_denominator; &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>上面的类可以通过如下方法进行实例化:</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Fraction fiveThirds&#123;<span class="number">5</span>, <span class="number">3</span>&#125;; <span class="comment">// List initialization, calls Fraction(int, int)</span></span><br><span class="line"><span class="function">Fraction <span class="title">threeQuarters</span><span class="params">(<span class="number">3</span>, <span class="number">4</span>)</span></span>; <span class="comment">// Direct initialization, also calls Fraction(int, int)</span></span><br></pre></td></tr></table></figure>
-<p>上面的实例化使用了大括号和小括号两种初始化方式，一般情况下我们应该使用大括号初始化。  </p>
-<p>下面是一个对构造函数默认参数使用的例子:</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;assert.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Ball</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> m_color;</span><br><span class="line">    <span class="keyword">float</span> m_radius;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Ball(<span class="built_in">std</span>::<span class="built_in">string</span> color=<span class="string">"black"</span>, <span class="keyword">float</span> radius=<span class="number">10.0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        assert(radius &gt; <span class="number">0</span>);</span><br><span class="line">        m_color = color;</span><br><span class="line">        m_radius = radius;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Ball(<span class="keyword">float</span> radius)</span><br><span class="line">    &#123;</span><br><span class="line">        assert(radius &gt; <span class="number">0</span>);</span><br><span class="line">        m_color = <span class="string">"black"</span>;</span><br><span class="line">        m_radius = radius;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">print</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"color: "</span> &lt;&lt; m_color &lt;&lt; <span class="string">", radius: "</span> &lt;&lt; m_radius &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Ball def&#123;&#125;;</span><br><span class="line">    def.<span class="built_in">print</span>();</span><br><span class="line"> </span><br><span class="line">    Ball blue&#123; <span class="string">"blue"</span> &#125;;</span><br><span class="line">    blue.<span class="built_in">print</span>();</span><br><span class="line">    </span><br><span class="line">    Ball twenty&#123; <span class="number">3.5</span> &#125;;</span><br><span class="line">    twenty.<span class="built_in">print</span>();</span><br><span class="line">    </span><br><span class="line">    Ball blueTwenty&#123; <span class="string">"blue"</span>, <span class="number">20.0</span> &#125;;</span><br><span class="line">    blueTwenty.<span class="built_in">print</span>();</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="类内包含类情况的构造函数调用"><a href="#类内包含类情况的构造函数调用" class="headerlink" title="类内包含类情况的构造函数调用"></a>类内包含类情况的构造函数调用</h5><p>一个类内可能包含成员类型是其它类类型的情况。默认情况下，当类初始化时，会先调用类类型成员的构造函数。看下面的例子：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    A() &#123; <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"A\n"</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    A m_a; <span class="comment">// B contains A as a member variable</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    B() &#123; <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"B\n"</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    B b;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面的例子会输出：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">A</span><br><span class="line">B</span><br></pre></td></tr></table></figure>
-
-<h5 id="构造函数需要注意的地方"><a href="#构造函数需要注意的地方" class="headerlink" title="构造函数需要注意的地方"></a>构造函数需要注意的地方</h5><ol>
-<li>如果没有定义构造函数，那么编译器会默认为类创建一个空构造函数，所以该类还是可以被实例化</li>
-<li>如果程序员手动为类定义了构造函数，那么编译器将不会为类自动创建构造函数了，所以如果程序员实现了带参数的构造函数，没有实现无参构造函数，那么在实例化的时候将不能使用不带参数实例化。这种情况下可以使用<code>&lt;class&gt;()=default</code>添加一个默认的构造函数。</li>
-<li>在编写程序时，应该在构造函数中初始化所有的内部成员变量。</li>
-<li>尽量减少类的构造函数数量</li>
-<li>需要注意，实例(对象)并不是构造函数创建的，实例是编译器在内存中创建的，然后才调用构造函数。</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/28/cpp-strcut-and-class/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wdxx">
-      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wdxxliu">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/01/28/cpp-strcut-and-class/" class="post-title-link" itemprop="url">c++中的struct与class</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-01-28 20:40:39" itemprop="dateCreated datePublished" datetime="2021-01-28T20:40:39+08:00">2021-01-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-02 19:42:53" itemprop="dateModified" datetime="2021-03-02T19:42:53+08:00">2021-03-02</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/c-c/" itemprop="url" rel="index"><span itemprop="name">c/c++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>在c++中既可以使用strcut也可以使用class。那么他们有什么区别呢？看下面的例子。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">DateStruct</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> year&#123;&#125;;</span><br><span class="line">    <span class="keyword">int</span> month&#123;&#125;;</span><br><span class="line">    <span class="keyword">int</span> day&#123;&#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DateClass</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">int</span> m_year&#123;&#125;;</span><br><span class="line">    <span class="keyword">int</span> m_month&#123;&#125;;</span><br><span class="line">    <span class="keyword">int</span> m_day&#123;&#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>c++中，上面定义的DateStruct与DateClass是一样的，也就是说DateSruct中的成员类型是<code>public</code>的。注意上面只是申明了两个了类型，并没有定义，所以不会分配内存。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/01/28/cpp-strcut-and-class/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/25/build-external-modules-kernel/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="wdxx">
-      <meta itemprop="description" content="一个关于嵌入式方向的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="wdxxliu">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/01/25/build-external-modules-kernel/" class="post-title-link" itemprop="url">编译kernel外部模块</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-01-25 15:08:06" itemprop="dateCreated datePublished" datetime="2021-01-25T15:08:06+08:00">2021-01-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-02-03 17:50:53" itemprop="dateModified" datetime="2021-02-03T17:50:53+08:00">2021-02-03</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E8%AF%91/" itemprop="url" rel="index"><span itemprop="name">编译</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%BC%96%E8%AF%91/kernel/" itemprop="url" rel="index"><span itemprop="name">kernel</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>本文翻译自kernel<a href="https://www.kernel.org/doc/html/v5.4/kbuild/modules.html" target="_blank" rel="noopener">官方文档</a>,介绍怎么编译kernel源码目录之外的代码模块。  </p>
-<h4 id="1-介绍"><a href="#1-介绍" class="headerlink" title="1 介绍"></a>1 介绍</h4><p>Linux kernel使用<code>kbuild编译系统</code>来编译。kernel模块编译需要保持kbuild架构兼容，并且选择正确的gcc编译flag。kernel编译系统提供了在源码目录内编译以及在源码目录外编译的功能。这两种编译方式是类似的，所有的模块在最初开发阶段都是在源码外编译的。<br>本文所涵盖内容的目标是那些对在kernel源码目录之外编译模块感兴趣的开发者。源码目录外的模块的开发者应该提供一个makefile,该makefile隐藏了很多复杂细节，编译时只需要执行make命令就可以编译该模块。这个很容易实现，在第3小节会有一个详细的示例。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/01/25/build-external-modules-kernel/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1087,20 +1049,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
