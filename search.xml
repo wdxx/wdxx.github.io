@@ -1273,7 +1273,7 @@
 </ul>
 <p>现在通过如上所讲的三个特点来分析<code>llvm</code>的优势。</p>
 <h5 id="分层设计思想"><a href="#分层设计思想" class="headerlink" title="分层设计思想"></a>分层设计思想</h5><p><code>llvm</code>设计为<code>前端</code>、<code>优化器</code>、<code>后端</code>。其中后面两个部分是包含在<code>llvm</code>代码中的。由于后面两个部分基本固定，所以对于开发新的编程语言的编译器来说，只要设计出<code>前端</code>就可以了。下面结合下面的图来说明：</p>
-<p><img src="D:%5Csystem%5Chexo%5Cmyblog%5Cwdxx%5Csource%5Cimages%5Cimage-20210520193236796.png" alt="image-20210520193236796"></p>
+<p><img src="/images/image-20210520193236796.png" alt="image-20210520193236796"></p>
 <p>不同语言的编译器，可以共用<code>优化器</code>与<code>后端</code>。下面分别介绍这个三个层次的作用。</p>
 <ol>
 <li>前端</li>

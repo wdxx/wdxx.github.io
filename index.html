@@ -211,10 +211,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-05-20 10:52:05 / 修改时间：20:03:41" itemprop="dateCreated datePublished" datetime="2021-05-20T10:52:05+08:00">2021-05-20</time>
+              <time title="创建时间：2021-05-20 10:52:05" itemprop="dateCreated datePublished" datetime="2021-05-20T10:52:05+08:00">2021-05-20</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-21 09:59:57" itemprop="dateModified" datetime="2021-05-21T09:59:57+08:00">2021-05-21</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -250,7 +256,7 @@
 </ul>
 <p>现在通过如上所讲的三个特点来分析<code>llvm</code>的优势。</p>
 <h5 id="分层设计思想"><a href="#分层设计思想" class="headerlink" title="分层设计思想"></a>分层设计思想</h5><p><code>llvm</code>设计为<code>前端</code>、<code>优化器</code>、<code>后端</code>。其中后面两个部分是包含在<code>llvm</code>代码中的。由于后面两个部分基本固定，所以对于开发新的编程语言的编译器来说，只要设计出<code>前端</code>就可以了。下面结合下面的图来说明：</p>
-<p><img src="D:%5Csystem%5Chexo%5Cmyblog%5Cwdxx%5Csource%5Cimages%5Cimage-20210520193236796.png" alt="image-20210520193236796"></p>
+<p><img src="/images/image-20210520193236796.png" alt="image-20210520193236796"></p>
 <p>不同语言的编译器，可以共用<code>优化器</code>与<code>后端</code>。下面分别介绍这个三个层次的作用。</p>
 <ol>
 <li>前端</li>
